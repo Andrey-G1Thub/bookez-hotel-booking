@@ -1,0 +1,88 @@
+@import 'tailwindcss';
+/* :root {
+	font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+
+	color-scheme: light dark;
+	color: rgba(255, 255, 255, 0.87);
+	background-color: #242424;
+
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+a {
+	font-weight: 500;
+	color: #646cff;
+	text-decoration: inherit;
+}
+a:hover {
+	color: #535bf2;
+}
+
+button {
+	border-radius: 8px;
+	border: 1px solid transparent;
+	padding: 0.6em 1.2em;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: #1a1a1a;
+	cursor: pointer;
+	transition: border-color 0.25s;
+}
+button:hover {
+	border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+	outline: 4px auto -webkit-focus-ring-color;
+} */
+
+body {
+	font-family: 'Inter', sans-serif;
+	background-color: #f8f9fa; /* Светло-серый фон */
+	color: #343a40;
+}
+/* Основной цвет бренда: Бирюза */
+.accent-color {
+	background-color: #00a3a8;
+}
+.accent-text {
+	color: #00a3a8;
+}
+.accent-border {
+	border-color: #00a3a8;
+}
+.accent-hover:hover {
+	background-color: #008f93;
+}
+/* Стили для карточек и форм (доверие) */
+.card-shadow {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	border-radius: 0.5rem;
+}
+/* Стили для имитации скроллинга на мобильных */
+.overflow-x-scroll::-webkit-scrollbar {
+	display: none;
+}
+/* Стили для спиннера */
+.spinner {
+	border: 4px solid rgba(255, 255, 255, 0.3);
+	border-top: 4px solid #fff;
+	border-radius: 50%;
+	width: 1.5rem;
+	height: 1.5rem;
+	animation: spin 1s linear infinite;
+}
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
