@@ -1,3 +1,5 @@
+import { Home } from 'lucide-react';
+
 export const NotFoundPage = ({ message = 'Маршрут не найден.', navigate }) => (
 	<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
 		<h2 className="text-6xl font-extrabold accent-text mb-4">404</h2>

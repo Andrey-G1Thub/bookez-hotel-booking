@@ -1,5 +1,6 @@
 // - Компонент верхнего навигационного меню.
 
+import { LogOut, User } from 'lucide-react';
 import { useMemo } from 'react';
 
 export const Header = ({ currentUser, logout, navigate }) => {

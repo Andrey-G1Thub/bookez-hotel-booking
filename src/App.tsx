@@ -1,7 +1,8 @@
 import './App.css';
-import { Header } from './components/index.js';
+// import { Header } from './components/index.js';
 import { Zap } from 'lucide-react';
 import { MOCK_DATA } from './data/mockData.js';
+import { Footer, Header } from './components/index.js';
 
 // const MOCK_DATA = {
 // 	CITIES: [
@@ -31,7 +32,7 @@ const getMinDate = (): string => new Date().toISOString().split('T')[0];
 export const App = () => {
 	return (
 		<main>
-			<Header></Header>
+			<Header />
 			{/* Секция Hero с Поиском */}
 			<div
 				className="relative h-96 accent-color"
@@ -95,7 +96,6 @@ export const App = () => {
 					</div>
 				</div>
 			</div>
-
 			{/* Секция с Рекомендуемыми Отелями */}
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-3">
@@ -107,6 +107,7 @@ export const App = () => {
 					))}
 				</div>
 			</div>
+			<Footer />
 		</main>
 	);
 };

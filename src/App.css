@@ -1,3 +1,40 @@
+:root {
+--primary-accent: #00A3A8; /_ Глубокий бирюзовый _/
+--primary-accent-dark: #007C80;
+--secondary-bg: #f7f9fc; /_ Светло-серый фон _/
+}
+
+        /* Текст, границы и фон с акцентом */
+        .accent-text {
+            color: var(--primary-accent);
+        }
+        .accent-border {
+            border-color: var(--primary-accent);
+        }
+        .accent-color {
+            background-color: var(--primary-accent);
+        }
+        .accent-hover:hover {
+            background-color: var(--primary-accent-dark) !important;
+            transform: translateY(-1px);
+        }
+
+        /* Тень для карточек */
+        .card-shadow {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 1rem;
+        }
+
+        /* Общие стили для всего приложения */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--secondary-bg);
+        }
+        a, button {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
 /* #root {
   max-width: 1280px;
   margin: 0 auto;
