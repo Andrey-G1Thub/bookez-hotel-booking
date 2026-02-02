@@ -1,3 +1,4 @@
+import { Calendar, ChevronRight, DollarSign, User, Zap } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData.js';
 
 /\*_ Страница бронирования конкретного номера _/;

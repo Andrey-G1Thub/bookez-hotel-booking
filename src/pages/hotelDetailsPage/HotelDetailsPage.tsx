@@ -1,6 +1,6 @@
 // /\*_ Страница деталей отеля: список номеров _/;
 
-import { MapPin, Star, User } from 'lucide-react';
+import { ChevronRight, MapPin, Star, User } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 
@@ -19,7 +19,7 @@ export const HotelDetailsPage = ({ params, navigate }) => {
 				{MOCK_DATA.CITIES.find((c) => c.id === hotel.cityId)?.name ||
 					'Неизвестно'}
 				<span className="ml-4">
-					<Star rating={hotel.rating} />
+					<Rating rating={hotel.rating} />
 				</span>
 			</div>
 

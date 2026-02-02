@@ -1,4 +1,5 @@
 export * from './bookingsPage/BookingsPage.tsx';
+export * from './homePage/HomePage.tsx';
 export * from './cityDetailsPage/CityDetailsPage.tsx';
 export * from './hotelDetailsPage/HotelDetailsPage.tsx';
 export * from './loginPage/LoginPage.tsx';

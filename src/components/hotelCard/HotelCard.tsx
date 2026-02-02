@@ -1,3 +1,5 @@
+import { ChevronRight } from 'lucide-react';
+
 export const HotelCard = ({ hotel, navigate }) => {
 	// Используем чистую заглушку для изображения
 	const hotelImage = `https://placehold.co/400x250/E6F6F6/007C80?text=${encodeURIComponent(hotel.name)}`;

@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from 'react';
+
 export const useHashRouter = () => {
 	const [hash, setHash] = useState(window.location.hash.substring(1) || '');
 
