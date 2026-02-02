@@ -9,10 +9,12 @@ npm run dev запуск проекта
 4. npm install react-hook-form
 5. npm install react-router-dom@latest
 6. npm install yup redux redux-thunk react-redux
+7. npm install lucide-react
+8. npm install typescript --save-dev
 
 ## . Структура Папок: Создайть базовую структуру:
 
-o src/components/ (многократно используемые компоненты: кнопки, инпуты)
+o src/components/ ( компоненты: кнопки, инпуты)
 o src/pages/ (основные страницы)
 o src/routes/ (настройка маршрутизации)
 o src/services/ (сервисы для взаимодействия с API)
