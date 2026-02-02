@@ -1,1 +1,1 @@
-export * from './header/components/header';
+export * from './header/Header.jsx';

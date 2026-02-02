@@ -6,6 +6,7 @@ import { ChevronRight, Calendar, User, LogOut, MapPin, DollarSign, Hotel, Home, 
 // -------------------------------------------------------------------------
 
 const CustomStyles = () => (
+
 <style jsx="true">{`
 :root {
 --primary-accent: #00A3A8; /_ Глубокий бирюзовый _/
@@ -48,7 +49,8 @@ const CustomStyles = () => (
 );
 
 // -------------------------------------------------------------------------
-// 2. Mock-данные (Заглушки для работы с каталогом)
+
+<!-- // 2. Mock-данные (Заглушки для работы с каталогом)
 // -------------------------------------------------------------------------
 
 const MOCK_DATA = {
@@ -69,7 +71,7 @@ ROOMS: [
 { id: 2001, hotelId: 201, type: 'Студия', capacity: 2, amenities: 'Мини-кухня, Завтрак', price: 9800 },
 { id: 3001, hotelId: 301, type: 'Эконом', capacity: 2, amenities: 'Ванная комната', price: 4500 },
 ]
-};
+}; -->
 
 // -------------------------------------------------------------------------
 // 3. Вспомогательные Функции и Хуки
@@ -79,51 +81,51 @@ ROOMS: [
 
 - Хук для упрощенного Hash-роутинга.
   \*/
-  const useHashRouter = () => {
-  const [hash, setHash] = useState(window.location.hash.substring(1) || '');
-
-        useEffect(() => {
-            const handleHashChange = () => {
-                setHash(window.location.hash.substring(1) || '');
-            };
-            window.addEventListener('hashchange', handleHashChange);
-            return () => window.removeEventListener('hashchange', handleHashChange);
-        }, []);
-
-        // Функция для навигации
-        const navigate = useCallback((newHash) => {
-            if (newHash.startsWith('/')) {
-                newHash = newHash.substring(1);
+      <!-- const useHashRouter = () => {
+      const [hash, setHash] = useState(window.location.hash.substring(1) || '');
+    
+            useEffect(() => {
+                const handleHashChange = () => {
+                    setHash(window.location.hash.substring(1) || '');
+                };
+                window.addEventListener('hashchange', handleHashChange);
+                return () => window.removeEventListener('hashchange', handleHashChange);
+            }, []);
+    
+            // Функция для навигации
+            const navigate = useCallback((newHash) => {
+                if (newHash.startsWith('/')) {
+                    newHash = newHash.substring(1);
+                }
+                window.location.hash = newHash;
+            }, []);
+    
+            // Парсинг маршрута и параметров (например, 'city/1')
+            const parts = hash.split('/').filter(p => p);
+    
+            let route = '/';
+            let params = {};
+    
+            if (parts.length === 1) {
+                route = parts[0];
+            } else if (parts[0] === 'city' && parts.length > 1) {
+                route = 'cityDetails';
+                params.cityId = parseInt(parts[1], 10);
+            } else if (parts[0] === 'hotel' && parts.length > 1) {
+                route = 'hotelDetails';
+                params.hotelId = parseInt(parts[1], 10);
+            } else if (parts[0] === 'room' && parts.length > 2) {
+                route = 'roomBooking';
+                params.roomId = parseInt(parts[2], 10);
+            } else {
+                route = hash;
             }
-            window.location.hash = newHash;
-        }, []);
+    
+            return { route: route || '/', params, navigate };
+    
+        }; -->
 
-        // Парсинг маршрута и параметров (например, 'city/1')
-        const parts = hash.split('/').filter(p => p);
-
-        let route = '/';
-        let params = {};
-
-        if (parts.length === 1) {
-            route = parts[0];
-        } else if (parts[0] === 'city' && parts.length > 1) {
-            route = 'cityDetails';
-            params.cityId = parseInt(parts[1], 10);
-        } else if (parts[0] === 'hotel' && parts.length > 1) {
-            route = 'hotelDetails';
-            params.hotelId = parseInt(parts[1], 10);
-        } else if (parts[0] === 'room' && parts.length > 2) {
-            route = 'roomBooking';
-            params.roomId = parseInt(parts[2], 10);
-        } else {
-            route = hash;
-        }
-
-        return { route: route || '/', params, navigate };
-
-    };
-
-/\*\*
+<!-- /\*\*
 
 - Возвращает сегодняшнюю дату в формате YYYY-MM-DD.
   \*/
@@ -133,11 +135,13 @@ ROOMS: [
   return today.toISOString().split('T')[0];
   };
 
-// -------------------------------------------------------------------------
+// ------------------------------------------------------------------------- -->
+
 // 4. Компоненты UI (Карточки, Кнопки и т.д.)
 // -------------------------------------------------------------------------
 
 const Rating = ({ rating }) => (
+
 <div className="flex items-center text-sm font-semibold text-yellow-500">
 {[...Array(5)].map((\_, i) => (
 <span key={i} className={i < rating ? "text-yellow-500" : "text-gray-300"}>★</span>
@@ -675,6 +679,7 @@ b.userId === currentUser?.id && b.status === 'Отменено'
 };
 
 const NotFoundPage = ({ message = 'Маршрут не найден.', navigate }) => (
+
 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
 <h2 className="text-6xl font-extrabold accent-text mb-4">404</h2>
 <p className="text-2xl text-gray-700 mb-6">{message}</p>
@@ -696,82 +701,83 @@ const NotFoundPage = ({ message = 'Маршрут не найден.', navigate 
   // ОТОБРАЖЕНИЕ ИМЕНИ ЗАРЕГИСТРИРОВАННОГО ПОЛЬЗОВАТЕЛЯ
   const userName = useMemo(() => currentUser?.name || currentUser?.email || 'Профиль', [currentUser]);
 
-        return (
-            <div className="bg-white shadow-lg sticky top-0 z-10">
-                <CustomStyles />
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                        {/* Логотип */}
-                        <div className="flex-shrink-0">
-                            <button onClick={() => navigate('/')} className="text-2xl font-bold accent-text hover:opacity-80">
-                                BookEZ
-                            </button>
-                        </div>
-
-                        {/* Навигация */}
-                        <nav className="hidden md:flex space-x-6">
-                            <button onClick={() => navigate('/')} className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium">
-                                Главная
-                            </button>
-                            {currentUser && (
-                                <button onClick={() => navigate('/bookings')} className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium">
-                                    Мои Брони
+            return (
+                <div className="bg-white shadow-lg sticky top-0 z-10">
+                    <CustomStyles />
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-16">
+                            {/* Логотип */}
+                            <div className="flex-shrink-0">
+                                <button onClick={() => navigate('/')} className="text-2xl font-bold accent-text hover:opacity-80">
+                                    BookEZ
                                 </button>
-                            )}
-                            {/* Меню Менеджера/Админа */}
-                            {currentUser?.role === 'manager' && (
-                                 <button onClick={() => navigate('/manager')} className="text-amber-600 hover:text-amber-800 transition duration-150 font-bold">
-                                    Панель Менеджера
-                                </button>
-                            )}
-                        </nav>
+                            </div>
 
-                        {/* Авторизация/Профиль */}
-                        <div className="flex items-center space-x-3">
-                            {currentUser ? (
-                                <div className="relative group">
-                                    <button className="flex items-center p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition">
-                                        <User className="h-6 w-6 accent-text" />
-                                        {/* Отображение имени пользователя */}
-                                        <span className="ml-2 hidden sm:inline font-semibold text-gray-700">
-                                            {userName}
-                                        </span>
+                            {/* Навигация */}
+                            <nav className="hidden md:flex space-x-6">
+                                <button onClick={() => navigate('/')} className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium">
+                                    Главная
+                                </button>
+                                {currentUser && (
+                                    <button onClick={() => navigate('/bookings')} className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium">
+                                        Мои Брони
                                     </button>
+                                )}
+                                {/* Меню Менеджера/Админа */}
+                                {currentUser?.role === 'manager' && (
+                                     <button onClick={() => navigate('/manager')} className="text-amber-600 hover:text-amber-800 transition duration-150 font-bold">
+                                        Панель Менеджера
+                                    </button>
+                                )}
+                            </nav>
 
-                                    <div className="absolute right-0 mt-2 w-48 bg-white card-shadow hidden group-hover:block transition z-20 overflow-hidden">
-                                        <button
-                                            onClick={logout}
-                                            className="w-full text-left flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 font-medium"
-                                        >
-                                            <LogOut className="w-4 h-4 mr-2" /> Выход
+                            {/* Авторизация/Профиль */}
+                            <div className="flex items-center space-x-3">
+                                {currentUser ? (
+                                    <div className="relative group">
+                                        <button className="flex items-center p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition">
+                                            <User className="h-6 w-6 accent-text" />
+                                            {/* Отображение имени пользователя */}
+                                            <span className="ml-2 hidden sm:inline font-semibold text-gray-700">
+                                                {userName}
+                                            </span>
                                         </button>
+
+                                        <div className="absolute right-0 mt-2 w-48 bg-white card-shadow hidden group-hover:block transition z-20 overflow-hidden">
+                                            <button
+                                                onClick={logout}
+                                                className="w-full text-left flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 font-medium"
+                                            >
+                                                <LogOut className="w-4 h-4 mr-2" /> Выход
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ) : (
-                                <>
-                                    <button
-                                        onClick={() => navigate('/login')}
-                                        className="px-4 py-2 text-sm rounded-full border-2 accent-border accent-text hover:bg-gray-50 transition font-semibold"
-                                    >
-                                        Войти
-                                    </button>
-                                    <button
-                                        onClick={() => navigate('/register')}
-                                        className="px-4 py-2 text-sm rounded-full text-white accent-color accent-hover transition hidden sm:inline font-semibold shadow-md"
-                                    >
-                                        Регистрация
-                                    </button>
-                                </>
-                            )}
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={() => navigate('/login')}
+                                            className="px-4 py-2 text-sm rounded-full border-2 accent-border accent-text hover:bg-gray-50 transition font-semibold"
+                                        >
+                                            Войти
+                                        </button>
+                                        <button
+                                            onClick={() => navigate('/register')}
+                                            className="px-4 py-2 text-sm rounded-full text-white accent-color accent-hover transition hidden sm:inline font-semibold shadow-md"
+                                        >
+                                            Регистрация
+                                        </button>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
 
     };
 
 const Footer = () => (
+
 <footer className="bg-gray-800 mt-12">
 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-white">
 <div className="md:flex md:justify-between">
@@ -805,107 +811,107 @@ const Footer = () => (
   // 1. Имитация глобального состояния пользователя
   const [currentUser, setCurrentUser] = useState(null);
 
-        // ИМИТАЦИЯ СОСТОЯНИЯ БРОНИРОВАНИЙ
-        const [bookings, setBookings] = useState([
-            { id: 1, userId: 'user-123', hotelName: 'Москва Гранд Отель', roomType: 'Люкс с Видом', checkIn: '2025-12-15', checkOut: '2025-12-20', price: 15000, status: 'Подтверждено' },
-            { id: 2, userId: 'user-123', hotelName: 'Отель у Парка', roomType: 'Стандартный Двухместный', checkIn: '2025-11-25', checkOut: '2025-11-28', price: 5200, status: 'Подтверждено' },
-            { id: 3, userId: 'user-456', hotelName: 'Солнечный Берег', roomType: 'Эконом', checkIn: '2026-01-10', checkOut: '2026-01-15', price: 4500, status: 'Подтверждено' },
-        ]);
-
-        // 2. Роутинг на основе хэша
-        const { route, params, navigate } = useHashRouter();
-
-        // 3. Имитация авторизации и выхода
-        const login = (userData) => {
-            // Имитируем успешный вход с данными из формы
-            setCurrentUser({
-                id: 'user-123',
-                email: userData.email,
-                name: userData.name || userData.email.split('@')[0],
-                role: 'user'
-            });
-            alert(`Вы успешно вошли в систему как ${userData.name || userData.email.split('@')[0]}!`);
-            navigate('/');
-        };
-
-        const register = (userData) => {
-            console.log("Registered user:", userData);
-            alert(`Регистрация пользователя ${userData.name} прошла успешно! Теперь войдите.`);
-            navigate('/login');
-        };
-
-        const logout = (e) => {
-            e.preventDefault();
-            setCurrentUser(null);
-            alert('Вы вышли из системы.');
-            navigate('/');
-        };
-
-        const addBooking = (newBooking) => {
-            setBookings(prev => [
-                ...prev,
-                {
-                    ...newBooking,
-                    id: Date.now(),
-                    userId: currentUser.id,
-                    status: 'Подтверждено'
-                }
+            // ИМИТАЦИЯ СОСТОЯНИЯ БРОНИРОВАНИЙ
+            const [bookings, setBookings] = useState([
+                { id: 1, userId: 'user-123', hotelName: 'Москва Гранд Отель', roomType: 'Люкс с Видом', checkIn: '2025-12-15', checkOut: '2025-12-20', price: 15000, status: 'Подтверждено' },
+                { id: 2, userId: 'user-123', hotelName: 'Отель у Парка', roomType: 'Стандартный Двухместный', checkIn: '2025-11-25', checkOut: '2025-11-28', price: 5200, status: 'Подтверждено' },
+                { id: 3, userId: 'user-456', hotelName: 'Солнечный Берег', roomType: 'Эконом', checkIn: '2026-01-10', checkOut: '2026-01-15', price: 4500, status: 'Подтверждено' },
             ]);
-        };
 
-        // ФУНКЦИЯ ОТМЕНЫ БРОНИРОВАНИЯ
-        const cancelBooking = (bookingId) => {
-            setBookings(prev =>
-                prev.map(b =>
-                    b.id === bookingId && b.userId === currentUser.id
-                    ? { ...b, status: 'Отменено', cancelledAt: getMinDate() }
-                    : b
-                )
-            );
-            alert(`Бронирование #${bookingId} отменено.`);
-        };
+            // 2. Роутинг на основе хэша
+            const { route, params, navigate } = useHashRouter();
 
-        // 4. Определение содержимого страницы
-        let content;
-        const isUserLoggedIn = !!currentUser;
-        const isManager = currentUser?.role === 'manager';
+            // 3. Имитация авторизации и выхода
+            const login = (userData) => {
+                // Имитируем успешный вход с данными из формы
+                setCurrentUser({
+                    id: 'user-123',
+                    email: userData.email,
+                    name: userData.name || userData.email.split('@')[0],
+                    role: 'user'
+                });
+                alert(`Вы успешно вошли в систему как ${userData.name || userData.email.split('@')[0]}!`);
+                navigate('/');
+            };
 
-        if (route === '/') {
-            content = <HomePage navigate={navigate} />;
-        } else if (route === 'login') {
-            content = <LoginPage login={login} navigate={navigate} />;
-        } else if (route === 'register') {
-            // Передача функции регистрации
-            content = <RegisterPage navigate={navigate} register={register} />;
-        } else if (route === 'bookings') {
-            // Передача функции отмены бронирования
-            content = isUserLoggedIn ? <BookingsPage navigate={navigate} currentUser={currentUser} bookings={bookings} cancelBooking={cancelBooking} /> : <NotFoundPage navigate={navigate} message="Доступ только для авторизованных пользователей." />;
-        } else if (route === 'cityDetails') {
-            content = <CityDetailsPage params={params} navigate={navigate} />;
-        } else if (route === 'hotelDetails') {
-            content = <HotelDetailsPage params={params} navigate={navigate} />;
-        } else if (route === 'roomBooking') {
-            content = <RoomBookingPage
-                params={params}
-                navigate={navigate}
-                currentUser={currentUser}
-                bookings={bookings}
-                addBooking={addBooking}
-            />;
-        } else if (route === 'manager') {
-            content = isManager ? <NotFoundPage navigate={navigate} message="Панель менеджера (скоро здесь будет функционал управления)." /> : <NotFoundPage navigate={navigate} message="У вас нет прав доступа к этой странице." />;
-        } else {
-            content = <NotFoundPage navigate={navigate} />;
-        }
+            const register = (userData) => {
+                console.log("Registered user:", userData);
+                alert(`Регистрация пользователя ${userData.name} прошла успешно! Теперь войдите.`);
+                navigate('/login');
+            };
 
-        return (
-            <div className="min-h-screen flex flex-col">
-                <Header currentUser={currentUser} logout={logout} navigate={navigate} />
-                <div className="flex-grow">
-                    {content}
+            const logout = (e) => {
+                e.preventDefault();
+                setCurrentUser(null);
+                alert('Вы вышли из системы.');
+                navigate('/');
+            };
+
+            const addBooking = (newBooking) => {
+                setBookings(prev => [
+                    ...prev,
+                    {
+                        ...newBooking,
+                        id: Date.now(),
+                        userId: currentUser.id,
+                        status: 'Подтверждено'
+                    }
+                ]);
+            };
+
+            // ФУНКЦИЯ ОТМЕНЫ БРОНИРОВАНИЯ
+            const cancelBooking = (bookingId) => {
+                setBookings(prev =>
+                    prev.map(b =>
+                        b.id === bookingId && b.userId === currentUser.id
+                        ? { ...b, status: 'Отменено', cancelledAt: getMinDate() }
+                        : b
+                    )
+                );
+                alert(`Бронирование #${bookingId} отменено.`);
+            };
+
+            // 4. Определение содержимого страницы
+            let content;
+            const isUserLoggedIn = !!currentUser;
+            const isManager = currentUser?.role === 'manager';
+
+            if (route === '/') {
+                content = <HomePage navigate={navigate} />;
+            } else if (route === 'login') {
+                content = <LoginPage login={login} navigate={navigate} />;
+            } else if (route === 'register') {
+                // Передача функции регистрации
+                content = <RegisterPage navigate={navigate} register={register} />;
+            } else if (route === 'bookings') {
+                // Передача функции отмены бронирования
+                content = isUserLoggedIn ? <BookingsPage navigate={navigate} currentUser={currentUser} bookings={bookings} cancelBooking={cancelBooking} /> : <NotFoundPage navigate={navigate} message="Доступ только для авторизованных пользователей." />;
+            } else if (route === 'cityDetails') {
+                content = <CityDetailsPage params={params} navigate={navigate} />;
+            } else if (route === 'hotelDetails') {
+                content = <HotelDetailsPage params={params} navigate={navigate} />;
+            } else if (route === 'roomBooking') {
+                content = <RoomBookingPage
+                    params={params}
+                    navigate={navigate}
+                    currentUser={currentUser}
+                    bookings={bookings}
+                    addBooking={addBooking}
+                />;
+            } else if (route === 'manager') {
+                content = isManager ? <NotFoundPage navigate={navigate} message="Панель менеджера (скоро здесь будет функционал управления)." /> : <NotFoundPage navigate={navigate} message="У вас нет прав доступа к этой странице." />;
+            } else {
+                content = <NotFoundPage navigate={navigate} />;
+            }
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    <Header currentUser={currentUser} logout={logout} navigate={navigate} />
+                    <div className="flex-grow">
+                        {content}
+                    </div>
+                    <Footer />
                 </div>
-                <Footer />
-            </div>
-        );
+            );
 
     }

@@ -1,16 +1,17 @@
 import './App.css';
 import { Header } from './components/index.js';
 import { Zap } from 'lucide-react';
+import { MOCK_DATA } from './data/mockData.js';
 
-const MOCK_DATA = {
-	CITIES: [
-		{ id: '1', name: 'Геническ' },
-		{ id: '2', name: 'Севастополь' },
-		{ id: '3', name: 'Ялта' },
-		{ id: '4', name: 'Евпатория' },
-		{ id: '5', name: 'Арабатская стрелка' },
-	],
-};
+// const MOCK_DATA = {
+// 	CITIES: [
+// 		{ id: '1', name: 'Геническ' },
+// 		{ id: '2', name: 'Севастополь' },
+// 		{ id: '3', name: 'Ялта' },
+// 		{ id: '4', name: 'Евпатория' },
+// 		{ id: '5', name: 'Арабатская стрелка' },
+// 	],
+// };
 const featuredHotels = [];
 const navigate = () => {};
 
@@ -108,4 +109,12 @@ export const App = () => {
 			</div>
 		</main>
 	);
+};
+
+// - Возвращает сегодняшнюю дату в формате YYYY-MM-DD.
+
+export const getMinDate = () => {
+	const today = new Date();
+	// Используем 'T00:00:00' для нормализации даты до начала дня по местному времени
+	return today.toISOString().split('T')[0];
 };
