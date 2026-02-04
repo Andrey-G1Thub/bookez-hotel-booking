@@ -1,10 +1,10 @@
 export interface City {
-	id: string;
+	id: number;
 	name: string;
 }
 
 export interface Hotel {
-	id: string;
+	id: number;
 	name: string;
 	city: string;
 	pricePerNight: number;
@@ -14,10 +14,12 @@ export interface Hotel {
 }
 
 export interface Booking {
-	id: string;
-	hotelId: string;
-	userId: string;
-	checkIn: string; // ISO формат даты
+	id: number;
+	hotelName: string;
+	roomType: string;
+	checkIn: string;
 	checkOut: string;
-	totalPrice: number;
+	price: number;
+	status: 'Подтверждено' | 'Отменено';
+	userId: number;
 }

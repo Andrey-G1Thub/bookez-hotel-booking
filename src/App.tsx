@@ -22,8 +22,12 @@ import { Footer, Header } from './components';
 import { HomePage } from './pages/homePage/HomePage';
 import { getMinDate } from './utils/helpers';
 import './App.css';
+import { MOCK_DATA } from './data/mockData';
+import { useDispatch } from 'react-redux';
+import { SET_HOTELS } from './store/actions/hotelActions';
 
 export const App = () => {
+	const dispatch = useDispatch();
 	// 1. Имитация глобального состояния пользователя
 	const [currentUser, setCurrentUser] = useState(null);
 
@@ -61,11 +65,12 @@ export const App = () => {
 		},
 	]);
 	useEffect(() => {
+		dispatch({ type: 'SET_HOTELS', payload: MOCK_DATA.HOTELS });
 		const savedUser = localStorage.getItem('bookez_user');
 		if (savedUser) {
 			setCurrentUser(JSON.parse(savedUser)); // Превращаем строку обратно в объект
 		}
-	}, []);
+	}, [dispatch]);
 	// 2. Роутинг на основе хэша
 	const { route, params, navigate } = useHashRouter();
 
