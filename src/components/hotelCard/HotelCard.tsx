@@ -1,4 +1,5 @@
 import { ChevronRight } from 'lucide-react';
+import { Rating } from '../rating/Rating';
 
 export const HotelCard = ({ hotel, navigate }) => {
 	// Используем чистую заглушку для изображения

@@ -19,6 +19,9 @@ import { CityDetailsPage } from './pages/cityDetailsPage/CityDetailsPage';
 import { HotelDetailsPage } from './pages/hotelDetailsPage/HotelDetailsPage';
 import { RoomBookingPage } from './pages/roomBookingPage/RoomBookingPage';
 import { Footer, Header } from './components';
+import { HomePage } from './pages/homePage/HomePage';
+import { getMinDate } from './utils/helpers';
+import './App.css';
 
 export const App = () => {
 	// 1. Имитация глобального состояния пользователя
@@ -57,7 +60,12 @@ export const App = () => {
 			status: 'Подтверждено',
 		},
 	]);
-
+	useEffect(() => {
+		const savedUser = localStorage.getItem('bookez_user');
+		if (savedUser) {
+			setCurrentUser(JSON.parse(savedUser)); // Превращаем строку обратно в объект
+		}
+	}, []);
 	// 2. Роутинг на основе хэша
 	const { route, params, navigate } = useHashRouter();
 
@@ -73,6 +81,7 @@ export const App = () => {
 		alert(
 			`Вы успешно вошли в систему как ${userData.name || userData.email.split('@')[0]}!`,
 		);
+		localStorage.setItem('bookez_user', JSON.stringify(currentUser));
 		navigate('/');
 	};
 
@@ -88,6 +97,7 @@ export const App = () => {
 		e.preventDefault();
 		setCurrentUser(null);
 		alert('Вы вышли из системы.');
+		localStorage.removeItem('bookez_user');
 		navigate('/');
 	};
 
@@ -296,9 +306,3 @@ export const App = () => {
 // };
 
 // // - Возвращает сегодняшнюю дату в формате YYYY-MM-DD.
-
-// export const getMinDate = () => {
-// 	const today = new Date();
-// 	// Используем 'T00:00:00' для нормализации даты до начала дня по местному времени
-// 	return today.toISOString().split('T')[0];
-// };

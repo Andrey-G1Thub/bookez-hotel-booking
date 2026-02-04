@@ -1,3 +1,5 @@
+import { Hotel } from 'lucide-react';
+
 export const BookingsPage = ({ navigate, currentUser, bookings, cancelBooking }) => {
 	// ФИЛЬТРАЦИЯ АКТУАЛЬНЫХ БРОНИРОВАНИЙ (только со статусом "Подтверждено")
 	const activeBookings = bookings.filter(

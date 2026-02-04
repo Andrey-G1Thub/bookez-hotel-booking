@@ -1,6 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
+import { HotelCard } from '../../components/index.js';
 
 export const CityDetailsPage = ({ params, navigate }) => {
 	const city = MOCK_DATA.CITIES.find((c) => c.id === params.cityId);

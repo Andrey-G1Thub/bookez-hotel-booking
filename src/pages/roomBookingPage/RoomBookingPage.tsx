@@ -1,5 +1,7 @@
-import { Calendar, ChevronRight, DollarSign, User, Zap } from 'lucide-react';
+import { Calendar, ChevronRight, DollarSign, Hotel, User, Zap } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData.js';
+import { getMinDate } from '../../utils/helpers.js';
+import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 
 /\*_ Страница бронирования конкретного номера _/;
 export const RoomBookingPage = ({

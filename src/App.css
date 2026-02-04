@@ -1,79 +1,49 @@
 :root {
---primary-accent: #00A3A8; /_ Глубокий бирюзовый _/
---primary-accent-dark: #007C80;
---secondary-bg: #f7f9fc; /_ Светло-серый фон _/
+	--primary-accent: #00a3a8;
+	--primary-accent-dark: #007c80;
+	--secondary-bg: #f7f9fc;
 }
 
-        /* Текст, границы и фон с акцентом */
-        .accent-text {
-            color: var(--primary-accent);
-        }
-        .accent-border {
-            border-color: var(--primary-accent);
-        }
-        .accent-color {
-            background-color: var(--primary-accent);
-        }
-        .accent-hover:hover {
-            background-color: var(--primary-accent-dark) !important;
-            transform: translateY(-1px);
-        }
-
-        /* Тень для карточек */
-        .card-shadow {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            border-radius: 1rem;
-        }
-
-        /* Общие стили для всего приложения */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--secondary-bg);
-        }
-        a, button {
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Акцентные стили */
+.accent-text {
+	color: var(--primary-accent) !important;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.accent-color {
+	background-color: var(--primary-accent) !important;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.accent-border {
+	border-color: var(--primary-accent) !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.accent-hover:hover {
+	background-color: var(--primary-accent-dark) !important;
+	transform: translateY(-1px);
+	transition: all 0.2s ease-in-out;
 }
 
-.card {
-  padding: 2em;
+/* Карточки */
+.card-shadow {
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+	border-radius: 1rem;
 }
 
-.read-the-docs {
-  color: #888;
-} */
+/* Спиннер загрузки */
+.spinner {
+	border: 3px solid rgba(0, 163, 168, 0.2);
+	border-top: 3px solid var(--primary-accent);
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

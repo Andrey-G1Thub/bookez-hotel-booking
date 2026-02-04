@@ -3,6 +3,7 @@
 import { ChevronRight, MapPin, Star, User } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
+import { Rating } from '../../components/index.js';
 
 export const HotelDetailsPage = ({ params, navigate }) => {
 	const hotel = MOCK_DATA.HOTELS.find((h) => h.id === params.hotelId);
