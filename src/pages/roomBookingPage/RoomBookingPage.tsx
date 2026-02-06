@@ -3,6 +3,7 @@ import { MOCK_DATA } from '../../data/mockData.js';
 import { getMinDate } from '../../utils/helpers.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { useDispatch, useSelector } from 'react-redux';
+import { addBookingThunk } from '../../store/actions/bookingActions.js';
 
 /\*_ Страница бронирования конкретного номера _/;
 export const RoomBookingPage = ({ params, navigate, currentUser }) => {
@@ -61,6 +62,11 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 
 		return { overlap: false };
 	};
+	const handleCancel = (id) => {
+		if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
+			dispatch(deleteBookingThunk(id));
+		}
+	};
 
 	const handleBooking = (e) => {
 		e.preventDefault();
@@ -91,7 +97,7 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 			price: room.price,
 			status: 'Подтверждено',
 		};
-		dispatch({ type: 'ADD_BOOKING', payload: newBooking });
+		dispatch(addBookingThunk(newBooking));
 
 		alert(
 			`Бронирование номера "${room.type}" оформлено! (Смотри консоль и раздел 'Мои Брони')`,

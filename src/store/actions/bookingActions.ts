@@ -11,22 +11,41 @@ export const fetchBookings = () => async (dispatch) => {
 
 // POST - добавление новой брони
 export const addBookingThunk = (newBooking) => async (dispatch) => {
-	const response = await fetch('http://localhost:3001/bookings', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(newBooking),
-	});
-	const savedBooking = await response.json();
-	dispatch(addBookingThunk(newBooking));
+	try {
+		const response = await fetch('http://localhost:3001/bookings', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(newBooking),
+		});
+
+		if (response.ok) {
+			const savedBooking = await response.json();
+			// Обновляем Redux только если сервер ответил "ОК"
+			dispatch({ type: 'ADD_BOOKING', payload: savedBooking });
+		}
+	} catch (error) {
+		console.error('Ошибка при записи в db.json:', error);
+	}
 };
 
-// DELETE или PATCH - отмена брони
-export const cancelBookingThunk = (id) => async (dispatch) => {
-	// В JSON-server для изменения статуса используем PATCH
-	await fetch(`http://localhost:3001/bookings/${id}`, {
-		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ status: 'Отменено' }),
-	});
-	dispatch({ type: 'CANCEL_BOOKING', payload: id });
+// store/actions/bookingActions.js
+
+export const deleteBookingThunk = (id) => async (dispatch) => {
+	try {
+		// Отправляем запрос на удаление конкретного ID
+		const response = await fetch(`http://localhost:3001/bookings/${id}`, {
+			method: 'DELETE', // Метод DELETE удаляет запись в db.json
+		});
+
+		if (response.ok) {
+			// Если сервер подтвердил удаление, убираем из Redux
+			dispatch({ type: 'DELETE_BOOKING', payload: id });
+			// Примечание: тип 'CANCEL_BOOKING' в редюсере обычно уже умеет
+			// делать .filter() и удалять элемент из массива
+		}
+	} catch (error) {
+		console.error('Ошибка при удалении из db.json:', error);
+	}
 };

@@ -3,18 +3,7 @@ import { CANCEL_BOOKING, SET_BOOKINGS } from '../actions/bookingActions';
 
 const initialState = {
 	// Здесь только то, что относится к бронированиям
-	list: [
-		// 	{
-		// 		id: 1,
-		// 		hotelName: 'Москва Гранд Отель',
-		// 		roomType: 'Люкс',
-		// 		checkIn: '2024-06-01',
-		// 		checkOut: '2024-06-07',
-		// 		price: 15000,
-		// 		status: 'Подтверждено',
-		// 		userId: 1,
-		// 	},
-	],
+	list: [],
 	loading: false,
 };
 
@@ -29,14 +18,10 @@ export const bookingReducer = (state = initialState, action) => {
 				list: [...state.list, action.payload], // Создаем НОВЫЙ массив с новой бронью
 			};
 
-		case 'CANCEL_BOOKING':
+		case 'DELETE_BOOKING':
 			return {
 				...state,
-				list: state.list.map((booking) =>
-					booking.id === action.payload
-						? { ...booking, status: 'Отменено' }
-						: booking,
-				),
+				list: state.list.filter((booking) => booking.id !== action.payload),
 			};
 		default:
 			return state;

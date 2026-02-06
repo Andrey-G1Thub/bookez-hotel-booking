@@ -1,6 +1,9 @@
 import { Hotel } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { cancelBookingThunk } from '../../store/actions/bookingActions';
+import {
+	cancelBookingThunk,
+	deleteBookingThunk,
+} from '../../store/actions/bookingActions';
 
 export const BookingsPage = ({ currentUser }) => {
 	const dispatch = useDispatch();
@@ -16,9 +19,9 @@ export const BookingsPage = ({ currentUser }) => {
 		(b) => b.userId === currentUser?.id && b.status === 'Отменено',
 	);
 
-	const handleCancel = (id) => {
-		if (window.confirm('Вы уверены, что хотите отменить бронирование?')) {
-			dispatch(cancelBookingThunk(id));
+	const handleDelete = (id) => {
+		if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
+			dispatch(deleteBookingThunk(id));
 		}
 	};
 
@@ -46,7 +49,7 @@ export const BookingsPage = ({ currentUser }) => {
 							</p>
 						</div>
 						<button
-							onClick={() => handleCancel(booking.id)}
+							onClick={() => handleDelete(booking.id)}
 							className="text-red-600 border border-red-300 bg-white hover:bg-red-50 px-4 py-2 rounded-lg text-sm"
 						>
 							Отменить
