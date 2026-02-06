@@ -1,4 +1,4 @@
-npm run json-server сапуск сервера
+npm run server сапуск сервера
 npm run dev запуск проекта
 
 ## Установленные пакеты 0. npm install

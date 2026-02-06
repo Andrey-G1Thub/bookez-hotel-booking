@@ -2,16 +2,15 @@ import { Calendar, ChevronRight, DollarSign, Hotel, User, Zap } from 'lucide-rea
 import { MOCK_DATA } from '../../data/mockData.js';
 import { getMinDate } from '../../utils/helpers.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
+import { useDispatch, useSelector } from 'react-redux';
 
 /\*_ Страница бронирования конкретного номера _/;
-export const RoomBookingPage = ({
-	params,
-	navigate,
-	currentUser,
-	bookings,
-	addBooking,
-}) => {
-	const room = MOCK_DATA.ROOMS.find((r) => r.id === params.roomId);
+export const RoomBookingPage = ({ params, navigate, currentUser }) => {
+	const dispatch = useDispatch();
+
+	const bookings = useSelector((state) => state.bookings.list) || [];
+
+	const room = MOCK_DATA.ROOMS.find((r) => r.id === Number(params.roomId));
 
 	if (!room) return <NotFoundPage message="Номер не найден." navigate={navigate} />;
 
@@ -83,14 +82,16 @@ export const RoomBookingPage = ({
 
 		// Создание новой брони
 		const newBooking = {
+			id: Date.now(), // Генерируем временный ID
+			userId: currentUser.id,
 			hotelName: hotel.name,
 			roomType: room.type,
-			checkIn: checkIn,
-			checkOut: checkOut,
+			checkIn: formData.get('checkIn'),
+			checkOut: formData.get('checkOut'),
 			price: room.price,
+			status: 'Подтверждено',
 		};
-
-		addBooking(newBooking);
+		dispatch({ type: 'ADD_BOOKING', payload: newBooking });
 
 		alert(
 			`Бронирование номера "${room.type}" оформлено! (Смотри консоль и раздел 'Мои Брони')`,

@@ -20,10 +20,16 @@ const initialState = {
 
 export const bookingReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case SET_BOOKINGS:
+		case 'SET_BOOKINGS':
 			return { ...state, list: action.payload };
 
-		case CANCEL_BOOKING:
+		case 'ADD_BOOKING': // Проверь, чтобы это имя совпадало с тем, что в dispatch
+			return {
+				...state,
+				list: [...state.list, action.payload], // Создаем НОВЫЙ массив с новой бронью
+			};
+
+		case 'CANCEL_BOOKING':
 			return {
 				...state,
 				list: state.list.map((booking) =>

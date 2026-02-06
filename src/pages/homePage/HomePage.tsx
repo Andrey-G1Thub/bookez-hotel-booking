@@ -2,11 +2,13 @@ import { Zap } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData';
 import { HotelCard } from '../../components/hotelCard/HotelCard';
 import { getMinDate } from '../../utils/helpers';
+import { useSelector } from 'react-redux';
 
 // <!-- /\*_ Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = ({ navigate }) => {
+	const { allHotels } = useSelector((state) => state.hotels);
 	// Показываем все отели как рекомендуемые, чтобы не усложнять компонент
-	const featuredHotels = MOCK_DATA.HOTELS.slice(0, 3);
+	const featuredHotels = allHotels.slice(0, 3);
 
 	const handleSearch = (e) => {
 		e.preventDefault();
