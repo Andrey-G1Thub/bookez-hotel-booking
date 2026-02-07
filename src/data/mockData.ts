@@ -1,6 +1,6 @@
 export const MOCK_DATA = {
 	CITIES: [
-		{ id: 1, name: 'Москва', description: 'Сердце России.' },
+		{ id: 1, name: 'Геническ', description: 'Берег Азова' },
 		{ id: 2, name: 'Санкт-Петербург', description: 'Северная столица.' },
 		{ id: 3, name: 'Сочи', description: 'Черноморский курорт.' },
 	],

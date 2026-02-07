@@ -6,10 +6,19 @@ import { useSelector } from 'react-redux';
 
 // <!-- /\*_ Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = ({ navigate }) => {
-	const { allHotels } = useSelector((state) => state.hotels);
-	const { cities } = useSelector((state) => state.hotels);
+	const { allHotels, cities } = useSelector((state) => state.hotels);
 	// Показываем все отели как рекомендуемые, чтобы не усложнять компонент
 	const featuredHotels = allHotels?.slice(0, 3);
+
+	// НОВАЯ ЛОГИКА: мгновенный переход при выборе города
+	const handleCityChange = (e) => {
+		const cityName = e.target.value;
+		const selectedCity = cities.find((c) => c.name === cityName);
+
+		if (selectedCity) {
+			navigate(`/city/${selectedCity.id}`);
+		}
+	};
 
 	const handleSearch = (e) => {
 		e.preventDefault();
@@ -30,6 +39,7 @@ export const HomePage = ({ navigate }) => {
 		} else {
 			alert('Ошибка: выбранный город не найден.');
 		}
+		console.log('Ищем свободные номера на даты...');
 	};
 
 	return (
@@ -56,6 +66,7 @@ export const HomePage = ({ navigate }) => {
 							{/* ПОЛЕ ВЫБОРА ГОРОДА (ВЫПАДАЮЩИЙ СПИСОК) */}
 							<select
 								name="city"
+								onChange={handleCityChange}
 								className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border bg-white"
 								defaultValue=""
 								required
@@ -63,7 +74,7 @@ export const HomePage = ({ navigate }) => {
 								<option value="" disabled>
 									Выберите город
 								</option>
-								{MOCK_DATA.CITIES.map((city) => (
+								{cities.map((city) => (
 									// Используем имя города в качестве значения
 									<option key={city.id} value={city.name}>
 										{city.name}

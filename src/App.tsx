@@ -51,9 +51,10 @@ export const App = () => {
 			dispatch({ type: SET_USER, payload: JSON.parse(savedUser) }); // Превращаем строку обратно в объект
 		}
 	}, [dispatch]);
+
 	// 2. Роутинг на основе хэша
 	const { route, params, navigate } = useHashRouter();
-
+	console.log('Current Route:', route);
 	// Теперь функции login и logout вызывают Thunks
 	const login = (userData) => dispatch(loginThunk(userData));
 	const logout = (e) => {

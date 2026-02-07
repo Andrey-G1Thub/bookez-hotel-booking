@@ -2,11 +2,21 @@ import { ChevronRight } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { HotelCard } from '../../components/index.js';
+import { useSelector } from 'react-redux';
 
 export const CityDetailsPage = ({ params, navigate }) => {
-	const city = MOCK_DATA.CITIES.find((c) => c.id === params.cityId);
-	// ФИЛЬТРАЦИЯ ОТЕЛЕЙ ПО ID ГОРОДА
-	const hotels = MOCK_DATA.HOTELS.filter((h) => h.cityId === params.cityId);
+	// Находим текущий город, чтобы показать его название
+	const { allHotels, cities } = useSelector((state) => state.hotels);
+	// 1. Сначала проверяем, загрузились ли данные вообще
+	if (cities.length === 0 || allHotels.length === 0) {
+		return <div className="p-10 text-center text-xl">Загрузка данных...</div>;
+	}
+
+	const city = cities.find((c) => Number(c.id) === Number(params.cityId));
+
+	const filteredHotels = allHotels.filter(
+		(hotel) => Number(hotel.cityId) === Number(params.cityId),
+	);
 
 	if (!city) return <NotFoundPage message="Город не найден." navigate={navigate} />;
 
@@ -22,8 +32,8 @@ export const CityDetailsPage = ({ params, navigate }) => {
 			</h2>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{hotels.length > 0 ? (
-					hotels.map((hotel) => (
+				{filteredHotels.length > 0 ? (
+					filteredHotels.map((hotel) => (
 						<HotelCard key={hotel.id} hotel={hotel} navigate={navigate} />
 					))
 				) : (

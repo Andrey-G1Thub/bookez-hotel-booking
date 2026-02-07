@@ -27,7 +27,7 @@ export const useHashRouter = () => {
 
 	if (parts.length === 1) {
 		route = parts[0];
-	} else if (parts[0] === 'city' && parts.length > 1) {
+	} else if ((parts[0] === 'city' || parts[0] === 'cityDetails') && parts.length > 1) {
 		route = 'cityDetails';
 		params.cityId = parseInt(parts[1], 10);
 	} else if (parts[0] === 'hotel' && parts.length > 1) {
