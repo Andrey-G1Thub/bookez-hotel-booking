@@ -29,6 +29,8 @@ import { SET_HOTELS } from './store/actions/hotelActions';
 import { loginThunk, logoutThunk, SET_USER } from './store/actions/userActions';
 import { fetchHotels } from './store/actions/hotelActions';
 import { fetchBookings } from './store/actions/bookingActions';
+import { fetchRooms } from './store/actions/roomActions';
+import { fetchCities } from './store/actions/hotelActions';
 
 export const App = () => {
 	const dispatch = useDispatch();
@@ -38,6 +40,8 @@ export const App = () => {
 	useEffect(() => {
 		dispatch(fetchBookings()); // Запрос к JSON-server
 		dispatch(fetchHotels());
+		dispatch(fetchCities());
+		dispatch(fetchRooms());
 		// 	dispatch({ type: 'SET_HOTELS', payload: MOCK_DATA.HOTELS });
 
 		// dispatch({ type: SET_BOOKINGS, payload: initialBookings });

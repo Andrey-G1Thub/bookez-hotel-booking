@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 // <!-- /\*_ Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = ({ navigate }) => {
 	const { allHotels } = useSelector((state) => state.hotels);
+	const { cities } = useSelector((state) => state.hotels);
 	// Показываем все отели как рекомендуемые, чтобы не усложнять компонент
 	const featuredHotels = allHotels?.slice(0, 3);
 
@@ -20,7 +21,7 @@ export const HomePage = ({ navigate }) => {
 			return;
 		}
 
-		const selectedCity = MOCK_DATA.CITIES.find((c) => c.name === cityName);
+		const selectedCity = cities.find((c) => c.name === cityName);
 
 		if (selectedCity) {
 			console.log('Выполнен поиск:', Object.fromEntries(formData.entries()));

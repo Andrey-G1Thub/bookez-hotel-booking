@@ -1,5 +1,5 @@
 import { Calendar, ChevronRight, DollarSign, Hotel, User, Zap } from 'lucide-react';
-import { MOCK_DATA } from '../../data/mockData.js';
+// import { MOCK_DATA } from '../../data/mockData.js';
 import { getMinDate } from '../../utils/helpers.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,12 +10,16 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 	const dispatch = useDispatch();
 
 	const bookings = useSelector((state) => state.bookings.list) || [];
+	const { roomsList } = useSelector((state) => state.rooms);
+	const { allHotels } = useSelector((state) => state.hotels);
 
-	const room = MOCK_DATA.ROOMS.find((r) => r.id === Number(params.roomId));
+	const room = roomsList?.find((r) => String(r.id) === String(params.roomId));
+	const hotel = allHotels.find((h) => h.id === room?.hotelId);
 
+	// Если данные еще грузятся, показываем "Загрузка...", а не сразу 404
+	if (roomsList.length === 0 || allHotels.length === 0)
+		return <div className="p-10 text-center text-xl">Загрузка данных...</div>;
 	if (!room) return <NotFoundPage message="Номер не найден." navigate={navigate} />;
-
-	const hotel = MOCK_DATA.HOTELS.find((h) => h.id === room.hotelId);
 
 	// Фильтруем бронирования для этого номера, только подтвержденные
 	const roomBookings = bookings.filter(

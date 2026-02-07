@@ -11,3 +11,10 @@ export const fetchHotels = () => async (dispatch) => {
 		console.error('Hotel Fetch Error:', error);
 	}
 };
+export const SET_CITIES = 'SET_CITIES';
+
+export const fetchCities = () => async (dispatch) => {
+	const response = await fetch('http://localhost:3001/cities');
+	const data = await response.json();
+	dispatch({ type: SET_CITIES, payload: data });
+};
