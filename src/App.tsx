@@ -23,41 +23,38 @@ import { HomePage } from './pages/homePage/HomePage';
 import { getMinDate } from './utils/helpers';
 import './App.css';
 import { MOCK_DATA } from './data/mockData';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SET_HOTELS } from './store/actions/hotelActions';
-import { fetchBookings, SET_BOOKINGS } from './store/actions/bookingActions';
+// import { fetchBookings, SET_BOOKINGS } from './store/actions/bookingActions';
+import { loginThunk, logoutThunk, SET_USER } from './store/actions/userActions';
+import { fetchHotels } from './store/actions/hotelActions';
+import { fetchBookings } from './store/actions/bookingActions';
 
 export const App = () => {
 	const dispatch = useDispatch();
-	// 1. Имитация глобального состояния пользователя
-	const [currentUser, setCurrentUser] = useState(null);
+	const currentUser = useSelector((state) => state.users.currentUser);
+	// dispatch(fetchHotels()); // Грузим отели с сервера
 
 	useEffect(() => {
 		dispatch(fetchBookings()); // Запрос к JSON-server
-		dispatch({ type: 'SET_HOTELS', payload: MOCK_DATA.HOTELS });
+		dispatch(fetchHotels());
+		// 	dispatch({ type: 'SET_HOTELS', payload: MOCK_DATA.HOTELS });
 
 		// dispatch({ type: SET_BOOKINGS, payload: initialBookings });
 
 		const savedUser = localStorage.getItem('bookez_user');
 		if (savedUser) {
-			setCurrentUser(JSON.parse(savedUser)); // Превращаем строку обратно в объект
+			dispatch({ type: SET_USER, payload: JSON.parse(savedUser) }); // Превращаем строку обратно в объект
 		}
 	}, [dispatch]);
 	// 2. Роутинг на основе хэша
 	const { route, params, navigate } = useHashRouter();
 
-	// 3. Имитация авторизации и выхода
-	const login = (userData) => {
-		const user = {
-			id: 'user-123', // Вот твой строковый ID
-			email: userData.email,
-			name: userData.name || userData.email.split('@')[0],
-			role: 'user',
-		};
-		setCurrentUser(user);
-		alert(`Вы вошли как ${user.name}!`);
-		// Сохраняем локальную переменную user, а не стейт!
-		localStorage.setItem('bookez_user', JSON.stringify(user));
+	// Теперь функции login и logout вызывают Thunks
+	const login = (userData) => dispatch(loginThunk(userData));
+	const logout = (e) => {
+		e.preventDefault();
+		dispatch(logoutThunk());
 		navigate('/');
 	};
 
@@ -67,14 +64,6 @@ export const App = () => {
 			`Регистрация пользователя ${userData.name} прошла успешно! Теперь войдите.`,
 		);
 		navigate('/login');
-	};
-
-	const logout = (e) => {
-		e.preventDefault();
-		setCurrentUser(null);
-		alert('Вы вышли из системы.');
-		localStorage.removeItem('bookez_user');
-		navigate('/');
 	};
 
 	// 4. Определение содержимого страницы

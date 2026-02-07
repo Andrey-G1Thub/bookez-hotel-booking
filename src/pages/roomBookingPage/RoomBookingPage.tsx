@@ -62,11 +62,6 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 
 		return { overlap: false };
 	};
-	const handleCancel = (id) => {
-		if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
-			dispatch(deleteBookingThunk(id));
-		}
-	};
 
 	const handleBooking = (e) => {
 		e.preventDefault();

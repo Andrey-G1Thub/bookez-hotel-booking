@@ -1,12 +1,12 @@
-import { MOCK_DATA } from '../../data/mockData';
-export const CANCEL_BOOKING = 'CANCEL_BOOKING';
 export const SET_BOOKINGS = 'SET_BOOKINGS';
+export const ADD_BOOKING = 'ADD_BOOKING';
+export const DELETE_BOOKING = 'DELETE_BOOKING';
 
 // GET - получение данных
 export const fetchBookings = () => async (dispatch) => {
 	const response = await fetch('http://localhost:3001/bookings');
 	const data = await response.json();
-	dispatch({ type: 'SET_BOOKINGS', payload: data });
+	dispatch({ type: SET_BOOKINGS, payload: data });
 };
 
 // POST - добавление новой брони
@@ -23,7 +23,7 @@ export const addBookingThunk = (newBooking) => async (dispatch) => {
 		if (response.ok) {
 			const savedBooking = await response.json();
 			// Обновляем Redux только если сервер ответил "ОК"
-			dispatch({ type: 'ADD_BOOKING', payload: savedBooking });
+			dispatch({ type: ADD_BOOKING, payload: savedBooking });
 		}
 	} catch (error) {
 		console.error('Ошибка при записи в db.json:', error);
@@ -41,7 +41,7 @@ export const deleteBookingThunk = (id) => async (dispatch) => {
 
 		if (response.ok) {
 			// Если сервер подтвердил удаление, убираем из Redux
-			dispatch({ type: 'DELETE_BOOKING', payload: id });
+			dispatch({ type: DELETE_BOOKING, payload: id });
 			// Примечание: тип 'CANCEL_BOOKING' в редюсере обычно уже умеет
 			// делать .filter() и удалять элемент из массива
 		}

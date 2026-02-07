@@ -1,3 +1,40 @@
 {
-  "bookings": []
+  "bookings": [
+    {
+      "id": 1770454773403,
+      "userId": "user-123",
+      "hotelName": "Москва Гранд Отель",
+      "roomType": "Стандартный Двухместный",
+      "checkIn": "2026-02-09",
+      "checkOut": "2026-02-11",
+      "price": 8500,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1770454969757,
+      "userId": "user-123",
+      "hotelName": "Москва Гранд Отель",
+      "roomType": "Люкс с Видом",
+      "checkIn": "2026-02-09",
+      "checkOut": "2026-02-12",
+      "price": 15000,
+      "status": "Подтверждено"
+    }
+  ],
+  "hotels": [
+    {
+      "id": 101,
+      "cityId": 1,
+      "name": "Москва Гранд Отель",
+      "rating": 5,
+      "priceFrom": 8500
+    },
+    {
+      "id": 102,
+      "cityId": 1,
+      "name": "Отель у Парка",
+      "rating": 4,
+      "priceFrom": 5200
+    }
+  ]
 }

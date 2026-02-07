@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 export const HomePage = ({ navigate }) => {
 	const { allHotels } = useSelector((state) => state.hotels);
 	// Показываем все отели как рекомендуемые, чтобы не усложнять компонент
-	const featuredHotels = allHotels.slice(0, 3);
+	const featuredHotels = allHotels?.slice(0, 3);
 
 	const handleSearch = (e) => {
 		e.preventDefault();
