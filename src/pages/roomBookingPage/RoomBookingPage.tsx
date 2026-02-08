@@ -7,26 +7,44 @@ import { addBookingThunk } from '../../store/actions/bookingActions.js';
 
 /\*_ Страница бронирования конкретного номера _/;
 export const RoomBookingPage = ({ params, navigate, currentUser }) => {
+	console.log('Params:1', params);
 	const dispatch = useDispatch();
 
-	const bookings = useSelector((state) => state.bookings.list) || [];
-	const { roomsList } = useSelector((state) => state.rooms);
 	const { allHotels } = useSelector((state) => state.hotels);
 
-	const room = roomsList?.find((r) => String(r.id) === String(params.roomId));
-	const hotel = allHotels.find((h) => h.id === room?.hotelId);
+	const bookings = useSelector((state) => state.bookings.list) || [];
 
-	// Если данные еще грузятся, показываем "Загрузка...", а не сразу 404
-	if (roomsList.length === 0 || allHotels.length === 0)
-		return <div className="p-10 text-center text-xl">Загрузка данных...</div>;
-	if (!room) return <NotFoundPage message="Номер не найден." navigate={navigate} />;
+	const targetHotelId = Number(params.hotelId);
+	const targetRoomId = Number(params.roomId);
 
-	// Фильтруем бронирования для этого номера, только подтвержденные
+	// 1. Сначала ищем отель
+	const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
+
+	// 2. Затем ищем комнату ВНУТРИ этого отеля
+	const room = hotel?.rooms?.find((r) => Number(r.id) === targetRoomId);
+
+	// Состояние загрузки
+	if (allHotels.length === 0) {
+		return (
+			<div className="p-10 text-center text-xl font-semibold text-teal-600">
+				Загрузка данных...
+			</div>
+		);
+	}
+
+	// Если отель или комната не найдены
+	if (!hotel || !room) {
+		return (
+			<NotFoundPage
+				message={`Отель #${targetHotelId} или номер #${targetRoomId} не найден.`}
+				navigate={navigate}
+			/>
+		);
+	}
+
+	// Фильтруем бронирования именно для этого номера (используем ID для надежности)
 	const roomBookings = bookings.filter(
-		(b) =>
-			b.hotelName === hotel.name &&
-			b.roomType === room.type &&
-			b.status === 'Подтверждено',
+		(b) => Number(b.roomId) === room.id && b.status === 'Подтверждено',
 	);
 
 	// ФУНКЦИЯ ПРОВЕРКИ ПЕРЕСЕЧЕНИЯ ДАТ (ЗАПРЕТ ДВОЙНОГО БРОНИРОВАНИЯ)
@@ -50,17 +68,13 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 		const isOverlap = roomBookings.some((booking) => {
 			const bookedStart = new Date(booking.checkIn + 'T00:00:00');
 			const bookedEnd = new Date(booking.checkOut + 'T00:00:00');
-
-			// Условие пересечения: (Начало нового < Конец старого) И (Конец нового > Начало старого)
-			// Это предотвращает бронирование, даже если день выезда совпадает с днем заезда
 			return newStart < bookedEnd && newEnd > bookedStart;
 		});
 
 		if (isOverlap) {
 			return {
 				overlap: true,
-				message:
-					'Введенные даты пересекаются с существующим бронированием. Выберите другие даты.',
+				message: 'Эти даты уже заняты. Пожалуйста, выберите другие.',
 			};
 		}
 
@@ -98,8 +112,8 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 			price: room.price,
 			status: 'Подтверждено',
 		};
-		dispatch(addBookingThunk(newBooking));
 
+		dispatch(addBookingThunk(newBooking));
 		alert(
 			`Бронирование номера "${room.type}" оформлено! (Смотри консоль и раздел 'Мои Брони')`,
 		);
@@ -119,11 +133,9 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 			<div className="bg-white p-6 card-shadow grid grid-cols-1 md:grid-cols-2 gap-8">
 				{/* Левая колонка: Детали Номера */}
 				<div>
-					<img
-						src={`https://placehold.co/600x400/007C80/ffffff?text=${encodeURIComponent(room.type)}`}
-						alt={room.type}
-						className="w-full h-auto object-cover rounded-xl mb-4"
-					/>
+					<div className="bg-teal-100 w-full h-48 rounded-xl mb-4 flex items-center justify-center text-teal-700 font-bold text-center p-4">
+						Здесь могло быть фото <br /> {room.type}
+					</div>
 					<h3 className="text-2xl font-bold text-gray-800 mb-4">Детали</h3>
 					<ul className="space-y-3">
 						<li className="flex items-center text-gray-700">

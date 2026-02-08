@@ -35,6 +35,7 @@ export const useHashRouter = () => {
 		params.hotelId = parseInt(parts[1], 10);
 	} else if (parts[0] === 'room' && parts.length > 2) {
 		route = 'roomBooking';
+		params.hotelId = parseInt(parts[1], 10);
 		params.roomId = parseInt(parts[2], 10);
 	} else {
 		route = hash;

@@ -16,8 +16,7 @@ export const HotelCard = ({ hotel, navigate }) => {
 				className="w-full h-48 object-cover"
 				onError={(e) => {
 					e.target.onerror = null;
-					e.target.src =
-						'https://placehold.co/400x250/f0f0f0/333333?text=Нет+Фото';
+					e.target.src = 'https://placehold.co/400x250?text=No+Photo';
 				}}
 			/>
 			<div className="p-4">

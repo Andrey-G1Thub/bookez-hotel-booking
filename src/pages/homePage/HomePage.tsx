@@ -10,7 +10,7 @@ import { useMemo, useState } from 'react';
 // <!-- /\*_ Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = ({ navigate }) => {
 	const { allHotels, cities } = useSelector((state) => state.hotels);
-	const { roomsList } = useSelector((state) => state.rooms);
+
 	const { list: bookingsList } = useSelector((state) => state.bookings); //
 
 	const [nameSearch, setNameSearch] = useState('');
@@ -24,7 +24,6 @@ export const HomePage = ({ navigate }) => {
 
 	const hotelsPerPage = 9;
 
-	const safeRooms = roomsList || [];
 	const safeBookings = bookingsList || [];
 
 	// Показываем все отели как рекомендуемые, чтобы не усложнять компонент

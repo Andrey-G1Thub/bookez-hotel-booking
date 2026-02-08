@@ -8,12 +8,12 @@ import { useSelector } from 'react-redux';
 
 export const HotelDetailsPage = ({ params, navigate }) => {
 	const { allHotels, cities } = useSelector((state) => state.hotels);
-	const { roomsList } = useSelector((state) => state.rooms);
+	// const { roomsList } = useSelector((state) => state.rooms);
 
 	const targetHotelId = Number(params.hotelId);
-
 	const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
-	const rooms = roomsList.filter((r) => Number(r.hotelId) === targetHotelId);
+
+	const rooms = hotel?.rooms || [];
 
 	// Ищем город по ID, который указан в объекте отеля
 	const city = cities.find((c) => Number(c.id) === Number(hotel?.cityId));
@@ -81,11 +81,19 @@ export const HotelDetailsPage = ({ params, navigate }) => {
 
 			<div className="mt-10">
 				<button
-					onClick={() => navigate('/')}
+					// onClick={() => navigate('/')}
+					onClick={() => {
+						// Если твоя функция navigate поддерживает передачу параметров:
+						navigate('/', { state: { cityId: hotel.cityId } });
+						// Либо просто вернуться на главную
+						// navigate('/');
+					}}
 					className="text-gray-500 hover:text-gray-700 flex items-center"
 				>
 					<ChevronRight className="w-4 h-4 transform rotate-180 mr-1" />{' '}
-					Вернуться на Главную
+					{/* Вернуться на Главную
+					 */}
+					Вернуться к отелям в г. {city?.name}
 				</button>
 			</div>
 		</div>
