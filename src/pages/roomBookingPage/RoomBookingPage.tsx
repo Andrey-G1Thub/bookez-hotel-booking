@@ -85,14 +85,16 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 			return;
 		}
 
-		// Создание новой брони
+		// Создание новой брони с привязкой по ID
 		const newBooking = {
-			id: Date.now(), // Генерируем временный ID
+			id: Date.now(),
 			userId: currentUser.id,
+			hotelId: hotel.id, // ДОБАВИЛИ
+			roomId: room.id, // ДОБАВИЛИ
 			hotelName: hotel.name,
 			roomType: room.type,
-			checkIn: formData.get('checkIn'),
-			checkOut: formData.get('checkOut'),
+			checkIn: checkIn,
+			checkOut: checkOut,
 			price: room.price,
 			status: 'Подтверждено',
 		};

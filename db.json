@@ -1,23 +1,27 @@
 {
 	"bookings": [
 		{
-			"id": 1770458801272,
+			"id": 1770487400950,
 			"userId": "user-123",
-			"hotelName": "Москва Гранд Отель",
-			"roomType": "Люкс с Видом",
-			"checkIn": "2026-02-07",
-			"checkOut": "2026-02-09",
-			"price": 15000,
-			"status": "Подтверждено"
-		},
-		{
-			"id": 1770464766298,
-			"userId": "user-123",
-			"hotelName": "Москва Гранд Отель",
-			"roomType": "Стандартный Двухместный",
+			"hotelId": 101,
+			"roomId": 1001,
+			"hotelName": "Геническ отель номер1",
+			"roomType": "1.1 Стандартный Двухместный",
 			"checkIn": "2026-02-07",
 			"checkOut": "2026-02-10",
 			"price": 8500,
+			"status": "Подтверждено"
+		},
+		{
+			"id": 1770487416041,
+			"userId": "user-123",
+			"hotelId": 101,
+			"roomId": 1002,
+			"hotelName": "Геническ отель номер1",
+			"roomType": "1.2 Люкс с Видом",
+			"checkIn": "2026-02-07",
+			"checkOut": "2026-02-10",
+			"price": 15000,
 			"status": "Подтверждено"
 		}
 	],
@@ -47,7 +51,7 @@
 		{
 			"id": 101,
 			"cityId": 1,
-			"name": "Геническ отель номер1",
+			"name": "Геническ отель № 1",
 			"rating": 5,
 			"reviewCount": 1200,
 			"priceFrom": 8500,
@@ -56,7 +60,7 @@
 		{
 			"id": 102,
 			"cityId": 1,
-			"name": "Геническ отель номер2",
+			"name": "Геническ отель № 2",
 			"rating": 5,
 			"reviewCount": 1200,
 			"priceFrom": 8500,
@@ -65,7 +69,7 @@
 		{
 			"id": 103,
 			"cityId": 1,
-			"name": "Геническ отель номер3",
+			"name": "Геническ отель № 3",
 			"rating": 5,
 			"reviewCount": 1200,
 			"priceFrom": 8500,
@@ -74,7 +78,7 @@
 		{
 			"id": 104,
 			"cityId": 1,
-			"name": "Отель у Парка",
+			"name": "Геническ отель № 4",
 			"rating": 4,
 			"reviewCount": 550,
 			"priceFrom": 5200,
@@ -83,7 +87,7 @@
 		{
 			"id": 201,
 			"cityId": 2,
-			"name": "Невский Люкс",
+			"name": "Арабатская-стрелка отель № 1",
 			"rating": 5,
 			"reviewCount": 980,
 			"priceFrom": 9800,
@@ -92,7 +96,25 @@
 		{
 			"id": 301,
 			"cityId": 3,
-			"name": "Солнечный Берег",
+			"name": "Сочи отель № 1",
+			"rating": 4,
+			"reviewCount": 2100,
+			"priceFrom": 4500,
+			"description": "Прямой выход к морю."
+		},
+		{
+			"id": 401,
+			"cityId": 4,
+			"name": "Крым-Алушта отель № 1",
+			"rating": 4,
+			"reviewCount": 2100,
+			"priceFrom": 4500,
+			"description": "Прямой выход к морю."
+		},
+		{
+			"id": 402,
+			"cityId": 4,
+			"name": "Крым-Алушта отель № 2",
 			"rating": 4,
 			"reviewCount": 2100,
 			"priceFrom": 4500,
@@ -118,19 +140,99 @@
 		},
 		{
 			"id": 2001,
+			"hotelId": 102,
+			"type": "Семейный",
+			"capacity": 4,
+			"amenities": "Кухня",
+			"price": 7000
+		},
+		{
+			"id": 2002,
+			"hotelId": 102,
+			"type": "Студия",
+			"capacity": 2,
+			"amenities": "Завтрак",
+			"price": 9800
+		},
+		{
+			"id": 3001,
+			"hotelId": 103,
+			"type": "Улучшенный",
+			"capacity": 2,
+			"amenities": "Кондиционер",
+			"price": 9000
+		},
+		{
+			"id": 3002,
+			"hotelId": 103,
+			"type": "Студия",
+			"capacity": 2,
+			"amenities": "2.1 Мини-кухня, Завтрак",
+			"price": 9800
+		},
+		{
+			"id": 3001,
+			"hotelId": 104,
+			"type": "Студия",
+			"capacity": 2,
+			"amenities": "2.1 Мини-кухня, Завтрак",
+			"price": 9800
+		},
+		{
+			"id": 2001,
 			"hotelId": 201,
 			"type": "Студия",
 			"capacity": 2,
-			"amenities": "Мини-кухня, Завтрак",
+			"amenities": "Завтрак",
 			"price": 9800
+		},
+		{
+			"id": 2002,
+			"hotelId": 201,
+			"type": " Эконом",
+			"capacity": 2,
+			"amenities": "Ванная комната",
+			"price": 4500
 		},
 		{
 			"id": 3001,
 			"hotelId": 301,
 			"type": "Эконом",
 			"capacity": 2,
-			"amenities": "Ванная комната",
+			"amenities": "Ванная",
 			"price": 4500
+		},
+		{
+			"id": 3002,
+			"hotelId": 301,
+			"type": "Эконом",
+			"capacity": 2,
+			"amenities": "Ванная",
+			"price": 2700
+		},
+		{
+			"id": 4001,
+			"hotelId": 401,
+			"type": "Эконом",
+			"capacity": 2,
+			"amenities": "Ванная",
+			"price": 2700
+		},
+		{
+			"id": 4002,
+			"hotelId": 401,
+			"type": "Эконом",
+			"capacity": 2,
+			"amenities": "Ванная",
+			"price": 2700
+		},
+		{
+			"id": 4001,
+			"hotelId": 402,
+			"type": "Эконом",
+			"capacity": 2,
+			"amenities": "Ванная",
+			"price": 2700
 		}
 	]
 }

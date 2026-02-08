@@ -3,44 +3,83 @@ import { MOCK_DATA } from '../../data/mockData';
 import { HotelCard } from '../../components/hotelCard/HotelCard';
 import { getMinDate } from '../../utils/helpers';
 import { useSelector } from 'react-redux';
+import { useMemo, useState } from 'react';
+// import React, { useState, useMemo } from 'react';
+// import { useSelector } from 'react-redux';
 
 // <!-- /\*_ Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = ({ navigate }) => {
 	const { allHotels, cities } = useSelector((state) => state.hotels);
+	const { roomsList } = useSelector((state) => state.rooms); // Берем все комнаты
+	const { list: bookingsList } = useSelector((state) => state.bookings); // Берем все бронирования
+
+	const safeRooms = roomsList || [];
+	const safeBookings = bookingsList || [];
+	const [searchFilters, setSearchFilters] = useState({
+		cityId: null,
+		checkIn: '',
+		checkOut: '',
+	});
 	// Показываем все отели как рекомендуемые, чтобы не усложнять компонент
 	const featuredHotels = allHotels?.slice(0, 3);
 
-	// НОВАЯ ЛОГИКА: мгновенный переход при выборе города
 	const handleCityChange = (e) => {
-		const cityName = e.target.value;
-		const selectedCity = cities.find((c) => c.name === cityName);
-
-		if (selectedCity) {
-			navigate(`/city/${selectedCity.id}`);
-		}
+		const selectedCity = cities.find((c) => c.name === e.target.value);
+		setSearchFilters((prev) => ({ ...prev, cityId: selectedCity?.id || null }));
 	};
 
+	// 2. Логика кнопки "Найти" (с учетом дат)
 	const handleSearch = (e) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
-		const cityName = formData.get('city');
 
-		if (!cityName) {
-			alert('Пожалуйста, выберите город.');
-			return;
-		}
-
-		const selectedCity = cities.find((c) => c.name === cityName);
-
-		if (selectedCity) {
-			console.log('Выполнен поиск:', Object.fromEntries(formData.entries()));
-			// НАВИГАЦИЯ НА СТРАНИЦУ ГОРОДА ДЛЯ ОТОБРАЖЕНИЯ ФИЛЬТРОВАННЫХ ОТЕЛЕЙ
-			navigate(`/city/${selectedCity.id}`);
-		} else {
-			alert('Ошибка: выбранный город не найден.');
-		}
-		console.log('Ищем свободные номера на даты...');
+		setSearchFilters({
+			cityId: cities.find((c) => c.name === formData.get('city'))?.id || null,
+			checkIn: formData.get('checkIn'),
+			checkOut: formData.get('checkOut'),
+		});
 	};
+
+	// ГЛАВНАЯ ЛОГИКА ФИЛЬТРАЦИИ
+	const displayHotels = useMemo(() => {
+		if (!searchFilters.cityId) return allHotels?.slice(0, 3);
+
+		let filtered = allHotels.filter(
+			(hotel) => Number(hotel.cityId) === Number(searchFilters.cityId),
+		);
+
+		if (searchFilters.checkIn && searchFilters.checkOut) {
+			const userStart = new Date(searchFilters.checkIn);
+			const userEnd = new Date(searchFilters.checkOut);
+
+			filtered = filtered.filter((hotel) => {
+				// Используем safeRooms вместо rooms
+				const hotelRooms = safeRooms.filter(
+					(room) => Number(room.hotelId) === Number(hotel.id),
+				);
+
+				// Если в отеле вообще нет комнат в базе, он не пройдет фильтр
+				if (hotelRooms.length === 0) return false;
+
+				return hotelRooms.some((room) => {
+					// Используем safeBookings вместо bookings
+					const roomBookings = safeBookings.filter(
+						(b) => Number(b.roomId) === Number(room.id),
+					);
+
+					const isOccupied = roomBookings.some((b) => {
+						const bStart = new Date(b.checkIn);
+						const bEnd = new Date(b.checkOut);
+						return userStart < bEnd && userEnd > bStart;
+					});
+
+					return !isOccupied;
+				});
+			});
+		}
+
+		return filtered;
+	}, [allHotels, safeRooms, safeBookings, searchFilters]);
 
 	return (
 		<main>
@@ -109,16 +148,16 @@ export const HomePage = ({ navigate }) => {
 				</div>
 			</div>
 
-			{/* Секция с Рекомендуемыми Отелями */}
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-				<h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-3">
-					Популярные Отели
-				</h2>
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-					{featuredHotels.map((hotel) => (
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+				{displayHotels.length > 0 ? (
+					displayHotels.map((hotel) => (
 						<HotelCard key={hotel.id} hotel={hotel} navigate={navigate} />
-					))}
-				</div>
+					))
+				) : (
+					<p className="text-gray-500 col-span-full text-center py-10">
+						К сожалению, подходящих отелей не найдено.
+					</p>
+				)}
 			</div>
 		</main>
 	);

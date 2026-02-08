@@ -4,10 +4,19 @@ import { ChevronRight, MapPin, Star, User } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { Rating } from '../../components/index.js';
+import { useSelector } from 'react-redux';
 
 export const HotelDetailsPage = ({ params, navigate }) => {
-	const hotel = MOCK_DATA.HOTELS.find((h) => h.id === params.hotelId);
-	const rooms = MOCK_DATA.ROOMS.filter((r) => r.hotelId === params.hotelId);
+	const { allHotels, cities } = useSelector((state) => state.hotels);
+	const { roomsList } = useSelector((state) => state.rooms);
+
+	const targetHotelId = Number(params.hotelId);
+
+	const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
+	const rooms = roomsList.filter((r) => Number(r.hotelId) === targetHotelId);
+
+	// Ищем город по ID, который указан в объекте отеля
+	const city = cities.find((c) => Number(c.id) === Number(hotel?.cityId));
 
 	if (!hotel) return <NotFoundPage message="Отель не найден." navigate={navigate} />;
 
@@ -16,9 +25,7 @@ export const HotelDetailsPage = ({ params, navigate }) => {
 			<h1 className="text-4xl font-extrabold text-gray-800 mb-2">{hotel.name}</h1>
 			<div className="text-xl text-gray-600 mb-6 flex items-center">
 				<MapPin className="w-5 h-5 mr-2 accent-text" />
-				Город:{' '}
-				{MOCK_DATA.CITIES.find((c) => c.id === hotel.cityId)?.name ||
-					'Неизвестно'}
+				Город: {city?.name || 'Неизвестно'}
 				<span className="ml-4">
 					<Rating rating={hotel.rating} />
 				</span>
