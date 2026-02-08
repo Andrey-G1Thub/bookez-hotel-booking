@@ -1,11 +1,21 @@
-export const LoginPage = ({ login, navigate }) => {
+import { useDispatch } from 'react-redux';
+import { loginThunk } from '../../store/actions/userActions';
+
+export const LoginPage = ({ navigate }) => {
+	const dispatch = useDispatch();
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 		const email = formData.get('email');
-		// Имитация получения имени из базы данных (используем часть email)
+		const password = formData.get('password');
+
+		// Имитация получения данных (в реальном приложении здесь будет запрос к API)
 		const name = email.split('@')[0];
-		login({ email, name });
+
+		// Отправляем данные в Redux Thunk
+		dispatch(loginThunk({ email, name, password }));
+		navigate('/'); // После входа перенаправляем на главную
 	};
 
 	return (

@@ -53,17 +53,8 @@ export const App = () => {
 
 	// 2. Роутинг на основе хэша
 	const { route, params, navigate } = useHashRouter();
-	console.log('Current Route:', route);
-	// Теперь функции login и logout вызывают Thunks
-	const login = (userData) => dispatch(loginThunk(userData));
-	const logout = (e) => {
-		e.preventDefault();
-		dispatch(logoutThunk());
-		navigate('/');
-	};
 
 	const register = (userData) => {
-		console.log('Registered user:', userData);
 		alert(
 			`Регистрация пользователя ${userData.name} прошла успешно! Теперь войдите.`,
 		);
@@ -78,7 +69,7 @@ export const App = () => {
 	if (route === '/') {
 		content = <HomePage navigate={navigate} />;
 	} else if (route === 'login') {
-		content = <LoginPage login={login} navigate={navigate} />;
+		content = <LoginPage navigate={navigate} />;
 	} else if (route === 'register') {
 		// Передача функции регистрации
 		content = <RegisterPage navigate={navigate} register={register} />;
@@ -120,7 +111,7 @@ export const App = () => {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<Header currentUser={currentUser} logout={logout} navigate={navigate} />
+			<Header currentUser={currentUser} navigate={navigate} />
 			<div className="flex-grow">{content}</div>
 			<Footer />
 		</div>
