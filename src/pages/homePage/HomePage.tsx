@@ -1,4 +1,4 @@
-import { Zap } from 'lucide-react';
+import { ArrowUpDown, Search, Zap } from 'lucide-react';
 import { MOCK_DATA } from '../../data/mockData';
 import { HotelCard } from '../../components/hotelCard/HotelCard';
 import { getMinDate } from '../../utils/helpers';
@@ -10,16 +10,23 @@ import { useMemo, useState } from 'react';
 // <!-- /\*_ Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = ({ navigate }) => {
 	const { allHotels, cities } = useSelector((state) => state.hotels);
-	const { roomsList } = useSelector((state) => state.rooms); // Берем все комнаты
-	const { list: bookingsList } = useSelector((state) => state.bookings); // Берем все бронирования
+	const { roomsList } = useSelector((state) => state.rooms);
+	const { list: bookingsList } = useSelector((state) => state.bookings); //
 
-	const safeRooms = roomsList || [];
-	const safeBookings = bookingsList || [];
+	const [nameSearch, setNameSearch] = useState('');
+	const [sortBy, setSortBy] = useState('rating'); // 'rating' или 'price'
+	const [currentPage, setCurrentPage] = useState(1);
 	const [searchFilters, setSearchFilters] = useState({
 		cityId: null,
 		checkIn: '',
 		checkOut: '',
 	});
+
+	const hotelsPerPage = 9;
+
+	const safeRooms = roomsList || [];
+	const safeBookings = bookingsList || [];
+
 	// Показываем все отели как рекомендуемые, чтобы не усложнять компонент
 	const featuredHotels = allHotels?.slice(0, 3);
 
@@ -40,46 +47,56 @@ export const HomePage = ({ navigate }) => {
 		});
 	};
 
-	// ГЛАВНАЯ ЛОГИКА ФИЛЬТРАЦИИ
-	const displayHotels = useMemo(() => {
-		if (!searchFilters.cityId) return allHotels?.slice(0, 3);
+	// ГЛАВНАЯ ЛОГИКА ФИЛЬТРАЦИИ И СОРТИРОВКИ
+	const filteredAndSortedHotels = useMemo(() => {
+		let result = [...allHotels];
 
-		let filtered = allHotels.filter(
-			(hotel) => Number(hotel.cityId) === Number(searchFilters.cityId),
-		);
+		// 1. Фильтр по городу
+		if (searchFilters.cityId) {
+			result = result.filter(
+				(h) => Number(h.cityId) === Number(searchFilters.cityId),
+			);
+		}
 
+		// 2. Поиск по названию
+		if (nameSearch) {
+			result = result.filter((h) =>
+				h.name.toLowerCase().includes(nameSearch.toLowerCase()),
+			);
+		}
+
+		// 3. Фильтр по датам (теперь комнаты берем из объекта отеля h.rooms)
 		if (searchFilters.checkIn && searchFilters.checkOut) {
 			const userStart = new Date(searchFilters.checkIn);
 			const userEnd = new Date(searchFilters.checkOut);
 
-			filtered = filtered.filter((hotel) => {
-				// Используем safeRooms вместо rooms
-				const hotelRooms = safeRooms.filter(
-					(room) => Number(room.hotelId) === Number(hotel.id),
-				);
-
-				// Если в отеле вообще нет комнат в базе, он не пройдет фильтр
-				if (hotelRooms.length === 0) return false;
-
-				return hotelRooms.some((room) => {
-					// Используем safeBookings вместо bookings
-					const roomBookings = safeBookings.filter(
+			result = result.filter((hotel) => {
+				if (!hotel.rooms) return false;
+				return hotel.rooms.some((room) => {
+					const roomBookings = (bookingsList || []).filter(
 						(b) => Number(b.roomId) === Number(room.id),
 					);
-
-					const isOccupied = roomBookings.some((b) => {
+					return !roomBookings.some((b) => {
 						const bStart = new Date(b.checkIn);
 						const bEnd = new Date(b.checkOut);
 						return userStart < bEnd && userEnd > bStart;
 					});
-
-					return !isOccupied;
 				});
 			});
 		}
 
-		return filtered;
-	}, [allHotels, safeRooms, safeBookings, searchFilters]);
+		// 4. Сортировка
+		result.sort((a, b) => {
+			if (sortBy === 'price') return a.priceFrom - b.priceFrom;
+			return b.rating - a.rating; // По умолчанию рейтинг (от высокого к низкому)
+		});
+
+		return result;
+	}, [allHotels, searchFilters, nameSearch, sortBy, bookingsList]);
+	const lastHotelIndex = currentPage * hotelsPerPage;
+	const firstHotelIndex = lastHotelIndex - hotelsPerPage;
+	const currentHotels = filteredAndSortedHotels.slice(firstHotelIndex, lastHotelIndex);
+	const totalPages = Math.ceil(filteredAndSortedHotels.length / hotelsPerPage);
 
 	return (
 		<main>
@@ -148,7 +165,59 @@ export const HomePage = ({ navigate }) => {
 				</div>
 			</div>
 
-			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+			<div className="max-w-7xl mx-auto px-4 mt-8">
+				{/* ПАНЕЛЬ ДОПОЛНИТЕЛЬНЫХ ФИЛЬТРОВ */}
+				<div className="flex flex-col md:flex-row gap-4 mb-8 bg-gray-50 p-4 rounded-lg shadow-sm">
+					<div className="relative flex-grow">
+						<Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+						<input
+							type="text"
+							placeholder="Поиск по названию..."
+							className="w-full pl-10 p-2 border rounded-md"
+							value={nameSearch}
+							onChange={(e) => {
+								setNameSearch(e.target.value);
+								setCurrentPage(1);
+							}}
+						/>
+					</div>
+					<div className="flex gap-2 items-center">
+						<ArrowUpDown className="w-5 h-5 text-gray-500" />
+						<select
+							className="p-2 border rounded-md bg-white"
+							value={sortBy}
+							onChange={(e) => setSortBy(e.target.value)}
+						>
+							<option value="rating">По рейтингу</option>
+							<option value="price">Сначала дешевые</option>
+						</select>
+					</div>
+				</div>
+
+				{/* СЕТКА ОТЕЛЕЙ */}
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+					{currentHotels.map((hotel) => (
+						<HotelCard key={hotel.id} hotel={hotel} navigate={navigate} />
+					))}
+				</div>
+
+				{/* ПАГИНАЦИЯ */}
+				{totalPages > 1 && (
+					<div className="flex justify-center mt-10 gap-2">
+						{[...Array(totalPages)].map((_, i) => (
+							<button
+								key={i}
+								onClick={() => setCurrentPage(i + 1)}
+								className={`px-4 py-2 rounded ${currentPage === i + 1 ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+							>
+								{i + 1}
+							</button>
+						))}
+					</div>
+				)}
+			</div>
+
+			{/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 				{displayHotels.length > 0 ? (
 					displayHotels.map((hotel) => (
 						<HotelCard key={hotel.id} hotel={hotel} navigate={navigate} />
@@ -159,6 +228,7 @@ export const HomePage = ({ navigate }) => {
 					</p>
 				)}
 			</div>
+             */}
 		</main>
 	);
 };
