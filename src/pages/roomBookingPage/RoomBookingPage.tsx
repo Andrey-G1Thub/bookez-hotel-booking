@@ -4,18 +4,21 @@ import { getMinDate } from '../../utils/helpers.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { addBookingThunk } from '../../store/actions/bookingActions.js';
+import { useNavigate, useParams } from 'react-router-dom';
 
 /\*_ Страница бронирования конкретного номера _/;
-export const RoomBookingPage = ({ params, navigate, currentUser }) => {
-	console.log('Params:1', params);
+export const RoomBookingPage = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
+	const { hotelId, roomId } = useParams();
+
+	const currentUser = useSelector((state) => state.users.currentUser);
 	const { allHotels } = useSelector((state) => state.hotels);
-
 	const bookings = useSelector((state) => state.bookings.list) || [];
 
-	const targetHotelId = Number(params.hotelId);
-	const targetRoomId = Number(params.roomId);
+	const targetHotelId = Number(hotelId);
+	const targetRoomId = Number(roomId);
 
 	// 1. Сначала ищем отель
 	const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
@@ -37,7 +40,6 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 		return (
 			<NotFoundPage
 				message={`Отель #${targetHotelId} или номер #${targetRoomId} не найден.`}
-				navigate={navigate}
 			/>
 		);
 	}
@@ -103,19 +105,19 @@ export const RoomBookingPage = ({ params, navigate, currentUser }) => {
 		const newBooking = {
 			id: Date.now(),
 			userId: currentUser.id,
-			hotelId: hotel.id, // ДОБАВИЛИ
-			roomId: room.id, // ДОБАВИЛИ
+			hotelId: hotel.id,
+			roomId: room.id,
 			hotelName: hotel.name,
 			roomType: room.type,
-			checkIn: checkIn,
-			checkOut: checkOut,
+			checkIn,
+			checkOut,
 			price: room.price,
 			status: 'Подтверждено',
 		};
 
 		dispatch(addBookingThunk(newBooking));
 		alert(
-			`Бронирование номера "${room.type}" оформлено! (Смотри консоль и раздел 'Мои Брони')`,
+			`Бронирование номера "${room.type}" оформлено! Смотрите раздел 'Мои Брони')`,
 		);
 		navigate('/bookings');
 	};

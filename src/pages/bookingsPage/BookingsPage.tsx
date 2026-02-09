@@ -1,9 +1,6 @@
 import { Hotel } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	cancelBookingThunk,
-	deleteBookingThunk,
-} from '../../store/actions/bookingActions';
+import { deleteBookingThunk } from '../../store/actions/bookingActions';
 
 export const BookingsPage = ({ currentUser }) => {
 	const dispatch = useDispatch();
@@ -12,8 +9,11 @@ export const BookingsPage = ({ currentUser }) => {
 	const allBookings = useSelector((state) => state.bookings.list);
 
 	// Фильтрация (логику оставляем ту же, но данные из Store)
-	const activeBookings = allBookings.filter(
-		(b) => b.userId === currentUser?.id && b.status === 'Подтверждено',
+	const activeBookings = useMemo(
+		() =>
+			allBookings.filter(
+				(b) => b.userId === currentUser?.id && b.status === 'Подтверждено',
+			)[(allBookings, currentUser.id)],
 	);
 	const canceledBookings = allBookings.filter(
 		(b) => b.userId === currentUser?.id && b.status === 'Отменено',

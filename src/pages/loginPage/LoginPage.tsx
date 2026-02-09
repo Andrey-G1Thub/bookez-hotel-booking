@@ -1,8 +1,10 @@
 import { useDispatch } from 'react-redux';
 import { loginThunk } from '../../store/actions/userActions';
+import { useNavigate } from 'react-router-dom';
 
-export const LoginPage = ({ navigate }) => {
+export const LoginPage = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();

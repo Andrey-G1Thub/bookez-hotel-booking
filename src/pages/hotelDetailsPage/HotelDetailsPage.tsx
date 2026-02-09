@@ -5,20 +5,23 @@ import { MOCK_DATA } from '../../data/mockData.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { Rating } from '../../components/index.js';
 import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export const HotelDetailsPage = ({ params, navigate }) => {
+export const HotelDetailsPage = () => {
+	const navigate = useNavigate();
+	// const params = useParams();
+	const { hotelId } = useParams();
+
 	const { allHotels, cities } = useSelector((state) => state.hotels);
-	// const { roomsList } = useSelector((state) => state.rooms);
 
-	const targetHotelId = Number(params.hotelId);
-	const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
+	const hotel = allHotels.find((h) => Number(h.id) === hotelId);
 
 	const rooms = hotel?.rooms || [];
 
 	// Ищем город по ID, который указан в объекте отеля
 	const city = cities.find((c) => Number(c.id) === Number(hotel?.cityId));
 
-	if (!hotel) return <NotFoundPage message="Отель не найден." navigate={navigate} />;
+	if (!hotel) return <NotFoundPage message="Отель не найден." />;
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -81,13 +84,7 @@ export const HotelDetailsPage = ({ params, navigate }) => {
 
 			<div className="mt-10">
 				<button
-					// onClick={() => navigate('/')}
-					onClick={() => {
-						// Если твоя функция navigate поддерживает передачу параметров:
-						navigate('/', { state: { cityId: hotel.cityId } });
-						// Либо просто вернуться на главную
-						// navigate('/');
-					}}
+					onClick={() => navigate(`/city/${hotel.cityId}`)}
 					className="text-gray-500 hover:text-gray-700 flex items-center"
 				>
 					<ChevronRight className="w-4 h-4 transform rotate-180 mr-1" />{' '}

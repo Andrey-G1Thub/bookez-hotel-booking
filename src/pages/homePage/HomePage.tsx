@@ -1,14 +1,13 @@
 import { ArrowUpDown, Search, Zap } from 'lucide-react';
-import { MOCK_DATA } from '../../data/mockData';
 import { HotelCard } from '../../components/hotelCard/HotelCard';
 import { getMinDate } from '../../utils/helpers';
 import { useSelector } from 'react-redux';
 import { useMemo, useState } from 'react';
-// import React, { useState, useMemo } from 'react';
-// import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 // <!-- /\*_ Главная страница с поиском и каталогом городов/отелей _/
-export const HomePage = ({ navigate }) => {
+export const HomePage = () => {
+	const navigate = useNavigate();
 	const { allHotels, cities } = useSelector((state) => state.hotels);
 
 	const { list: bookingsList } = useSelector((state) => state.bookings); //
@@ -23,8 +22,6 @@ export const HomePage = ({ navigate }) => {
 	});
 
 	const hotelsPerPage = 9;
-
-	const safeBookings = bookingsList || [];
 
 	// Показываем все отели как рекомендуемые, чтобы не усложнять компонент
 	const featuredHotels = allHotels?.slice(0, 3);
@@ -196,7 +193,7 @@ export const HomePage = ({ navigate }) => {
 				{/* СЕТКА ОТЕЛЕЙ */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 					{currentHotels.map((hotel) => (
-						<HotelCard key={hotel.id} hotel={hotel} navigate={navigate} />
+						<HotelCard key={hotel.id} hotel={hotel} />
 					))}
 				</div>
 
@@ -215,19 +212,6 @@ export const HomePage = ({ navigate }) => {
 					</div>
 				)}
 			</div>
-
-			{/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-				{displayHotels.length > 0 ? (
-					displayHotels.map((hotel) => (
-						<HotelCard key={hotel.id} hotel={hotel} navigate={navigate} />
-					))
-				) : (
-					<p className="text-gray-500 col-span-full text-center py-10">
-						К сожалению, подходящих отелей не найдено.
-					</p>
-				)}
-			</div>
-             */}
 		</main>
 	);
 };

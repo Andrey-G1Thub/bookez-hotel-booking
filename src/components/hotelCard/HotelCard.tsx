@@ -1,8 +1,9 @@
 import { ChevronRight } from 'lucide-react';
 import { Rating } from '../rating/Rating';
+import { useNavigate } from 'react-router-dom';
 
-export const HotelCard = ({ hotel, navigate }) => {
-	// Используем чистую заглушку для изображения
+export const HotelCard = ({ hotel }) => {
+	const navigate = useNavigate();
 	const hotelImage = `https://placehold.co/400x250/E6F6F6/007C80?text=${encodeURIComponent(hotel.name)}`;
 
 	return (

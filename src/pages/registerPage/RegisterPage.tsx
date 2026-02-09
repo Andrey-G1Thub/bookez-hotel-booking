@@ -1,15 +1,27 @@
-export const RegisterPage = ({ navigate, register }) => {
+import { useNavigate } from 'react-router-dom';
+
+export const RegisterPage = () => {
+	const navigate = useNavigate();
+
 	const handleRegister = (e) => {
 		e.preventDefault();
+
 		const formData = new FormData(e.target);
 		const data = Object.fromEntries(formData.entries());
 
+		// Простая валидация
 		if (data.password !== data.confirmPassword) {
 			alert('Пароли не совпадают. Пожалуйста, проверьте ввод.');
 			return;
 		}
 
-		register({ name: data.name, email: data.email, password: data.password });
+		// Имитация регистрации (в будущем здесь будет dispatch(registerThunk(data)))
+		console.log('Регистрация пользователя:', data);
+
+		alert(`Регистрация пользователя ${data.name} прошла успешно! Теперь войдите.`);
+
+		// После успешной "регистрации" отправляем на страницу логина
+		navigate('/login');
 	};
 
 	return (

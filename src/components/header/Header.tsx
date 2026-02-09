@@ -4,9 +4,11 @@ import { LogOut, User } from 'lucide-react';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutThunk } from '../../store/actions/userActions';
+import { useNavigate, Link } from 'react-router-dom';
 
-export const Header = ({ navigate }) => {
+export const Header = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	// Получаем пользователя напрямую из Redux
 	const currentUser = useSelector((state) => state.users.currentUser);
@@ -27,39 +29,65 @@ export const Header = ({ navigate }) => {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex justify-between items-center h-16">
 					{/* Логотип */}
-					<div className="flex-shrink-0">
+					{/* <div className="flex-shrink-0">
 						<button
 							onClick={() => navigate('/')}
 							className="text-2xl font-bold accent-text hover:opacity-80"
 						>
 							BookEZ
 						</button>
+					</div> */}
+					<div className="flex-shrink-0">
+						<Link
+							to="/"
+							className="text-2xl font-bold accent-text hover:opacity-80"
+						>
+							BookEZ
+						</Link>
 					</div>
 
 					{/* Навигация */}
 					<nav className="hidden md:flex space-x-6">
-						<button
+						{/* <button
 							onClick={() => navigate('/')}
 							className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium"
 						>
 							Главная
-						</button>
+						</button> */}
+						<Link
+							to="/"
+							className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium"
+						>
+							Главная
+						</Link>
 						{currentUser && (
-							<button
-								onClick={() => navigate('/bookings')}
+							// <button
+							// 	onClick={() => navigate('/bookings')}
+							// 	className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium"
+							// >
+							// 	Мои Брони
+							// </button>
+							<Link
+								to="/bookings"
 								className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium"
 							>
 								Мои Брони
-							</button>
+							</Link>
 						)}
 						{/* Меню Менеджера/Админа */}
 						{currentUser?.role === 'manager' && (
-							<button
-								onClick={() => navigate('/manager')}
+							// <button
+							// 	onClick={() => navigate('/manager')}
+							// 	className="text-amber-600 hover:text-amber-800 transition duration-150 font-bold"
+							// >
+							// 	Панель Менеджера
+							// </button>
+							<Link
+								to="/manager"
 								className="text-amber-600 hover:text-amber-800 transition duration-150 font-bold"
 							>
 								Панель Менеджера
-							</button>
+							</Link>
 						)}
 					</nav>
 
@@ -86,18 +114,30 @@ export const Header = ({ navigate }) => {
 							</div>
 						) : (
 							<>
-								<button
+								{/* <button
 									onClick={() => navigate('/login')}
 									className="px-4 py-2 text-sm rounded-full border-2 accent-border accent-text hover:bg-gray-50 transition font-semibold"
 								>
 									Войти
-								</button>
-								<button
+								</button> */}
+								<Link
+									to="/login"
+									className="px-4 py-2 text-sm rounded-full border-2 accent-border accent-text hover:bg-gray-50 transition font-semibold"
+								>
+									Войти
+								</Link>
+								{/* <button
 									onClick={() => navigate('/register')}
 									className="px-4 py-2 text-sm rounded-full text-white accent-color accent-hover transition hidden sm:inline font-semibold shadow-md"
 								>
 									Регистрация
-								</button>
+								</button> */}
+								<Link
+									to="/register"
+									className="px-4 py-2 text-sm rounded-full text-white accent-color accent-hover transition hidden sm:inline font-semibold shadow-md"
+								>
+									Регистрация
+								</Link>
 							</>
 						)}
 					</div>

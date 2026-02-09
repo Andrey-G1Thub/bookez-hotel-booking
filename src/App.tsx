@@ -1,58 +1,39 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-	ChevronRight,
-	Calendar,
-	User,
-	LogOut,
-	MapPin,
-	DollarSign,
-	Hotel,
-	Home,
-	Zap,
-} from 'lucide-react';
+import { useEffect } from 'react';
 import { useHashRouter } from './hooks/useHashRouter';
-import { LoginPage } from './pages/loginPage/LoginPage';
-import { RegisterPage } from './pages/registerPage/RegisterPage';
-import { BookingsPage } from './pages/bookingsPage/BookingsPage';
-import { NotFoundPage } from './pages/notFoundPage/NotFoundPage';
-import { CityDetailsPage } from './pages/cityDetailsPage/CityDetailsPage';
-import { HotelDetailsPage } from './pages/hotelDetailsPage/HotelDetailsPage';
-import { RoomBookingPage } from './pages/roomBookingPage/RoomBookingPage';
-import { Footer, Header } from './components';
-import { HomePage } from './pages/homePage/HomePage';
-import { getMinDate } from './utils/helpers';
-import './App.css';
-import { MOCK_DATA } from './data/mockData';
 import { useDispatch, useSelector } from 'react-redux';
-import { SET_HOTELS } from './store/actions/hotelActions';
-// import { fetchBookings, SET_BOOKINGS } from './store/actions/bookingActions';
-import { loginThunk, logoutThunk, SET_USER } from './store/actions/userActions';
+
+import { Footer, Header } from './components';
+import { BookingsPage } from './pages/bookingsPage/BookingsPage';
+import { CityDetailsPage } from './pages/cityDetailsPage/CityDetailsPage';
+import { HomePage } from './pages/homePage/HomePage';
+import { HotelDetailsPage } from './pages/hotelDetailsPage/HotelDetailsPage';
+import { LoginPage } from './pages/loginPage/LoginPage';
+import { NotFoundPage } from './pages/notFoundPage/NotFoundPage';
+import { RegisterPage } from './pages/registerPage/RegisterPage';
+import { RoomBookingPage } from './pages/roomBookingPage/RoomBookingPage';
+
+import './App.css';
+import { SET_USER } from './store/actions/userActions';
 import { fetchHotels } from './store/actions/hotelActions';
 import { fetchBookings } from './store/actions/bookingActions';
 import { fetchCities } from './store/actions/hotelActions';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 export const App = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const currentUser = useSelector((state) => state.users.currentUser);
-	// dispatch(fetchHotels()); // Грузим отели с сервера
 
 	useEffect(() => {
-		dispatch(fetchBookings()); // Запрос к JSON-server
+		dispatch(fetchBookings());
 		dispatch(fetchHotels());
 		dispatch(fetchCities());
 
-		// 	dispatch({ type: 'SET_HOTELS', payload: MOCK_DATA.HOTELS });
-
-		// dispatch({ type: SET_BOOKINGS, payload: initialBookings });
-
 		const savedUser = localStorage.getItem('bookez_user');
 		if (savedUser) {
-			dispatch({ type: SET_USER, payload: JSON.parse(savedUser) }); // Превращаем строку обратно в объект
+			dispatch({ type: SET_USER, payload: JSON.parse(savedUser) });
 		}
 	}, [dispatch]);
-
-	// 2. Роутинг на основе хэша
-	const { route, params, navigate } = useHashRouter();
 
 	const register = (userData) => {
 		alert(
@@ -62,57 +43,46 @@ export const App = () => {
 	};
 
 	// 4. Определение содержимого страницы
-	let content;
 	const isUserLoggedIn = !!currentUser;
 	const isManager = currentUser?.role === 'manager';
 
-	if (route === '/') {
-		content = <HomePage navigate={navigate} />;
-	} else if (route === 'login') {
-		content = <LoginPage navigate={navigate} />;
-	} else if (route === 'register') {
-		// Передача функции регистрации
-		content = <RegisterPage navigate={navigate} register={register} />;
-	} else if (route === 'bookings') {
-		// ТЕПЕРЬ МЫ НЕ ПЕРЕДАЕМ bookings и cancelBooking как пропсы!
-		// Компонент сам возьмет их из Redux через useSelector и useDispatch
-		content = isUserLoggedIn ? (
-			<BookingsPage navigate={navigate} currentUser={currentUser} />
-		) : (
-			<NotFoundPage navigate={navigate} message="Нужна авторизация" />
-		);
-	} else if (route === 'cityDetails') {
-		content = <CityDetailsPage params={params} navigate={navigate} />;
-	} else if (route === 'hotelDetails') {
-		content = <HotelDetailsPage params={params} navigate={navigate} />;
-	} else if (route === 'roomBooking') {
-		content = (
-			<RoomBookingPage
-				params={params}
-				navigate={navigate}
-				currentUser={currentUser}
-			/>
-		);
-	} else if (route === 'manager') {
-		content = isManager ? (
-			<NotFoundPage
-				navigate={navigate}
-				message="Панель менеджера (скоро здесь будет функционал управления)."
-			/>
-		) : (
-			<NotFoundPage
-				navigate={navigate}
-				message="У вас нет прав доступа к этой странице."
-			/>
-		);
-	} else {
-		content = <NotFoundPage navigate={navigate} />;
-	}
-
 	return (
 		<div className="min-h-screen flex flex-col">
-			<Header currentUser={currentUser} navigate={navigate} />
-			<div className="flex-grow">{content}</div>
+			<Header />
+			<main className="flex-grow">
+				<Routes>
+					<Route path="/" element={<HomePage />} />
+					<Route path="/login" element={<LoginPage />} />
+					<Route path="/register" element={<RegisterPage />} />
+
+					{/* Параметризованные маршруты */}
+					<Route path="/city/:cityId" element={<CityDetailsPage />} />
+					<Route path="/hotel/:hotelId" element={<HotelDetailsPage />} />
+					<Route path="/room/:hotelId/:roomId" element={<RoomBookingPage />} />
+
+					{/* Защищенные маршруты */}
+					<Route
+						path="/bookings"
+						element={
+							isUserLoggedIn ? <BookingsPage /> : <Navigate to="/login" />
+						}
+					/>
+
+					<Route
+						path="/manager"
+						element={
+							isManager ? (
+								<NotFoundPage message="Панель менеджера в разработке" />
+							) : (
+								<Navigate to="/" />
+							)
+						}
+					/>
+
+					{/* 404 */}
+					<Route path="*" element={<NotFoundPage />} />
+				</Routes>
+			</main>
 			<Footer />
 		</div>
 	);

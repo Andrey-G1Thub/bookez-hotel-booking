@@ -40,10 +40,7 @@ export const deleteBookingThunk = (id) => async (dispatch) => {
 		});
 
 		if (response.ok) {
-			// Если сервер подтвердил удаление, убираем из Redux
 			dispatch({ type: DELETE_BOOKING, payload: id });
-			// Примечание: тип 'CANCEL_BOOKING' в редюсере обычно уже умеет
-			// делать .filter() и удалять элемент из массива
 		}
 	} catch (error) {
 		console.error('Ошибка при удалении из db.json:', error);
