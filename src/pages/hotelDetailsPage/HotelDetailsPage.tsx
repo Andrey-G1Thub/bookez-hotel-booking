@@ -14,7 +14,7 @@ export const HotelDetailsPage = () => {
 
 	const { allHotels, cities } = useSelector((state) => state.hotels);
 
-	const hotel = allHotels.find((h) => Number(h.id) === hotelId);
+	const hotel = allHotels.find((h) => Number(h.id) === Number(hotelId));
 
 	const rooms = hotel?.rooms || [];
 

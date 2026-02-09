@@ -1,29 +1,36 @@
 import { Hotel } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteBookingThunk } from '../../store/actions/bookingActions';
+import { useMemo } from 'react';
 
-export const BookingsPage = ({ currentUser }) => {
+export const BookingsPage = () => {
 	const dispatch = useDispatch();
 
 	// Получаем список всех бронирований из Redux
 	const allBookings = useSelector((state) => state.bookings.list);
-
+	const currentUser = useSelector((state) => state.users.currentUser);
 	// Фильтрация (логику оставляем ту же, но данные из Store)
-	const activeBookings = useMemo(
-		() =>
-			allBookings.filter(
-				(b) => b.userId === currentUser?.id && b.status === 'Подтверждено',
-			)[(allBookings, currentUser.id)],
-	);
-	const canceledBookings = allBookings.filter(
-		(b) => b.userId === currentUser?.id && b.status === 'Отменено',
-	);
+
+	const activeBookings = useMemo(() => {
+		if (!currentUser) return [];
+		return allBookings.filter(
+			(b) => b.userId === currentUser?.id && b.status === 'Подтверждено',
+		);
+	}, [allBookings, currentUser]);
+
+	const canceledBookings = useMemo(() => {
+		if (!currentUser) return [];
+		return allBookings.filter(
+			(b) => b.userId === currentUser.id && b.status === 'Отменено',
+		);
+	}, [allBookings, currentUser]);
 
 	const handleDelete = (id) => {
 		if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
 			dispatch(deleteBookingThunk(id));
 		}
 	};
+	if (!currentUser) return <div className="p-10 text-center">Загрузка...</div>;
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
