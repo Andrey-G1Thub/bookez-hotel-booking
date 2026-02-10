@@ -1,16 +1,34 @@
 export const SET_USER = 'SET_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
 
-export const loginThunk = (userData) => (dispatch) => {
-	// Имитация запроса к серверу (позже здесь будет fetch)
-	const user = {
-		id: 'user-123',
-		email: userData.email,
-		name: userData.name || userData.email.split('@')[0],
-		role: 'user', // Здесь потом будем менять роли
-	};
-	localStorage.setItem('bookez_user', JSON.stringify(user));
-	dispatch({ type: SET_USER, payload: user });
+export const loginThunk = (credentials) => async (dispatch) => {
+	try {
+		const email = encodeURIComponent(credentials.email);
+		const password = encodeURIComponent(credentials.password);
+		const res = await fetch(
+			`http://localhost:3001/users?email=${email}&password=${password}`,
+		);
+		if (!res.ok) throw new Error('Ошибка сервера');
+
+		const users = await res.json();
+
+		if (users.length === 0) {
+			alert('Неверный email или пароль. Попробуйте снова.');
+			return false;
+		}
+
+		const user = users[0]; // Нашли пользователя
+
+		// 3. Сохраняем "сессию"
+		localStorage.setItem('bookez_user', JSON.stringify(user));
+		// 4. Обновляем Redux
+		dispatch({ type: SET_USER, payload: user });
+		return true;
+	} catch (error) {
+		console.error('Login Error:', error);
+		alert('Произошла ошибка при входе. Проверьте соединение с сервером.');
+		return false;
+	}
 };
 
 export const logoutThunk = () => (dispatch) => {

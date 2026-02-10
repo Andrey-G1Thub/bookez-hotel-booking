@@ -2,22 +2,21 @@ import { useDispatch } from 'react-redux';
 import { loginThunk } from '../../store/actions/userActions';
 import { useNavigate } from 'react-router-dom';
 
-export const LoginPage = () => {
+export const LoginPage = (e) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 		const email = formData.get('email');
 		const password = formData.get('password');
 
-		// Имитация получения данных (в реальном приложении здесь будет запрос к API)
-		const name = email.split('@')[0];
+		const isSuccess = await dispatch(loginThunk({ email, password }));
 
-		// Отправляем данные в Redux Thunk
-		dispatch(loginThunk({ email, name, password }));
-		navigate('/'); // После входа перенаправляем на главную
+		if (isSuccess) {
+			navigate('/');
+		}
 	};
 
 	return (
