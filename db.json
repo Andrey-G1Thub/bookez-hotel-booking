@@ -1,303 +1,300 @@
 {
-  "bookings": [
-    {
-      "id": 1770654363736,
-      "userId": "user-123",
-      "hotelId": 101,
-      "roomId": 1001,
-      "hotelName": "Геническ отель № 1",
-      "roomType": "Стандартный Двухместный",
-      "checkIn": "2026-02-09",
-      "checkOut": "2026-02-16",
-      "price": 8500,
-      "status": "Подтверждено"
-    }
-  ],
-  "cities": [
-    {
-      "id": 1,
-      "name": "Геническ",
-      "description": "Берег Азова"
-    },
-    {
-      "id": 2,
-      "name": "Арабатская-стрелка",
-      "description": "Горячий источник"
-    },
-    {
-      "id": 3,
-      "name": "Сочи",
-      "description": "Черноморский курорт."
-    },
-    {
-      "id": 4,
-      "name": "Крым-Алушта",
-      "description": "Черноморский курорт."
-    }
-  ],
-  "hotels": [
-    {
-      "id": 101,
-      "cityId": 1,
-      "name": "Геническ отель № 1",
-      "rating": 5,
-      "reviewCount": 1200,
-      "priceFrom": 8500,
-      "description": "Роскошь и комфорт в возле моря.",
-      "rooms": [
-        {
-          "id": 1001,
-          "hotelId": 101,
-          "type": "Стандартный Двухместный",
-          "capacity": 2,
-          "amenities": "WiFi, ТВ, Кондиционер",
-          "price": 8500
-        },
-        {
-          "id": 1002,
-          "hotelId": 101,
-          "type": "Люкс с Видом",
-          "capacity": 3,
-          "amenities": "Мини-бар, Балкон, Халаты",
-          "price": 15000
-        }
-      ]
-    },
-    {
-      "id": 102,
-      "cityId": 1,
-      "name": "Геническ отель № 2",
-      "rating": 5,
-      "reviewCount": 1200,
-      "priceFrom": 8500,
-      "description": "Роскошь и комфорт в возле моря.",
-      "rooms": [
-        {
-          "id": 2001,
-          "hotelId": 102,
-          "type": "Семейный",
-          "capacity": 4,
-          "amenities": "Кухня",
-          "price": 7000
-        },
-        {
-          "id": 2002,
-          "hotelId": 102,
-          "type": "Студия",
-          "capacity": 2,
-          "amenities": "Завтрак",
-          "price": 9800
-        }
-      ]
-    },
-    {
-      "id": 103,
-      "cityId": 1,
-      "name": "Геническ отель № 3",
-      "rating": 5,
-      "reviewCount": 1200,
-      "priceFrom": 8500,
-      "description": "Роскошь и комфорт в возле моря.",
-      "rooms": [
-        {
-          "id": 3001,
-          "hotelId": 103,
-          "type": "Улучшенный",
-          "capacity": 2,
-          "amenities": "Кондиционер",
-          "price": 9000
-        },
-        {
-          "id": 3002,
-          "hotelId": 103,
-          "type": "Студия",
-          "capacity": 2,
-          "amenities": "2.1 Мини-кухня, Завтрак",
-          "price": 9800
-        }
-      ]
-    },
-    {
-      "id": 104,
-      "cityId": 1,
-      "name": "Геническ отель № 4",
-      "rating": 4,
-      "reviewCount": 550,
-      "priceFrom": 5200,
-      "description": "Идеально для семейного отдыха.",
-      "rooms": [
-        {
-          "id": 3001,
-          "hotelId": 104,
-          "type": "Студия",
-          "capacity": 2,
-          "amenities": "2.1 Мини-кухня, Завтрак",
-          "price": 9800
-        }
-      ]
-    },
-    {
-      "id": 201,
-      "cityId": 2,
-      "name": "Арабатская-стрелка отель № 1",
-      "rating": 5,
-      "reviewCount": 980,
-      "priceFrom": 9800,
-      "description": "Вид на Дворцовую площадь.",
-      "rooms": [
-        {
-          "id": 2001,
-          "hotelId": 201,
-          "type": "Студия",
-          "capacity": 2,
-          "amenities": "Завтрак",
-          "price": 9800
-        },
-        {
-          "id": 2002,
-          "hotelId": 201,
-          "type": " Эконом",
-          "capacity": 2,
-          "amenities": "Ванная комната",
-          "price": 4500
-        }
-      ]
-    },
-    {
-      "id": 202,
-      "cityId": 2,
-      "name": "Арабатская-стрелка отель № 2",
-      "rating": 5,
-      "reviewCount": 980,
-      "priceFrom": 9800,
-      "description": "Вид на Дворцовую площадь.",
-      "rooms": [
-        {
-          "id": 2001,
-          "hotelId": 202,
-          "type": "Эконом",
-          "capacity": 2,
-          "amenities": "Ванная",
-          "price": 4500
-        },
-        {
-          "id": 2002,
-          "hotelId": 202,
-          "type": "Эконом",
-          "capacity": 2,
-          "amenities": "Ванная",
-          "price": 2700
-        }
-      ]
-    },
-    {
-      "id": 203,
-      "cityId": 2,
-      "name": "Арабатская-стрелка отель № 3",
-      "rating": 5,
-      "reviewCount": 980,
-      "priceFrom": 9800,
-      "description": "Вид на Дворцовую площадь.",
-      "rooms": [
-        {
-          "id": 2001,
-          "hotelId": 203,
-          "type": "Студия",
-          "capacity": 2,
-          "amenities": "Завтрак",
-          "price": 9800
-        },
-        {
-          "id": 2002,
-          "hotelId": 203,
-          "type": " Эконом",
-          "capacity": 2,
-          "amenities": "Ванная комната",
-          "price": 4500
-        }
-      ]
-    },
-    {
-      "id": 301,
-      "cityId": 3,
-      "name": "Сочи отель № 1",
-      "rating": 4,
-      "reviewCount": 2100,
-      "priceFrom": 4500,
-      "description": "Прямой выход к морю.",
-      "rooms": [
-        {
-          "id": 3001,
-          "hotelId": 301,
-          "type": "Эконом",
-          "capacity": 2,
-          "amenities": "Ванная",
-          "price": 4500
-        },
-        {
-          "id": 3002,
-          "hotelId": 301,
-          "type": "Эконом",
-          "capacity": 2,
-          "amenities": "Ванная",
-          "price": 2700
-        }
-      ]
-    },
-    {
-      "id": 302,
-      "cityId": 3,
-      "name": "Сочи отель № 2",
-      "rating": 4,
-      "reviewCount": 2100,
-      "priceFrom": 4500,
-      "description": "Прямой выход к морю."
-    },
-    {
-      "id": 401,
-      "cityId": 4,
-      "name": "Крым-Алушта отель № 1",
-      "rating": 4,
-      "reviewCount": 2100,
-      "priceFrom": 4500,
-      "description": "Прямой выход к морю.",
-      "rooms": [
-        {
-          "id": 4001,
-          "hotelId": 401,
-          "type": "Эконом",
-          "capacity": 2,
-          "amenities": "Ванная",
-          "price": 2700
-        },
-        {
-          "id": 4002,
-          "hotelId": 401,
-          "type": "Эконом",
-          "capacity": 2,
-          "amenities": "Ванная",
-          "price": 2700
-        }
-      ]
-    },
-    {
-      "id": 402,
-      "cityId": 4,
-      "name": "Крым-Алушта отель № 2",
-      "rating": 4,
-      "reviewCount": 2100,
-      "priceFrom": 4500,
-      "description": "Прямой выход к морю.",
-      "rooms": [
-        {
-          "id": 4001,
-          "hotelId": 402,
-          "type": "Эконом",
-          "capacity": 2,
-          "amenities": "Ванная",
-          "price": 2700
-        }
-      ]
-    }
-  ]
+	"users": [
+		{
+			"name": "admin",
+			"email": "admin@admin",
+			"phone": "+99099999999",
+			"password": "111111",
+			"role": "user",
+			"id": 1770711015637
+		}
+	],
+	"bookings": [],
+	"cities": [
+		{
+			"id": 1,
+			"name": "Геническ",
+			"description": "Берег Азова"
+		},
+		{
+			"id": 2,
+			"name": "Арабатская-стрелка",
+			"description": "Горячий источник"
+		},
+		{
+			"id": 3,
+			"name": "Сочи",
+			"description": "Черноморский курорт."
+		},
+		{
+			"id": 4,
+			"name": "Крым-Алушта",
+			"description": "Черноморский курорт."
+		}
+	],
+	"hotels": [
+		{
+			"id": 101,
+			"cityId": 1,
+			"name": "Геническ отель № 1",
+			"rating": 5,
+			"reviewCount": 1200,
+			"priceFrom": 8500,
+			"description": "Роскошь и комфорт в возле моря.",
+			"rooms": [
+				{
+					"id": 1001,
+					"hotelId": 101,
+					"type": "Стандартный Двухместный",
+					"capacity": 2,
+					"amenities": "WiFi, ТВ, Кондиционер",
+					"price": 8500
+				},
+				{
+					"id": 1002,
+					"hotelId": 101,
+					"type": "Люкс с Видом",
+					"capacity": 3,
+					"amenities": "Мини-бар, Балкон, Халаты",
+					"price": 15000
+				}
+			]
+		},
+		{
+			"id": 102,
+			"cityId": 1,
+			"name": "Геническ отель № 2",
+			"rating": 5,
+			"reviewCount": 1200,
+			"priceFrom": 8500,
+			"description": "Роскошь и комфорт в возле моря.",
+			"rooms": [
+				{
+					"id": 2001,
+					"hotelId": 102,
+					"type": "Семейный",
+					"capacity": 4,
+					"amenities": "Кухня",
+					"price": 7000
+				},
+				{
+					"id": 2002,
+					"hotelId": 102,
+					"type": "Студия",
+					"capacity": 2,
+					"amenities": "Завтрак",
+					"price": 9800
+				}
+			]
+		},
+		{
+			"id": 103,
+			"cityId": 1,
+			"name": "Геническ отель № 3",
+			"rating": 5,
+			"reviewCount": 1200,
+			"priceFrom": 8500,
+			"description": "Роскошь и комфорт в возле моря.",
+			"rooms": [
+				{
+					"id": 3001,
+					"hotelId": 103,
+					"type": "Улучшенный",
+					"capacity": 2,
+					"amenities": "Кондиционер",
+					"price": 9000
+				},
+				{
+					"id": 3002,
+					"hotelId": 103,
+					"type": "Студия",
+					"capacity": 2,
+					"amenities": "2.1 Мини-кухня, Завтрак",
+					"price": 9800
+				}
+			]
+		},
+		{
+			"id": 104,
+			"cityId": 1,
+			"name": "Геническ отель № 4",
+			"rating": 4,
+			"reviewCount": 550,
+			"priceFrom": 5200,
+			"description": "Идеально для семейного отдыха.",
+			"rooms": [
+				{
+					"id": 3001,
+					"hotelId": 104,
+					"type": "Студия",
+					"capacity": 2,
+					"amenities": "2.1 Мини-кухня, Завтрак",
+					"price": 9800
+				}
+			]
+		},
+		{
+			"id": 201,
+			"cityId": 2,
+			"name": "Арабатская-стрелка отель № 1",
+			"rating": 5,
+			"reviewCount": 980,
+			"priceFrom": 9800,
+			"description": "Вид на Дворцовую площадь.",
+			"rooms": [
+				{
+					"id": 2001,
+					"hotelId": 201,
+					"type": "Студия",
+					"capacity": 2,
+					"amenities": "Завтрак",
+					"price": 9800
+				},
+				{
+					"id": 2002,
+					"hotelId": 201,
+					"type": " Эконом",
+					"capacity": 2,
+					"amenities": "Ванная комната",
+					"price": 4500
+				}
+			]
+		},
+		{
+			"id": 202,
+			"cityId": 2,
+			"name": "Арабатская-стрелка отель № 2",
+			"rating": 5,
+			"reviewCount": 980,
+			"priceFrom": 9800,
+			"description": "Вид на Дворцовую площадь.",
+			"rooms": [
+				{
+					"id": 2001,
+					"hotelId": 202,
+					"type": "Эконом",
+					"capacity": 2,
+					"amenities": "Ванная",
+					"price": 4500
+				},
+				{
+					"id": 2002,
+					"hotelId": 202,
+					"type": "Эконом",
+					"capacity": 2,
+					"amenities": "Ванная",
+					"price": 2700
+				}
+			]
+		},
+		{
+			"id": 203,
+			"cityId": 2,
+			"name": "Арабатская-стрелка отель № 3",
+			"rating": 5,
+			"reviewCount": 980,
+			"priceFrom": 9800,
+			"description": "Вид на Дворцовую площадь.",
+			"rooms": [
+				{
+					"id": 2001,
+					"hotelId": 203,
+					"type": "Студия",
+					"capacity": 2,
+					"amenities": "Завтрак",
+					"price": 9800
+				},
+				{
+					"id": 2002,
+					"hotelId": 203,
+					"type": " Эконом",
+					"capacity": 2,
+					"amenities": "Ванная комната",
+					"price": 4500
+				}
+			]
+		},
+		{
+			"id": 301,
+			"cityId": 3,
+			"name": "Сочи отель № 1",
+			"rating": 4,
+			"reviewCount": 2100,
+			"priceFrom": 4500,
+			"description": "Прямой выход к морю.",
+			"rooms": [
+				{
+					"id": 3001,
+					"hotelId": 301,
+					"type": "Эконом",
+					"capacity": 2,
+					"amenities": "Ванная",
+					"price": 4500
+				},
+				{
+					"id": 3002,
+					"hotelId": 301,
+					"type": "Эконом",
+					"capacity": 2,
+					"amenities": "Ванная",
+					"price": 2700
+				}
+			]
+		},
+		{
+			"id": 302,
+			"cityId": 3,
+			"name": "Сочи отель № 2",
+			"rating": 4,
+			"reviewCount": 2100,
+			"priceFrom": 4500,
+			"description": "Прямой выход к морю."
+		},
+		{
+			"id": 401,
+			"cityId": 4,
+			"name": "Крым-Алушта отель № 1",
+			"rating": 4,
+			"reviewCount": 2100,
+			"priceFrom": 4500,
+			"description": "Прямой выход к морю.",
+			"rooms": [
+				{
+					"id": 4001,
+					"hotelId": 401,
+					"type": "Эконом",
+					"capacity": 2,
+					"amenities": "Ванная",
+					"price": 2700
+				},
+				{
+					"id": 4002,
+					"hotelId": 401,
+					"type": "Эконом",
+					"capacity": 2,
+					"amenities": "Ванная",
+					"price": 2700
+				}
+			]
+		},
+		{
+			"id": 402,
+			"cityId": 4,
+			"name": "Крым-Алушта отель № 2",
+			"rating": 4,
+			"reviewCount": 2100,
+			"priceFrom": 4500,
+			"description": "Прямой выход к морю.",
+			"rooms": [
+				{
+					"id": 4001,
+					"hotelId": 402,
+					"type": "Эконом",
+					"capacity": 2,
+					"amenities": "Ванная",
+					"price": 2700
+				}
+			]
+		}
+	]
 }

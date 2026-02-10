@@ -11,6 +11,7 @@
 		"server": "json-server db.json --port 3001"
 	},
 	"dependencies": {
+		"@hookform/resolvers": "^5.2.2",
 		"@tailwindcss/vite": "^4.1.17",
 		"lucide-react": "^0.563.0",
 		"prop-types": "^15.8.1",

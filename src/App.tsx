@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useHashRouter } from './hooks/useHashRouter';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Footer, Header } from './components';
@@ -34,13 +33,6 @@ export const App = () => {
 			dispatch({ type: SET_USER, payload: JSON.parse(savedUser) });
 		}
 	}, [dispatch]);
-
-	const register = (userData) => {
-		alert(
-			`Регистрация пользователя ${userData.name} прошла успешно! Теперь войдите.`,
-		);
-		navigate('/login');
-	};
 
 	// 4. Определение содержимого страницы
 	const isUserLoggedIn = !!currentUser;

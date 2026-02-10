@@ -1,7 +1,6 @@
 // /\*_ Страница деталей отеля: список номеров _/;
 
 import { ChevronRight, MapPin, Star, User } from 'lucide-react';
-import { MOCK_DATA } from '../../data/mockData.js';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { Rating } from '../../components/index.js';
 import { useSelector } from 'react-redux';
@@ -9,7 +8,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 export const HotelDetailsPage = () => {
 	const navigate = useNavigate();
-	// const params = useParams();
 	const { hotelId } = useParams();
 
 	const { allHotels, cities } = useSelector((state) => state.hotels);
@@ -84,13 +82,11 @@ export const HotelDetailsPage = () => {
 
 			<div className="mt-10">
 				<button
-					onClick={() => navigate(`/city/${hotel.cityId}`)}
+					onClick={() => navigate(-1)}
 					className="text-gray-500 hover:text-gray-700 flex items-center"
 				>
-					<ChevronRight className="w-4 h-4 transform rotate-180 mr-1" />{' '}
-					{/* Вернуться на Главную
-					 */}
-					Вернуться к отелям в г. {city?.name}
+					<ChevronRight className="w-4 h-4 transform rotate-180 mr-1" />
+					Назад
 				</button>
 			</div>
 		</div>

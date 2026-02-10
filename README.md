@@ -11,6 +11,7 @@ npm run dev запуск проекта
 6. npm install yup redux redux-thunk react-redux
 7. npm install lucide-react
 8. npm install typescript --save-dev
+9. npm install @hookform/resolvers yup
 
 ## . Структура Папок: Создайть базовую структуру:
 
