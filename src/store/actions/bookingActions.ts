@@ -3,10 +3,20 @@ export const ADD_BOOKING = 'ADD_BOOKING';
 export const DELETE_BOOKING = 'DELETE_BOOKING';
 
 // GET - получение данных
-export const fetchBookings = () => async (dispatch) => {
-	const response = await fetch('http://localhost:3001/bookings');
-	const data = await response.json();
-	dispatch({ type: SET_BOOKINGS, payload: data });
+export const fetchBookings = (userId) => async (dispatch) => {
+	try {
+		// Если userId не передан, мы можем либо не грузить ничего,
+		// либо грузить всё (если это админ). Для обычного юзера фильтруем:
+		const url = userId
+			? `http://localhost:3001/bookings?userId=${userId}`
+			: `http://localhost:3001/bookings`;
+		const res = userId;
+		const data = await res.json();
+
+		dispatch({ type: SET_BOOKINGS, payload: data });
+	} catch (e) {
+		console.error('Ошибка загрузки броней', e);
+	}
 };
 
 // POST - добавление новой брони

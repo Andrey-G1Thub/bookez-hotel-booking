@@ -17,6 +17,7 @@ import { fetchHotels } from './store/actions/hotelActions';
 import { fetchBookings } from './store/actions/bookingActions';
 import { fetchCities } from './store/actions/hotelActions';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { PrivateRoute } from './components/PrivateRouter';
 
 export const App = () => {
 	const dispatch = useDispatch();
@@ -24,13 +25,15 @@ export const App = () => {
 	const currentUser = useSelector((state) => state.users.currentUser);
 
 	useEffect(() => {
-		dispatch(fetchBookings());
+		// dispatch(fetchBookings());
 		dispatch(fetchHotels());
 		dispatch(fetchCities());
 
 		const savedUser = localStorage.getItem('bookez_user');
 		if (savedUser) {
-			dispatch({ type: SET_USER, payload: JSON.parse(savedUser) });
+			const user = JSON.parse(savedUser);
+			dispatch({ type: SET_USER, payload: JSON.parse(user) });
+			dispatch(fetchBookings(user.id));
 		}
 	}, [dispatch]);
 
@@ -56,7 +59,9 @@ export const App = () => {
 					<Route
 						path="/bookings"
 						element={
-							isUserLoggedIn ? <BookingsPage /> : <Navigate to="/login" />
+							<PrivateRoute>
+								<BookingsPage />
+							</PrivateRoute>
 						}
 					/>
 
