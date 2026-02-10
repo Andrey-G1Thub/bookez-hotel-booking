@@ -1,7 +1,9 @@
 import { SET_USER, LOGOUT_USER } from '../actions/userActions';
 
+const savedUser = localStorage.getItem('bookez_user');
+
 const initialState = {
-	currentUser: null,
+	currentUser: savedUser ? JSON.parse(savedUser) : null,
 };
 
 export const userReducer = (state = initialState, action) => {
