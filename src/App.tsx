@@ -18,6 +18,7 @@ import { fetchBookings } from './store/actions/bookingActions';
 import { fetchCities } from './store/actions/hotelActions';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRouter';
+// import { PrivateRoute } from './components/PrivateRouter';
 
 export const App = () => {
 	const dispatch = useDispatch();
@@ -32,7 +33,7 @@ export const App = () => {
 		const savedUser = localStorage.getItem('bookez_user');
 		if (savedUser) {
 			const user = JSON.parse(savedUser);
-			dispatch({ type: SET_USER, payload: JSON.parse(user) });
+			dispatch({ type: SET_USER, payload: user });
 			dispatch(fetchBookings(user.id));
 		}
 	}, [dispatch]);

@@ -10,7 +10,8 @@ export const fetchBookings = (userId) => async (dispatch) => {
 		const url = userId
 			? `http://localhost:3001/bookings?userId=${userId}`
 			: `http://localhost:3001/bookings`;
-		const res = userId;
+		const res = await fetch(url);
+		if (!res.ok) throw new Error('Ошибка сети');
 		const data = await res.json();
 
 		dispatch({ type: SET_BOOKINGS, payload: data });

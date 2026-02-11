@@ -5,36 +5,91 @@ import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { addBookingThunk } from '../../store/actions/bookingActions.js';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '../../components/Skeleton.js';
 
 /\*_ Страница бронирования конкретного номера _/;
 export const RoomBookingPage = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
 	const { hotelId, roomId } = useParams();
 
 	const currentUser = useSelector((state) => state.users.currentUser);
 	const { allHotels } = useSelector((state) => state.hotels);
 	const bookings = useSelector((state) => state.bookings.list) || [];
 
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		// Имитируем загрузку 800мс, чтобы глаз успел увидеть скелетон
+		const timer = setTimeout(() => {
+			setIsLoading(false);
+		}, 800);
+		return () => clearTimeout(timer);
+	}, []);
+
 	const targetHotelId = Number(hotelId);
 	const targetRoomId = Number(roomId);
 
 	// 1. Сначала ищем отель
 	const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
-
 	// 2. Затем ищем комнату ВНУТРИ этого отеля
 	const room = hotel?.rooms?.find((r) => Number(r.id) === targetRoomId);
 
+	// 3. Создаем состояния для дат и итоговой цены
+	const [checkIn, setCheckIn] = useState('');
+	const [checkOut, setCheckOut] = useState('');
+	const [totalPrice, setTotalPrice] = useState(0);
+	const [isPaying, setIsPaying] = useState(false);
+	const [agreement, setAgreement] = useState(false);
+
+	// Эффект для автоматического пересчета цены при изменении дат
+	useEffect(() => {
+		if (checkIn && checkOut && room) {
+			const s = new Date(checkIn);
+			const e = new Date(checkOut);
+			const diffTime = e - s;
+			const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+			// Если даты валидны (выезд позже заезда)
+			if (diffDays > 0) {
+				setTotalPrice(diffDays * room.price);
+			} else {
+				setTotalPrice(room.price); // Или 0
+			}
+		} else if (room) {
+			setTotalPrice(room.price); // Цена за 1 ночь по умолчанию
+		}
+	}, [checkIn, checkOut, room]);
+
 	// Состояние загрузки
-	if (allHotels.length === 0) {
+	if (isLoading || allHotels.length === 0) {
 		return (
-			<div className="p-10 text-center text-xl font-semibold text-teal-600">
-				Загрузка данных...
+			<div className="max-w-4xl mx-auto px-4 py-12">
+				{/* Скелетон заголовка */}
+				<Skeleton className="h-10 w-3/4 mb-4" />
+				<Skeleton className="h-6 w-1/2 mb-8" />
+
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+					{/* Левая колонка */}
+					<div className="space-y-4">
+						<Skeleton className="h-48 w-full rounded-xl" />
+						<Skeleton className="h-8 w-1/3" />
+						<Skeleton className="h-4 w-full" />
+						<Skeleton className="h-4 w-full" />
+					</div>
+					{/* Правая колонка */}
+					<div className="p-6 border rounded-xl space-y-4">
+						<Skeleton className="h-8 w-full" />
+						<Skeleton className="h-12 w-full" />
+						<Skeleton className="h-12 w-full" />
+						<Skeleton className="h-24 w-full" />
+						<Skeleton className="h-12 w-full" />
+					</div>
+				</div>
 			</div>
 		);
 	}
-
 	// Если отель или комната не найдены
 	if (!hotel || !room) {
 		return (
@@ -83,11 +138,18 @@ export const RoomBookingPage = () => {
 		return { overlap: false };
 	};
 
-	const handleBooking = (e) => {
+	const handleBooking = async (e) => {
 		e.preventDefault();
+
 		if (!currentUser) {
 			alert('Пожалуйста, войдите в систему, чтобы забронировать номер.');
 			navigate('/login');
+			return;
+		}
+
+		// Проверка галочки (на всякий случай, хотя кнопка будет заблокирована)
+		if (!agreement) {
+			alert('Пожалуйста, подтвердите согласие с условиями оферты.');
 			return;
 		}
 
@@ -100,26 +162,41 @@ export const RoomBookingPage = () => {
 			alert(overlapResult.message);
 			return;
 		}
+		setIsPaying(true);
+		try {
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			// Создание новой брони с привязкой по ID
+			const newBooking = {
+				id: Date.now(),
+				userId: currentUser.id,
+				hotelId: hotel.id,
+				roomId: room.id,
+				hotelName: hotel.name,
+				roomType: room.type,
+				checkIn,
+				checkOut,
+				// price: room.price,
+				price: totalPrice,
+				status: 'Подтверждено',
+			};
 
-		// Создание новой брони с привязкой по ID
-		const newBooking = {
-			id: Date.now(),
-			userId: currentUser.id,
-			hotelId: hotel.id,
-			roomId: room.id,
-			hotelName: hotel.name,
-			roomType: room.type,
-			checkIn,
-			checkOut,
-			price: room.price,
-			status: 'Подтверждено',
-		};
-
-		dispatch(addBookingThunk(newBooking));
-		alert(
-			`Бронирование номера "${room.type}" оформлено! Смотрите раздел 'Мои Брони')`,
-		);
-		navigate('/bookings');
+			dispatch(addBookingThunk(newBooking));
+			alert(`Оплата прошла успешно! Номер "${room.type}" забронирован.`);
+			navigate('/bookings');
+		} catch (error) {
+			alert('Ошибка при оплате. Попробуйте еще раз.');
+		} finally {
+			setIsPaying(false);
+		}
+	};
+	const calculateTotal = (start, end) => {
+		if (!start || !end) return;
+		const s = new Date(start);
+		const e = new Date(end);
+		const diffTime = Math.abs(e - s);
+		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+		// Если заезд и выезд в один день, считаем как 1 ночь
+		setTotalPrice((diffDays || 1) * room.price);
 	};
 
 	return (
@@ -200,6 +277,7 @@ export const RoomBookingPage = () => {
 								name="checkIn"
 								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border"
 								min={getMinDate()}
+								onChange={(e) => setCheckIn(e.target.value)}
 								required
 							/>
 						</div>
@@ -215,15 +293,80 @@ export const RoomBookingPage = () => {
 								type="date"
 								name="checkOut"
 								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border"
-								min={getMinDate()}
+								min={checkIn || getMinDate()}
+								onChange={(e) => setCheckOut(e.target.value)}
 								required
 							/>
 						</div>
+						{checkIn && checkOut && totalPrice > 0 && (
+							<div className="bg-teal-50 p-4 rounded-lg border border-teal-100 my-4 animate-in fade-in duration-500">
+								<h4 className="text-sm font-bold text-teal-800 uppercase mb-2">
+									Детали платежа
+								</h4>
+								<div className="flex justify-between text-sm text-gray-600 mb-1">
+									<span>
+										{room.price} ₽ ×{' '}
+										{Math.ceil(
+											(new Date(checkOut) - new Date(checkIn)) /
+												(1000 * 60 * 60 * 24),
+										)}{' '}
+										ночи(ей)
+									</span>
+									<span>{totalPrice} ₽</span>
+								</div>
+								<div className="flex justify-between text-sm text-gray-600 mb-2">
+									<span>Налоги и сборы</span>
+									<span className="text-green-600">Бесплатно</span>
+								</div>
+								<div className="border-t border-teal-200 pt-2 flex justify-between items-center">
+									<span className="font-bold text-gray-800">
+										Итого к оплате:
+									</span>
+									<span className="text-xl font-extrabold text-teal-700">
+										{totalPrice} ₽
+									</span>
+								</div>
+							</div>
+						)}
+						<div className="flex items-start mt-4 mb-2">
+							<input
+								id="agreement"
+								type="checkbox"
+								checked={agreement}
+								onChange={(e) => setAgreement(e.target.checked)}
+								className="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded cursor-pointer"
+								required
+							/>
+							<label
+								htmlFor="agreement"
+								className="ml-2 text-sm text-gray-600 cursor-pointer"
+							>
+								Я согласен с{' '}
+								<span className="text-teal-600 underline">
+									условиями бронирования
+								</span>{' '}
+								и правилами предоставления услуг.
+							</label>
+						</div>
 						<button
 							type="submit"
-							className="w-full py-3 rounded-lg text-white font-semibold accent-color accent-hover transition shadow-lg mt-4"
+							// Кнопка не нажмется, если нет дат, идет оплата или не стоит галочка
+							disabled={isPaying || !checkIn || !checkOut || !agreement}
+							className={`w-full py-3 rounded-lg text-white font-semibold transition shadow-lg mt-2 ${
+								isPaying || !agreement || !checkIn || !checkOut
+									? 'bg-gray-400 cursor-not-allowed'
+									: 'bg-teal-600 hover:bg-teal-700'
+							}`}
 						>
-							Забронировать за {room.price} ₽
+							{isPaying ? (
+								<div className="flex items-center justify-center">
+									{/* Простой CSS-спиннер через Tailwind */}
+									<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+									Связь с банком...
+								</div>
+							) : (
+								`Оплатить и забронировать: ${totalPrice} ₽`
+							)}
 						</button>
 					</form>
 				</div>
