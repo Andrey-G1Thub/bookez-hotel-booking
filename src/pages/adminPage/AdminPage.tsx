@@ -20,6 +20,24 @@ export const AdminPage = () => {
 		dispatch(updateUserRoleThunk(userId, newRole, defaultLimits));
 	};
 
+	// НОВАЯ ФУНКЦИЯ: Изменение конкретного лимита
+	const handleLimitChange = (
+		userId: number,
+		currentRole: string,
+		field: string,
+		value: string,
+	) => {
+		const user = usersList.find((u: any) => u.id === userId);
+		if (!user) return;
+
+		const newLimits = {
+			...user.limits,
+			[field]: parseInt(value) || 0,
+		};
+
+		dispatch(updateUserRoleThunk(userId, currentRole, newLimits));
+	};
+
 	return (
 		<div className="p-8 mt-10">
 			<h1 className="text-3xl font-bold mb-6 text-gray-800">
@@ -78,14 +96,51 @@ export const AdminPage = () => {
 										<option value={ROLES.ADMIN}>Admin</option>
 									</select>
 								</td>
-								<td className="p-4 text-sm">
+								<td className="p-4">
 									{user.role === ROLES.MANAGER ? (
-										<span>
-											{user.limits?.maxHotels || 1} /{' '}
-											{user.limits?.maxRooms || 5}
-										</span>
+										<div className="flex items-center justify-center gap-2">
+											<div className="flex flex-col items-center">
+												<span className="text-[10px] text-gray-400 uppercase">
+													Отели
+												</span>
+												<input
+													type="number"
+													min="1"
+													value={user.limits?.maxHotels || 1}
+													onChange={(e) =>
+														handleLimitChange(
+															user.id,
+															user.role,
+															'maxHotels',
+															e.target.value,
+														)
+													}
+													className="w-16 border rounded p-1 text-center font-bold text-blue-600"
+												/>
+											</div>
+											<span className="text-gray-300 mt-4">/</span>
+											<div className="flex flex-col items-center">
+												<span className="text-[10px] text-gray-400 uppercase">
+													Номера
+												</span>
+												<input
+													type="number"
+													min="1"
+													value={user.limits?.maxRooms || 5}
+													onChange={(e) =>
+														handleLimitChange(
+															user.id,
+															user.role,
+															'maxRooms',
+															e.target.value,
+														)
+													}
+													className="w-16 border rounded p-1 text-center font-bold text-teal-600"
+												/>
+											</div>
+										</div>
 									) : (
-										<span className="text-gray-400">—</span>
+										<div className="text-center text-gray-300">—</div>
 									)}
 								</td>
 							</tr>
