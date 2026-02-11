@@ -1,5 +1,8 @@
+import { ROLES } from '../../utils/permissions';
+
 export const SET_USER = 'SET_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
+export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
 
 export const loginThunk = (credentials) => async (dispatch) => {
 	try {
@@ -53,7 +56,11 @@ export const registerThunk = (userData) => async (dispatch) => {
 		const { confirmPassword, ...dataToInscribe } = userData;
 		const newUser = {
 			...dataToInscribe,
-			role: 'user', // Роль по умолчанию
+			role: ROLES.USER, // Используй константу
+			limits: {
+				maxHotels: 0, // У обычного юзера нет отелей
+				maxRooms: 0,
+			},
 			id: Date.now(), // Если json-server не настроен на авто-id
 		};
 
@@ -70,5 +77,45 @@ export const registerThunk = (userData) => async (dispatch) => {
 	} catch (error) {
 		console.error('Register Error:', error);
 		return false;
+	}
+};
+// userActions.js
+export const updateUserRoleThunk =
+	(userId, newRole, limits = null) =>
+	async (dispatch, getState) => {
+		try {
+			const response = await fetch(`http://localhost:3001/users/${userId}`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					role: newRole,
+					...(limits && { limits }),
+				}),
+			});
+
+			if (response.ok) {
+				// 1. Обновляем список всех юзеров для админа
+				dispatch(fetchAllUsersThunk());
+
+				// 2. Если админ изменил роль самому себе
+				const currentUser = getState().users.currentUser;
+				if (currentUser && currentUser.id === userId) {
+					const updatedUser = await response.json();
+					dispatch({ type: SET_USER, payload: updatedUser });
+					localStorage.setItem('bookez_user', JSON.stringify(updatedUser));
+				}
+				return true;
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	};
+export const fetchAllUsersThunk = () => async (dispatch) => {
+	try {
+		const res = await fetch('http://localhost:3001/users');
+		const data = await res.json();
+		dispatch({ type: FETCH_USERS_SUCCESS, payload: data });
+	} catch (e) {
+		console.error('Ошибка при загрузке пользователей:', e);
 	}
 };

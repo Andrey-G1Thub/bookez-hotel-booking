@@ -18,6 +18,8 @@ import { fetchBookings } from './store/actions/bookingActions';
 import { fetchCities } from './store/actions/hotelActions';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRouter';
+import { AdminPage } from './pages/adminPage/AdminPage';
+import { ROLES } from './utils/permissions';
 // import { PrivateRoute } from './components/PrivateRouter';
 
 export const App = () => {
@@ -67,17 +69,13 @@ export const App = () => {
 					/>
 
 					<Route
-						path="/manager"
+						path="/admin"
 						element={
-							isManager ? (
-								<NotFoundPage message="Панель менеджера в разработке" />
-							) : (
-								<Navigate to="/" />
-							)
+							<PrivateRoute roles={[ROLES.ADMIN]}>
+								<AdminPage />
+							</PrivateRoute>
 						}
 					/>
-
-					{/* 404 */}
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
 			</main>

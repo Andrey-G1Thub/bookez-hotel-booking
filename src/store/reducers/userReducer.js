@@ -1,9 +1,10 @@
-import { SET_USER, LOGOUT_USER } from '../actions/userActions';
+import { SET_USER, LOGOUT_USER, FETCH_USERS_SUCCESS } from '../actions/userActions';
 
 const savedUser = localStorage.getItem('bookez_user');
 
 const initialState = {
 	currentUser: savedUser ? JSON.parse(savedUser) : null,
+	usersList: [],
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -16,6 +17,8 @@ export const userReducer = (state = initialState, action) => {
 				...state,
 				currentUser: null,
 			};
+		case FETCH_USERS_SUCCESS:
+			return { ...state, usersList: action.payload };
 		default:
 			return state;
 	}

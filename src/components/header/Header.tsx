@@ -1,10 +1,11 @@
 // - Компонент верхнего навигационного меню.
 
-import { LogOut, User } from 'lucide-react';
+import { Hotel, LogOut, ShieldAlert, User } from 'lucide-react';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutThunk } from '../../store/actions/userActions';
 import { useNavigate, Link } from 'react-router-dom';
+import { ROLES } from '../../utils/permissions';
 
 export const Header = () => {
 	const dispatch = useDispatch();
@@ -17,7 +18,7 @@ export const Header = () => {
 		[currentUser],
 	);
 
-	const handleLogout = (e) => {
+	const handleLogout = (e: React.MouseEvent) => {
 		e.preventDefault();
 		if (window.confirm('Вы действительно хотите выйти?')) {
 			dispatch(logoutThunk());
@@ -54,12 +55,24 @@ export const Header = () => {
 								Мои Брони
 							</Link>
 						)}
-						{/* Меню Менеджера/Админа */}
-						{currentUser?.role === 'manager' && (
+						{/* КНОПКА АДМИНА (Яркая, видна только админу) */}
+						{currentUser?.role === ROLES.ADMIN && (
+							<Link
+								to="/admin"
+								className="flex items-center gap-1 text-red-600 hover:text-red-800 transition duration-150 font-bold border-l pl-4 border-gray-200"
+							>
+								<ShieldAlert className="w-4 h-4" />
+								Админ-панель
+							</Link>
+						)}
+
+						{/* КНОПКА МЕНЕДЖЕРА (видна менеджеру) */}
+						{currentUser?.role === ROLES.MANAGER && (
 							<Link
 								to="/manager"
-								className="text-amber-600 hover:text-amber-800 transition duration-150 font-bold"
+								className="flex items-center gap-1 text-amber-600 hover:text-amber-800 transition duration-150 font-bold border-l pl-4 border-gray-200"
 							>
+								<Hotel className="w-4 h-4" />
 								Панель Менеджера
 							</Link>
 						)}

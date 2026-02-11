@@ -18,6 +18,14 @@ export const RoomBookingPage = () => {
 	const { allHotels } = useSelector((state) => state.hotels);
 	const bookings = useSelector((state) => state.bookings.list) || [];
 
+	// Считаем, сколько отелей уже есть у менеджера
+	const myHotels = allHotels.filter((h) => h.ownerId === currentUser.id);
+
+	// Проверка лимита (берем из юзера или ставим дефолт)
+	const maxHotels = currentUser.limits?.maxHotels || 1;
+
+	const canAddMore = myHotels.length < maxHotels;
+
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
