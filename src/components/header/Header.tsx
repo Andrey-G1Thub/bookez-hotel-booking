@@ -66,8 +66,9 @@ export const Header = () => {
 							</Link>
 						)}
 
-						{/* КНОПКА МЕНЕДЖЕРА (видна менеджеру) */}
-						{currentUser?.role === ROLES.MANAGER && (
+						{/* Кнопка Менеджера - теперь видна и Менеджеру, и Админу */}
+						{(currentUser?.role === ROLES.MANAGER ||
+							currentUser?.role === ROLES.ADMIN) && (
 							<Link
 								to="/manager"
 								className="flex items-center gap-1 text-amber-600 hover:text-amber-800 transition duration-150 font-bold border-l pl-4 border-gray-200"

@@ -117,6 +117,30 @@
       "checkOut": "2026-02-18",
       "price": 49000,
       "status": "Подтверждено"
+    },
+    {
+      "id": 1770815189129,
+      "userId": 1770718214721,
+      "hotelId": 1770814437937,
+      "roomId": 1770815036316,
+      "hotelName": "HOTEL manager1",
+      "roomType": "5",
+      "checkIn": "2026-02-11",
+      "checkOut": "2026-02-25",
+      "price": 35000,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1770815253561,
+      "userId": 1770711015637,
+      "hotelId": 1770814437937,
+      "roomId": 1770815036316,
+      "hotelName": "HOTEL manager1",
+      "roomType": "5",
+      "checkIn": "2026-02-25",
+      "checkOut": "2026-02-28",
+      "price": 7500,
+      "status": "Подтверждено"
     }
   ],
   "cities": [
@@ -403,6 +427,134 @@
           "capacity": 2,
           "amenities": "Ванная",
           "price": 2700
+        }
+      ]
+    },
+    {
+      "name": "HOTEL  admin1",
+      "cityId": 2,
+      "description": "Возле теплого моря, с мягким песком",
+      "priceFrom": 2700,
+      "id": 1770813091391,
+      "ownerId": 1770711015637,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": [
+        {
+          "type": "1",
+          "capacity": 2,
+          "price": 1,
+          "amenities": "",
+          "id": 1770817432957,
+          "hotelId": 1770813091391
+        },
+        {
+          "type": "2",
+          "capacity": 2,
+          "price": 2,
+          "amenities": "",
+          "id": 1770817439241,
+          "hotelId": 1770813091391
+        },
+        {
+          "type": "3",
+          "capacity": 2,
+          "price": 3,
+          "amenities": "",
+          "id": 1770817452777,
+          "hotelId": 1770813091391
+        },
+        {
+          "type": "4",
+          "capacity": 2,
+          "price": 4,
+          "amenities": "",
+          "id": 1770817456996,
+          "hotelId": 1770813091391
+        },
+        {
+          "type": "5",
+          "capacity": 2,
+          "price": 5,
+          "amenities": "",
+          "id": 1770817461264,
+          "hotelId": 1770813091391
+        },
+        {
+          "type": "6",
+          "capacity": 2,
+          "price": 6,
+          "amenities": "",
+          "id": 1770817464871,
+          "hotelId": 1770813091391
+        },
+        {
+          "type": "7",
+          "capacity": 2,
+          "price": 7,
+          "amenities": "",
+          "id": 1770817558238,
+          "hotelId": 1770813091391
+        },
+        {
+          "type": "7",
+          "capacity": 2,
+          "price": 7,
+          "amenities": "",
+          "id": 1770817566517,
+          "hotelId": 1770813091391
+        }
+      ]
+    },
+    {
+      "name": "HOTEL manager1",
+      "cityId": 1,
+      "description": "Возле моря со всеми удобствами",
+      "priceFrom": 2200,
+      "id": 1770814437937,
+      "ownerId": 1770718214721,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": [
+        {
+          "type": "№ 1",
+          "capacity": 1,
+          "price": 1800,
+          "amenities": "завтрак",
+          "id": 1770814863458,
+          "hotelId": 1770814437937
+        },
+        {
+          "type": "№2",
+          "capacity": 2,
+          "price": 2200,
+          "amenities": "WiFi; кондиционер и яблоко",
+          "id": 1770814936095,
+          "hotelId": 1770814437937
+        },
+        {
+          "type": "№3",
+          "capacity": 3,
+          "price": 3000,
+          "amenities": "WiFi; кондиционер и банан",
+          "id": 1770814969229,
+          "hotelId": 1770814437937
+        },
+        {
+          "type": "№4",
+          "capacity": 4,
+          "price": 4000,
+          "amenities": "WiFi; кондиционер и виноград",
+          "id": 1770814996901,
+          "hotelId": 1770814437937
+        },
+        {
+          "type": "5",
+          "capacity": 2,
+          "price": 2500,
+          "amenities": "WiFi; кондиционер и апельсин",
+          "id": 1770815036316,
+          "hotelId": 1770814437937
         }
       ]
     }

@@ -20,6 +20,7 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRouter';
 import { AdminPage } from './pages/adminPage/AdminPage';
 import { ROLES } from './utils/permissions';
+import { ManagerPage } from './pages/magerPage/ManagerPage';
 // import { PrivateRoute } from './components/PrivateRouter';
 
 export const App = () => {
@@ -76,6 +77,14 @@ export const App = () => {
 							</PrivateRoute>
 						}
 					/>
+					<Route
+						path="/manager"
+						element={
+							<PrivateRoute roles={[ROLES.ADMIN, ROLES.MANAGER]}>
+								<ManagerPage />
+							</PrivateRoute>
+						}
+					></Route>
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
 			</main>
