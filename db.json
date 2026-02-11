@@ -19,93 +19,21 @@
         "maxHotels": 1,
         "maxRooms": 5
       }
+    },
+    {
+      "name": "Lena",
+      "email": "lena@lena",
+      "phone": "+99011111111",
+      "password": "111111",
+      "role": "user",
+      "limits": {
+        "maxHotels": 0,
+        "maxRooms": 0
+      },
+      "id": 1770832348065
     }
   ],
   "bookings": [
-    {
-      "id": 1770718139458,
-      "userId": 1770711015637,
-      "hotelId": 101,
-      "roomId": 1001,
-      "hotelName": "Геническ отель № 1",
-      "roomType": "Стандартный Двухместный",
-      "checkIn": "2026-02-10",
-      "checkOut": "2026-02-16",
-      "price": 8500,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770796012805,
-      "userId": 1770718214721,
-      "hotelId": 101,
-      "roomId": 1001,
-      "hotelName": "Геническ отель № 1",
-      "roomType": "Стандартный Двухместный",
-      "checkIn": "2026-02-11",
-      "checkOut": "2026-02-18",
-      "price": 59500,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770796051089,
-      "userId": 1770718214721,
-      "hotelId": 101,
-      "roomId": 1001,
-      "hotelName": "Геническ отель № 1",
-      "roomType": "Стандартный Двухместный",
-      "checkIn": "2026-02-19",
-      "checkOut": "2026-02-21",
-      "price": 17000,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770796075206,
-      "userId": 1770718214721,
-      "hotelId": 101,
-      "roomId": 1001,
-      "hotelName": "Геническ отель № 1",
-      "roomType": "Стандартный Двухместный",
-      "checkIn": "2026-02-18",
-      "checkOut": "2026-02-19",
-      "price": 8500,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770796321372,
-      "userId": 1770711015637,
-      "hotelId": 101,
-      "roomId": 1002,
-      "hotelName": "Геническ отель № 1",
-      "roomType": "Люкс с Видом",
-      "checkIn": "2026-02-11",
-      "checkOut": "2026-02-18",
-      "price": 105000,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770803331383,
-      "userId": 1770711015637,
-      "hotelId": 101,
-      "roomId": 1001,
-      "hotelName": "Геническ отель № 1",
-      "roomType": "Стандартный Двухместный",
-      "checkIn": "2026-02-17",
-      "checkOut": "2026-02-24",
-      "price": 59500,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770809276347,
-      "userId": 1770718214721,
-      "hotelId": 101,
-      "roomId": 1002,
-      "hotelName": "Геническ отель № 1",
-      "roomType": "Люкс с Видом",
-      "checkIn": "2026-02-11",
-      "checkOut": "2026-02-16",
-      "price": 75000,
-      "status": "Подтверждено"
-    },
     {
       "id": 1770809979691,
       "userId": 1770711015637,
@@ -116,30 +44,6 @@
       "checkIn": "2026-02-11",
       "checkOut": "2026-02-18",
       "price": 49000,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770815189129,
-      "userId": 1770718214721,
-      "hotelId": 1770814437937,
-      "roomId": 1770815036316,
-      "hotelName": "HOTEL manager1",
-      "roomType": "5",
-      "checkIn": "2026-02-11",
-      "checkOut": "2026-02-25",
-      "price": 35000,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770815253561,
-      "userId": 1770711015637,
-      "hotelId": 1770814437937,
-      "roomId": 1770815036316,
-      "hotelName": "HOTEL manager1",
-      "roomType": "5",
-      "checkIn": "2026-02-25",
-      "checkOut": "2026-02-28",
-      "price": 7500,
       "status": "Подтверждено"
     }
   ],
@@ -431,11 +335,22 @@
       ]
     },
     {
-      "name": "HOTEL  admin1",
-      "cityId": 2,
-      "description": "Возле теплого моря, с мягким песком",
-      "priceFrom": 2700,
-      "id": 1770813091391,
+      "name": "HOTEL manager1",
+      "cityId": 1,
+      "description": "Возле моря со всеми удобствами",
+      "priceFrom": 2200,
+      "id": 1770814437937,
+      "ownerId": 1770718214721,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": []
+    },
+    {
+      "name": "ADMIN №1",
+      "cityId": 1,
+      "description": "хорошо",
+      "priceFrom": 3333,
+      "id": 1770824082888,
       "ownerId": 1770711015637,
       "rating": 5,
       "reviewCount": 0,
@@ -445,118 +360,21 @@
           "capacity": 2,
           "price": 1,
           "amenities": "",
-          "id": 1770817432957,
-          "hotelId": 1770813091391
-        },
-        {
-          "type": "2",
-          "capacity": 2,
-          "price": 2,
-          "amenities": "",
-          "id": 1770817439241,
-          "hotelId": 1770813091391
-        },
-        {
-          "type": "3",
-          "capacity": 2,
-          "price": 3,
-          "amenities": "",
-          "id": 1770817452777,
-          "hotelId": 1770813091391
-        },
-        {
-          "type": "4",
-          "capacity": 2,
-          "price": 4,
-          "amenities": "",
-          "id": 1770817456996,
-          "hotelId": 1770813091391
-        },
-        {
-          "type": "5",
-          "capacity": 2,
-          "price": 5,
-          "amenities": "",
-          "id": 1770817461264,
-          "hotelId": 1770813091391
-        },
-        {
-          "type": "6",
-          "capacity": 2,
-          "price": 6,
-          "amenities": "",
-          "id": 1770817464871,
-          "hotelId": 1770813091391
-        },
-        {
-          "type": "7",
-          "capacity": 2,
-          "price": 7,
-          "amenities": "",
-          "id": 1770817558238,
-          "hotelId": 1770813091391
-        },
-        {
-          "type": "7",
-          "capacity": 2,
-          "price": 7,
-          "amenities": "",
-          "id": 1770817566517,
-          "hotelId": 1770813091391
+          "id": 1770824104163,
+          "hotelId": 1770824082888
         }
       ]
     },
     {
-      "name": "HOTEL manager1",
+      "name": "ADMIN 3",
       "cityId": 1,
-      "description": "Возле моря со всеми удобствами",
-      "priceFrom": 2200,
-      "id": 1770814437937,
-      "ownerId": 1770718214721,
+      "description": "guud",
+      "priceFrom": 1111,
+      "id": 1770830316297,
+      "ownerId": 1770711015637,
       "rating": 5,
       "reviewCount": 0,
-      "rooms": [
-        {
-          "type": "№ 1",
-          "capacity": 1,
-          "price": 1800,
-          "amenities": "завтрак",
-          "id": 1770814863458,
-          "hotelId": 1770814437937
-        },
-        {
-          "type": "№2",
-          "capacity": 2,
-          "price": 2200,
-          "amenities": "WiFi; кондиционер и яблоко",
-          "id": 1770814936095,
-          "hotelId": 1770814437937
-        },
-        {
-          "type": "№3",
-          "capacity": 3,
-          "price": 3000,
-          "amenities": "WiFi; кондиционер и банан",
-          "id": 1770814969229,
-          "hotelId": 1770814437937
-        },
-        {
-          "type": "№4",
-          "capacity": 4,
-          "price": 4000,
-          "amenities": "WiFi; кондиционер и виноград",
-          "id": 1770814996901,
-          "hotelId": 1770814437937
-        },
-        {
-          "type": "5",
-          "capacity": 2,
-          "price": 2500,
-          "amenities": "WiFi; кондиционер и апельсин",
-          "id": 1770815036316,
-          "hotelId": 1770814437937
-        }
-      ]
+      "rooms": []
     }
   ]
 }

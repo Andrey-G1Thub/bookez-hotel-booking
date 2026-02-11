@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ROLES } from '../../utils/permissions';
-import { Hotel, PlusCircle, ClipboardList, X } from 'lucide-react';
+import { Hotel, PlusCircle, ClipboardList, X, Trash2 } from 'lucide-react';
+import {
+	addHotelThunk,
+	deleteHotelThunk,
+	updateHotelRoomsThunk,
+} from '../../store/actions/hotelActions';
 
 export const ManagerPage = () => {
 	const { currentUser } = useSelector((state: any) => state.users);
+	const dispatch = useDispatch();
 
 	const [myHotels, setMyHotels] = useState([]);
 	const [myBookings, setMyBookings] = useState([]);
@@ -27,6 +33,64 @@ export const ManagerPage = () => {
 		amenities: '',
 	});
 	const [users, setUsers] = useState([]);
+
+	// --- ФУНКЦИЯ УДАЛЕНИЯ ОТЕЛЯ ---
+	const handleDeleteHotel = async (hotelId: number) => {
+		// 1. Проверка на наличие бронирований (Защита от дурака)
+		const hasBookings = myBookings.some((b: any) => b.hotelId === hotelId);
+		if (hasBookings) {
+			alert(
+				'Невозможно удалить отель, в котором есть активные бронирования. Сначала отмените бронирования.',
+			);
+			return;
+		}
+		if (!window.confirm('Вы уверены, что хотите удалить этот отель?')) return;
+
+		const success = await dispatch(deleteHotelThunk(hotelId));
+
+		if (success) {
+			// Мгновенно убираем из списка
+			setMyHotels((prev) => prev.filter((h: any) => h.id !== hotelId));
+			// Также стоит отфильтровать бронирования этого отеля в UI
+			// setMyBookings((prev) => prev.filter((b: any) => b.hotelId !== hotelId));
+		}
+	};
+
+	// --- ФУНКЦИЯ УДАЛЕНИЯ НОМЕРА ---
+	const handleDeleteRoom = async (hotelId: number, roomId: number) => {
+		// Проверка: забронирован ли именно этот номер?
+		const isRoomBooked = myBookings.some((b: any) => b.roomId === roomId);
+
+		if (isRoomBooked) {
+			alert('Нельзя удалить номер, на который есть активные бронирования!');
+			return;
+		}
+		if (!window.confirm('Удалить этот номер?')) return;
+
+		const hotel = myHotels.find((h: any) => h.id === hotelId);
+		if (!hotel) return;
+
+		const updatedRooms = hotel.rooms.filter((r: any) => r.id !== roomId);
+		const success = await dispatch(updateHotelRoomsThunk(hotelId, updatedRooms));
+
+		if (success) {
+			// Синхронизируем Redux, если нужно
+			dispatch({
+				type: 'hotels/updateHotel',
+				payload: { id: hotelId, rooms: updatedRooms },
+			});
+		}
+		// 2. ОБЯЗАТЕЛЬНО: Обновляем Redux
+		// Если у вас есть готовый action для обновления отеля, используйте его.
+		// Если нет, можно отправить временный экшен (зависит от вашего store):
+		dispatch({
+			type: 'hotels/updateHotel', // Укажите ваш тип экшена
+			payload: { id: selectedHotel.id, rooms: updatedRooms },
+		});
+
+		setIsRoomModalOpen(false);
+		setNewRoom({ type: '', capacity: 2, price: '', amenities: '' });
+	};
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -81,14 +145,10 @@ export const ManagerPage = () => {
 			rooms: [],
 		};
 
-		const res = await fetch('http://localhost:3001/hotels', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(hotelToSave),
-		});
+		const success = await dispatch(addHotelThunk(hotelToSave));
 
-		if (res.ok) {
-			setMyHotels([...myHotels, hotelToSave]);
+		if (success) {
+			setMyHotels((myHotels) => [...myHotels, hotelToSave]);
 			setIsModalOpen(false);
 			setNewHotel({ name: '', cityId: '', description: '', priceFrom: '' });
 		}
@@ -99,6 +159,7 @@ export const ManagerPage = () => {
 
 		// Проверка лимита (Админам можно всё, менеджерам - по лимиту)
 		const isAdmin = currentUser.role === ROLES.ADMIN;
+		const currentHotelInState = myHotels.find((h) => h.id === selectedHotel.id);
 		const currentRoomsCount = selectedHotel.rooms?.length || 0;
 		const maxRooms = currentUser.limits?.maxRooms || 0;
 
@@ -118,19 +179,18 @@ export const ManagerPage = () => {
 		const updatedRooms = [...(selectedHotel.rooms || []), roomData];
 
 		// PATCH запрос для обновления массива rooms в объекте отеля
-		const res = await fetch(`http://localhost:3001/hotels/${selectedHotel.id}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ rooms: updatedRooms }),
-		});
+		const success = await dispatch(
+			updateHotelRoomsThunk(selectedHotel.id, updatedRooms),
+		);
 
-		if (res.ok) {
-			// Обновляем локальный стейт, чтобы изменения сразу отобразились
-			setMyHotels(
-				myHotels.map((h) =>
+		if (success) {
+			// Обновляем локальный список отелей для отображения на текущей странице
+			setMyHotels((prev) =>
+				prev.map((h: any) =>
 					h.id === selectedHotel.id ? { ...h, rooms: updatedRooms } : h,
 				),
 			);
+
 			setIsRoomModalOpen(false);
 			setNewRoom({ type: '', capacity: 2, price: '', amenities: '' });
 		}
@@ -167,45 +227,76 @@ export const ManagerPage = () => {
 			</header>
 
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-				{/* Список отелей */}
 				<div className="lg:col-span-2 space-y-4">
 					<h2 className="text-xl font-semibold flex items-center gap-2 ml-2">
 						<Hotel className="text-teal-600" /> Мои объекты
 					</h2>
-					{myHotels.length === 0 && (
-						<p className="text-gray-400 p-10 text-center bg-gray-50 rounded-xl border-2 border-dashed">
-							У вас пока нет добавленных отелей
-						</p>
-					)}
+
 					{myHotels.map((hotel: any) => (
 						<div
 							key={hotel.id}
-							className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition-shadow"
+							className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4"
 						>
-							<div>
-								<h3 className="font-bold text-xl text-gray-800">
-									{hotel.name}
-								</h3>
-								<p className="text-sm text-gray-500">
-									{cities.find((c) => c.id === hotel.cityId)?.name ||
-										'Город не указан'}
-								</p>
-								{!isAdmin && (
-									<p className="text-xs mt-2 text-teal-600 font-bold">
-										Номера: {hotel.rooms?.length || 0} /{' '}
-										{currentUser?.limits?.maxRooms}
+							<div className="flex justify-between items-start">
+								<div>
+									<h3 className="font-bold text-xl text-gray-800">
+										{hotel.name}
+									</h3>
+									<p className="text-sm text-gray-500">
+										{cities.find((c: any) => c.id === hotel.cityId)
+											?.name || 'Город не указан'}
 									</p>
-								)}
+								</div>
+								<div className="flex gap-2">
+									<button
+										onClick={() => {
+											setSelectedHotel(hotel);
+											setIsRoomModalOpen(true);
+										}}
+										className="text-sm bg-teal-50 text-teal-700 px-3 py-1 rounded-lg hover:bg-teal-100 transition"
+									>
+										+ Номер
+									</button>
+									<button
+										onClick={() => handleDeleteHotel(hotel.id)}
+										className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+									>
+										<Trash2 size={18} />
+									</button>
+								</div>
 							</div>
-							<button
-								onClick={() => {
-									setSelectedHotel(hotel);
-									setIsRoomModalOpen(true);
-								}}
-								className="bg-gray-50 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 font-medium border"
-							>
-								+ Добавить номер
-							</button>
+
+							{/* СПИСОК НОМЕРОВ ВНУТРИ КАРТОЧКИ (чтобы видеть изменения) */}
+							{hotel.rooms?.length > 0 && (
+								<div className="border-t pt-3">
+									<p className="text-xs font-semibold text-gray-400 uppercase mb-2">
+										Номера:
+									</p>
+									<div className="grid grid-cols-1 gap-2">
+										{hotel.rooms.map((room: any) => (
+											<div
+												key={room.id}
+												className="flex justify-between items-center bg-gray-50 p-2 rounded-xl text-sm"
+											>
+												<span>
+													{room.type} ({room.price}₽)
+												</span>
+												<button
+													onClick={() =>
+														handleDeleteRoom(
+															hotel.id,
+															room.id,
+														)
+													}
+													className="text-gray-400 hover:text-red-500"
+												>
+													<X size={14} />
+												</button>
+											</div>
+										))}
+									</div>
+								</div>
+							)}
 						</div>
 					))}
 				</div>
@@ -215,25 +306,7 @@ export const ManagerPage = () => {
 					<h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-700">
 						<ClipboardList className="text-blue-600" /> Последние брони
 					</h2>
-					{/* <div className="space-y-4">
-						{myBookings.slice(0, 5).map((book: any) => (
-							<div
-								key={book.id}
-								className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-sm"
-							>
-								<div className="flex justify-between font-bold text-gray-800 mb-1">
-									<span>{book.hotelName}</span>
-									<span className="text-teal-600">{book.price}₽</span>
-								</div>
-								<div className="text-gray-500 text-xs">
-									{book.checkIn} — {book.checkOut}
-								</div>
-								<div className="mt-2 inline-block px-2 py-1 rounded bg-blue-50 text-blue-600 text-[10px] uppercase font-bold">
-									{book.status}
-								</div>
-							</div>
-						))}
-					</div> */}
+
 					<div className="space-y-4">
 						{myBookings.slice(0, 5).map((book: any) => (
 							<div

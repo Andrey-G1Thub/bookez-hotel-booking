@@ -18,3 +18,76 @@ export const fetchCities = () => async (dispatch) => {
 	const data = await response.json();
 	dispatch({ type: SET_CITIES, payload: data });
 };
+// store/actions/hotelActions.js
+
+export const UPDATE_HOTEL_SUCCESS = 'UPDATE_HOTEL_SUCCESS';
+
+// Thunk для обновления комнат (или любых данных отеля)
+export const updateHotelRoomsThunk = (hotelId, updatedRooms) => async (dispatch) => {
+	try {
+		const response = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ rooms: updatedRooms }),
+		});
+
+		if (response.ok) {
+			const updatedHotel = await response.json();
+
+			// Отправляем обновленный объект отеля в редьюсер
+			dispatch({
+				type: UPDATE_HOTEL_SUCCESS,
+				payload: updatedHotel,
+			});
+			return true;
+		}
+	} catch (error) {
+		console.error('Ошибка при обновлении комнат отеля:', error);
+		return false;
+	}
+};
+export const ADD_HOTEL_SUCCESS = 'ADD_HOTEL_SUCCESS';
+export const DELETE_HOTEL_SUCCESS = 'DELETE_HOTEL_SUCCESS';
+
+// Thunk для добавления отеля
+export const addHotelThunk = (hotelData) => async (dispatch) => {
+	try {
+		const response = await fetch('http://localhost:3001/hotels', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(hotelData),
+		});
+
+		if (response.ok) {
+			const savedHotel = await response.json();
+			dispatch({
+				type: ADD_HOTEL_SUCCESS,
+				payload: savedHotel,
+			});
+			return true;
+		}
+	} catch (error) {
+		console.error('Ошибка при добавлении отеля:', error);
+		return false;
+	}
+};
+
+// Thunk для удаления отеля
+export const deleteHotelThunk = (hotelId) => async (dispatch) => {
+	try {
+		const response = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
+			method: 'DELETE',
+		});
+
+		if (response.ok) {
+			dispatch({
+				type: DELETE_HOTEL_SUCCESS,
+				payload: hotelId,
+			});
+			return true;
+		}
+	} catch (error) {
+		console.error('Ошибка при удалении отеля:', error);
+		return false;
+	}
+};
