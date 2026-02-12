@@ -7,10 +7,13 @@ import {
 	deleteHotelThunk,
 	updateHotelRoomsThunk,
 } from '../../store/actions/hotelActions';
+import { deleteBookingThunk } from '../../store/actions/bookingActions';
 
 export const ManagerPage = () => {
 	const { currentUser } = useSelector((state: any) => state.users);
 	const dispatch = useDispatch();
+
+	const isAdmin = currentUser?.role === ROLES.ADMIN;
 
 	const [myHotels, setMyHotels] = useState([]);
 	const [myBookings, setMyBookings] = useState([]);
@@ -51,8 +54,6 @@ export const ManagerPage = () => {
 		if (success) {
 			// Мгновенно убираем из списка
 			setMyHotels((prev) => prev.filter((h: any) => h.id !== hotelId));
-			// Также стоит отфильтровать бронирования этого отеля в UI
-			// setMyBookings((prev) => prev.filter((b: any) => b.hotelId !== hotelId));
 		}
 	};
 
@@ -80,11 +81,9 @@ export const ManagerPage = () => {
 				payload: { id: hotelId, rooms: updatedRooms },
 			});
 		}
-		// 2. ОБЯЗАТЕЛЬНО: Обновляем Redux
-		// Если у вас есть готовый action для обновления отеля, используйте его.
-		// Если нет, можно отправить временный экшен (зависит от вашего store):
+
 		dispatch({
-			type: 'hotels/updateHotel', // Укажите ваш тип экшена
+			type: 'hotels/updateHotel', //  тип экшена
 			payload: { id: selectedHotel.id, rooms: updatedRooms },
 		});
 
@@ -92,11 +91,27 @@ export const ManagerPage = () => {
 		setNewRoom({ type: '', capacity: 2, price: '', amenities: '' });
 	};
 
+	// --- ФУНКЦИЯ УДАЛЕНИЯ БРОНИ ---
+	const handleDeleteBooking = async (bookingId: number) => {
+		if (!window.confirm('Вы уверены, что хотите отменить это бронирование?')) return;
+
+		// Вызываем ваш санк (убедитесь, что он возвращает true/false или используйте .then)
+		await dispatch(deleteBookingThunk(bookingId));
+
+		// Обновляем локальный стейт, чтобы бронь исчезла из списка
+		setMyBookings((prev) => prev.filter((b) => b.id !== bookingId));
+	};
+
+	// --- ИЗМЕНЕННЫЙ FETCH DATA ---
 	useEffect(() => {
 		const fetchData = async () => {
-			// 1. Отели и Города
+			// ЛОГИКА URL: Если админ - берем все отели, если менеджер - только его
+			const hotelsUrl = isAdmin
+				? `http://localhost:3001/hotels`
+				: `http://localhost:3001/hotels?ownerId=${currentUser.id}`;
+
 			const [hRes, cRes, bRes, uRes] = await Promise.all([
-				fetch(`http://localhost:3001/hotels?ownerId=${currentUser.id}`),
+				fetch(hotelsUrl),
 				fetch(`http://localhost:3001/cities`),
 				fetch(`http://localhost:3001/bookings`),
 				fetch(`http://localhost:3001/users`),
@@ -109,14 +124,17 @@ export const ManagerPage = () => {
 
 			setMyHotels(hotelsData);
 			setCities(citiesData);
-			setUsers(allUsers); // Сохраняем пользователей в стейт
 
 			// СКЛЕИВАЕМ ДАННЫЕ:
 			const enrichedBookings = allBookings
-				.filter((b: any) => hotelsData.some((h: any) => h.id === b.hotelId))
+				.filter((b: any) => {
+					// Если админ - видим вообще все брони
+					if (isAdmin) return true;
+					// Если менеджер - только брони в его отелях
+					return hotelsData.some((h: any) => h.id === b.hotelId);
+				})
 				.map((book: any) => ({
 					...book,
-					// Сразу находим клиента и кладем его в объект брони
 					client: allUsers.find((u: any) => u.id === book.userId) || null,
 				}));
 
@@ -124,10 +142,10 @@ export const ManagerPage = () => {
 		};
 
 		if (currentUser?.id) fetchData();
-	}, [currentUser]);
+	}, [currentUser, isAdmin]); // добавили isAdmin в зависимости
 
 	// ЛОГИКА: Админ может всегда, Менеджер - по лимиту
-	const isAdmin = currentUser?.role === ROLES.ADMIN;
+	// const isAdmin = currentUser?.role === ROLES.ADMIN;
 	const canAddHotel =
 		isAdmin || myHotels.length < (currentUser?.limits?.maxHotels || 0);
 
@@ -301,24 +319,33 @@ export const ManagerPage = () => {
 					))}
 				</div>
 
-				{/* Бронирования */}
+				{/* ПРАВАЯ КОЛОНКА: БРОНИРОВАНИЯ */}
 				<div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 h-fit">
 					<h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-700">
-						<ClipboardList className="text-blue-600" /> Последние брони
+						<ClipboardList className="text-blue-600" />
+						{isAdmin ? 'Все бронирования' : 'Последние брони'}
 					</h2>
 
 					<div className="space-y-4">
-						{myBookings.slice(0, 5).map((book: any) => (
+						{myBookings.map((book: any) => (
 							<div
 								key={book.id}
-								className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-sm"
+								className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-sm relative group"
 							>
-								<div className="flex justify-between font-bold text-gray-800 mb-1">
+								{/* КНОПКА УДАЛЕНИЯ БРОНИ (Видна всем менеджерам/админам в этой панели) */}
+								<button
+									onClick={() => handleDeleteBooking(book.id)}
+									className="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 transition-colors"
+									title="Удалить бронирование"
+								>
+									<Trash2 size={16} />
+								</button>
+
+								<div className="flex justify-between font-bold text-gray-800 mb-1 pr-6">
 									<span>{book.hotelName}</span>
 									<span className="text-teal-600">{book.price}₽</span>
 								</div>
 
-								{/* Информация о клиенте — данные уже внутри book! */}
 								<div className="mb-2 p-2 bg-gray-50 rounded-lg border border-gray-100">
 									<p className="font-semibold text-gray-700">
 										Клиент: {book.client?.name || 'Неизвестный'}
@@ -342,6 +369,11 @@ export const ManagerPage = () => {
 								</div>
 							</div>
 						))}
+						{myBookings.length === 0 && (
+							<p className="text-center text-gray-400 py-10">
+								Бронирований пока нет
+							</p>
+						)}
 					</div>
 				</div>
 			</div>

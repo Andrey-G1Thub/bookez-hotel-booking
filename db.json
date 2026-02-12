@@ -45,56 +45,7 @@
       "id": 1770884566098
     }
   ],
-  "bookings": [
-    {
-      "id": 1770884242115,
-      "userId": 1770884155361,
-      "hotelId": 1770824082888,
-      "roomId": 1770824104163,
-      "hotelName": "ADMIN №1",
-      "roomType": "1",
-      "checkIn": "2026-02-12",
-      "checkOut": "2026-02-26",
-      "price": 14,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770885343915,
-      "userId": 1770884566098,
-      "hotelId": 1770885194895,
-      "roomId": 1770885293802,
-      "hotelName": "HOTEL-Lena 2",
-      "roomType": "Стандарт",
-      "checkIn": "2026-02-12",
-      "checkOut": "2026-02-19",
-      "price": 7777,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770886411667,
-      "userId": 1770884566098,
-      "hotelId": 1770824082888,
-      "roomId": 1770824104163,
-      "hotelName": "ADMIN №1",
-      "roomType": "1",
-      "checkIn": "2026-02-12",
-      "checkOut": "2026-02-19",
-      "price": 7,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1770886727655,
-      "userId": 1770884155361,
-      "hotelId": 1770824082888,
-      "roomId": 1770824104163,
-      "hotelName": "ADMIN №1",
-      "roomType": "1",
-      "checkIn": "2026-02-19",
-      "checkOut": "2026-02-22",
-      "price": 3,
-      "status": "Подтверждено"
-    }
-  ],
+  "bookings": [],
   "cities": [
     {
       "id": 1,
@@ -394,26 +345,6 @@
       "rooms": []
     },
     {
-      "name": "ADMIN №1",
-      "cityId": 1,
-      "description": "хорошо",
-      "priceFrom": 3333,
-      "id": 1770824082888,
-      "ownerId": 1770711015637,
-      "rating": 5,
-      "reviewCount": 0,
-      "rooms": [
-        {
-          "type": "1",
-          "capacity": 2,
-          "price": 1,
-          "amenities": "",
-          "id": 1770824104163,
-          "hotelId": 1770824082888
-        }
-      ]
-    },
-    {
       "name": "HOTEL-Lena 1",
       "cityId": 1,
       "description": "good",
@@ -430,26 +361,6 @@
           "amenities": "яблоки",
           "id": 1770885125194,
           "hotelId": 1770884862418
-        }
-      ]
-    },
-    {
-      "name": "HOTEL-Lena 2",
-      "cityId": 1,
-      "description": "good\n",
-      "priceFrom": 3333,
-      "id": 1770885194895,
-      "ownerId": 1770832348065,
-      "rating": 5,
-      "reviewCount": 0,
-      "rooms": [
-        {
-          "type": "Стандарт",
-          "capacity": 2,
-          "price": 1111,
-          "amenities": "Орехи",
-          "id": 1770885293802,
-          "hotelId": 1770885194895
         }
       ]
     }
