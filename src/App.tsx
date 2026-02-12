@@ -14,7 +14,7 @@ import { RoomBookingPage } from './pages/roomBookingPage/RoomBookingPage';
 import './App.css';
 import { SET_USER } from './store/actions/userActions';
 import { fetchHotels } from './store/actions/hotelActions';
-import { fetchBookings } from './store/actions/bookingActions';
+import { fetchBookings, fetchBookingsThunk } from './store/actions/bookingActions';
 import { fetchCities } from './store/actions/hotelActions';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRouter';
@@ -37,7 +37,7 @@ export const App = () => {
 		if (savedUser) {
 			const user = JSON.parse(savedUser);
 			dispatch({ type: SET_USER, payload: user });
-			dispatch(fetchBookings(user.id));
+			dispatch(fetchBookingsThunk(user.id));
 		}
 	}, [dispatch]);
 

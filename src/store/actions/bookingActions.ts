@@ -3,7 +3,7 @@ export const ADD_BOOKING = 'ADD_BOOKING';
 export const DELETE_BOOKING = 'DELETE_BOOKING';
 
 // GET - получение данных
-export const fetchBookings = (userId) => async (dispatch) => {
+export const fetchBookingsThunk = (userId) => async (dispatch) => {
 	try {
 		// Если userId не передан, мы можем либо не грузить ничего,
 		// либо грузить всё (если это админ). Для обычного юзера фильтруем:

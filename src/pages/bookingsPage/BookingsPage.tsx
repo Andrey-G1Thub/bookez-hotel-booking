@@ -1,7 +1,10 @@
 import { Hotel } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteBookingThunk } from '../../store/actions/bookingActions';
-import { useMemo } from 'react';
+import {
+	deleteBookingThunk,
+	fetchBookingsThunk,
+} from '../../store/actions/bookingActions';
+import { useEffect, useMemo } from 'react';
 
 export const BookingsPage = () => {
 	const dispatch = useDispatch();
@@ -9,7 +12,11 @@ export const BookingsPage = () => {
 	// Получаем список всех бронирований из Redux
 	const allBookings = useSelector((state) => state.bookings.list);
 	const currentUser = useSelector((state) => state.users.currentUser);
-	// Фильтрация (логику оставляем ту же, но данные из Store)
+
+	//  Загружаем бронирования при заходе на страницу
+	useEffect(() => {
+		dispatch(fetchBookingsThunk());
+	}, [dispatch]);
 
 	const activeBookings = useMemo(() => {
 		if (!currentUser) return [];

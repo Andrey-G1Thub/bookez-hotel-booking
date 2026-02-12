@@ -47,18 +47,6 @@
   ],
   "bookings": [
     {
-      "id": 1770809979691,
-      "userId": 1770711015637,
-      "hotelId": 102,
-      "roomId": 2001,
-      "hotelName": "Геническ отель № 2",
-      "roomType": "Семейный",
-      "checkIn": "2026-02-11",
-      "checkOut": "2026-02-18",
-      "price": 49000,
-      "status": "Подтверждено"
-    },
-    {
       "id": 1770884242115,
       "userId": 1770884155361,
       "hotelId": 1770824082888,
@@ -80,6 +68,30 @@
       "checkIn": "2026-02-12",
       "checkOut": "2026-02-19",
       "price": 7777,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1770886411667,
+      "userId": 1770884566098,
+      "hotelId": 1770824082888,
+      "roomId": 1770824104163,
+      "hotelName": "ADMIN №1",
+      "roomType": "1",
+      "checkIn": "2026-02-12",
+      "checkOut": "2026-02-19",
+      "price": 7,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1770886727655,
+      "userId": 1770884155361,
+      "hotelId": 1770824082888,
+      "roomId": 1770824104163,
+      "hotelName": "ADMIN №1",
+      "roomType": "1",
+      "checkIn": "2026-02-19",
+      "checkOut": "2026-02-22",
+      "price": 3,
       "status": "Подтверждено"
     }
   ],
@@ -400,17 +412,6 @@
           "hotelId": 1770824082888
         }
       ]
-    },
-    {
-      "name": "ADMIN 3",
-      "cityId": 1,
-      "description": "guud",
-      "priceFrom": 1111,
-      "id": 1770830316297,
-      "ownerId": 1770711015637,
-      "rating": 5,
-      "reviewCount": 0,
-      "rooms": []
     },
     {
       "name": "HOTEL-Lena 1",
