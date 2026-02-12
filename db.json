@@ -9,28 +9,40 @@
       "id": 1770711015637
     },
     {
-      "name": "user1",
-      "email": "user1@user",
-      "phone": "+99000000001",
-      "password": "111111",
-      "role": "manager",
-      "id": 1770718214721,
-      "limits": {
-        "maxHotels": 1,
-        "maxRooms": 5
-      }
-    },
-    {
       "name": "Lena",
       "email": "lena@lena",
       "phone": "+99011111111",
+      "password": "111111",
+      "role": "manager",
+      "limits": {
+        "maxHotels": 2,
+        "maxRooms": 5
+      },
+      "id": 1770832348065
+    },
+    {
+      "name": "user1",
+      "email": "user1@user",
+      "phone": "+9901111110",
       "password": "111111",
       "role": "user",
       "limits": {
         "maxHotels": 0,
         "maxRooms": 0
       },
-      "id": 1770832348065
+      "id": 1770884155361
+    },
+    {
+      "name": "user2",
+      "email": "user2@user",
+      "phone": "+9901",
+      "password": "111111",
+      "role": "user",
+      "limits": {
+        "maxHotels": 0,
+        "maxRooms": 0
+      },
+      "id": 1770884566098
     }
   ],
   "bookings": [
@@ -44,6 +56,30 @@
       "checkIn": "2026-02-11",
       "checkOut": "2026-02-18",
       "price": 49000,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1770884242115,
+      "userId": 1770884155361,
+      "hotelId": 1770824082888,
+      "roomId": 1770824104163,
+      "hotelName": "ADMIN №1",
+      "roomType": "1",
+      "checkIn": "2026-02-12",
+      "checkOut": "2026-02-26",
+      "price": 14,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1770885343915,
+      "userId": 1770884566098,
+      "hotelId": 1770885194895,
+      "roomId": 1770885293802,
+      "hotelName": "HOTEL-Lena 2",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-12",
+      "checkOut": "2026-02-19",
+      "price": 7777,
       "status": "Подтверждено"
     }
   ],
@@ -375,6 +411,46 @@
       "rating": 5,
       "reviewCount": 0,
       "rooms": []
+    },
+    {
+      "name": "HOTEL-Lena 1",
+      "cityId": 1,
+      "description": "good",
+      "priceFrom": 1111,
+      "id": 1770884862418,
+      "ownerId": 1770832348065,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": [
+        {
+          "type": "стандарт",
+          "capacity": 2,
+          "price": 2222,
+          "amenities": "яблоки",
+          "id": 1770885125194,
+          "hotelId": 1770884862418
+        }
+      ]
+    },
+    {
+      "name": "HOTEL-Lena 2",
+      "cityId": 1,
+      "description": "good\n",
+      "priceFrom": 3333,
+      "id": 1770885194895,
+      "ownerId": 1770832348065,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": [
+        {
+          "type": "Стандарт",
+          "capacity": 2,
+          "price": 1111,
+          "amenities": "Орехи",
+          "id": 1770885293802,
+          "hotelId": 1770885194895
+        }
+      ]
     }
   ]
 }

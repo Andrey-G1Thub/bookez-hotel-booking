@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllUsersThunk, updateUserRoleThunk } from '../../store/actions/userActions';
+import {
+	deleteUserThunk,
+	fetchAllUsersThunk,
+	updateUserRoleThunk,
+} from '../../store/actions/userActions';
 import { ROLES } from '../../utils/permissions';
 // import { ROLES } from '../../utils/roles'; //
 
@@ -36,6 +40,13 @@ export const AdminPage = () => {
 		};
 
 		dispatch(updateUserRoleThunk(userId, currentRole, newLimits));
+	};
+
+	// НОВАЯ ФУНКЦИЯ УДАЛЕНИЯ
+	const handleDeleteUser = (userId: number, userName: string) => {
+		if (window.confirm(`Вы уверены, что хотите удалить пользователя ${userName}?`)) {
+			dispatch(deleteUserThunk(userId));
+		}
 	};
 
 	return (
@@ -82,6 +93,7 @@ export const AdminPage = () => {
 										{user.role}
 									</span>
 								</td>
+
 								<td className="p-4">
 									<select
 										value={user.role}
@@ -142,6 +154,21 @@ export const AdminPage = () => {
 									) : (
 										<div className="text-center text-gray-300">—</div>
 									)}
+								</td>
+								<td className="p-4">
+									<button
+										onClick={() =>
+											handleDeleteUser(user.id, user.name)
+										}
+										disabled={user.id === currentUser?.id} // Себя удалять нельзя
+										className={`px-3 py-1 rounded text-white transition ${
+											user.id === currentUser?.id
+												? 'bg-gray-300 cursor-not-allowed'
+												: 'bg-red-500 hover:bg-red-600'
+										}`}
+									>
+										Удалить
+									</button>
 								</td>
 							</tr>
 						))}

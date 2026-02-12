@@ -3,6 +3,7 @@ import { ROLES } from '../../utils/permissions';
 export const SET_USER = 'SET_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
 export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS';
+export const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS';
 
 export const loginThunk = (credentials) => async (dispatch) => {
 	try {
@@ -117,5 +118,19 @@ export const fetchAllUsersThunk = () => async (dispatch) => {
 		dispatch({ type: FETCH_USERS_SUCCESS, payload: data });
 	} catch (e) {
 		console.error('Ошибка при загрузке пользователей:', e);
+	}
+};
+export const deleteUserThunk = (userId: number) => async (dispatch: any) => {
+	try {
+		// 1. Запрос к API
+		const res = await fetch(`http://localhost:3001/users/${userId}`, {
+			method: 'DELETE',
+		});
+		if (res.ok) {
+			// 2. Если запрос успешен, обновляем стор
+			dispatch({ type: DELETE_USER_SUCCESS, payload: userId });
+		}
+	} catch (error) {
+		console.error('Ошибка при удалении пользователя:', error);
 	}
 };

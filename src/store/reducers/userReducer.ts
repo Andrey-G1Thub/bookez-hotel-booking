@@ -1,4 +1,9 @@
-import { SET_USER, LOGOUT_USER, FETCH_USERS_SUCCESS } from '../actions/userActions';
+import {
+	SET_USER,
+	LOGOUT_USER,
+	FETCH_USERS_SUCCESS,
+	DELETE_USER_SUCCESS,
+} from '../actions/userActions';
 
 const savedUser = localStorage.getItem('bookez_user');
 
@@ -19,6 +24,15 @@ export const userReducer = (state = initialState, action) => {
 			};
 		case FETCH_USERS_SUCCESS:
 			return { ...state, usersList: action.payload };
+
+		case DELETE_USER_SUCCESS:
+			return {
+				...state,
+				usersList: state.usersList.filter(
+					(user: any) => user.id !== action.payload,
+				),
+			};
+
 		default:
 			return state;
 	}
