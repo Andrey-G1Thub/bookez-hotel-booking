@@ -11,7 +11,8 @@ export const HotelModal = ({
 	setIsModalOpen,
 	handleDeleteHotelPhoto,
 	handleAddHotelPhoto,
-	handleAddHotel,
+	handleSaveHotel,
+	isEditMode,
 }) => {
 	if (!isModalOpen) return null;
 
@@ -24,7 +25,9 @@ export const HotelModal = ({
 				>
 					<X size={24} />
 				</button>
-				<h2 className="text-2xl font-bold mb-6 text-gray-800">Новый отель</h2>
+				<h2 className="text-2xl font-bold mb-6 text-gray-800">
+					{isEditMode ? 'Редактирование отеля' : 'Новый отель'}
+				</h2>
 
 				{/* Секция управления фото отеля внутри модалки */}
 				<div className="mt-4 p-3 bg-gray-50 rounded-xl">
@@ -69,7 +72,7 @@ export const HotelModal = ({
 					</div>
 				</div>
 
-				<form onSubmit={handleAddHotel} className="space-y-4">
+				<form onSubmit={handleSaveHotel} className="space-y-4">
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Название
@@ -174,7 +177,7 @@ export const HotelModal = ({
 						type="submit"
 						className="w-full bg-teal-600 text-white py-4 rounded-xl font-bold hover:bg-teal-700 transition shadow-lg shadow-teal-100"
 					>
-						Создать объект
+						{isEditMode ? 'Обновить данные' : 'Создать отель'}
 					</button>
 				</form>
 			</div>

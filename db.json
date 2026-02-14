@@ -47,39 +47,15 @@
   ],
   "bookings": [
     {
-      "id": 1771066327128,
-      "userId": 1770832348065,
-      "hotelId": 1771066042169,
-      "roomId": 1771066282980,
-      "hotelName": "HOTEL admin 1",
+      "id": 1771075819756,
+      "userId": 1770711015637,
+      "hotelId": 1771071321968,
+      "roomId": 1771074136002,
+      "hotelName": "HOTEL edit 3",
       "roomType": "Стандарт",
       "checkIn": "2026-02-14",
-      "checkOut": "2026-02-17",
-      "price": 3000,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1771066563949,
-      "userId": 1770884155361,
-      "hotelId": 1771066393437,
-      "roomId": 1771066501055,
-      "hotelName": "HOTEL manager 1",
-      "roomType": "Стандарт ",
-      "checkIn": "2026-02-14",
-      "checkOut": "2026-02-16",
-      "price": 4000,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1771066596698,
-      "userId": 1770884155361,
-      "hotelId": 1771066042169,
-      "roomId": 1771066282980,
-      "hotelName": "HOTEL admin 1",
-      "roomType": "Стандарт",
-      "checkIn": "2026-02-17",
-      "checkOut": "2026-02-20",
-      "price": 3000,
+      "checkOut": "2026-02-21",
+      "price": 7000,
       "status": "Подтверждено"
     }
   ],
@@ -107,14 +83,28 @@
   ],
   "hotels": [
     {
-      "name": "HOTEL admin 1",
+      "name": "Теперь нормальное название Отеля",
       "cityId": 1,
-      "description": "Первый отель",
+      "description": "1111",
+      "priceFrom": 111,
+      "images": [],
+      "id": 1771070135324,
+      "ownerId": 1770711015637,
+      "rating": 5,
+      "reviewCount": 0,
+      "comments": [],
+      "rooms": []
+    },
+    {
+      "name": "HOTEL edit 3",
+      "cityId": 1,
+      "description": "редактир",
       "priceFrom": 1000,
       "images": [
-        "https://fastly.picsum.photos/id/142/400/250.jpg?hmac=K22DCZAPDegx54LF0OoWVe70a4jzsbcp5rz6BZDlqbs"
+        "https://fastly.picsum.photos/id/623/400/250.jpg?hmac=5LDRXOCwzb1ZF1GtuATZhmbYPenIsqTNyxfkOhb5tww"
       ],
-      "id": 1771066042169,
+      "comments": [],
+      "id": 1771071321968,
       "ownerId": 1770711015637,
       "rating": 5,
       "reviewCount": 0,
@@ -122,39 +112,36 @@
         {
           "type": "Стандарт",
           "capacity": 2,
-          "price": 1000,
-          "amenities": "Овца",
+          "price": 3000,
+          "amenities": "овощи",
           "images": [
-            "https://fastly.picsum.photos/id/94/400/250.jpg?hmac=-r0BB5946Fi-Os3LS6Vy6uX2DlDtaVNDrHsDUeCiGAM"
+            "https://fastly.picsum.photos/id/259/400/250.jpg?hmac=5UUqYeg2NY3hvrzdFrun6bxjSmiUXZKvoKkHaDQibmw"
           ],
-          "id": 1771066282980,
-          "hotelId": 1771066042169
+          "id": 1771074136002,
+          "hotelId": 1771071321968
         }
       ]
     },
     {
-      "name": "HOTEL manager 1",
+      "name": "12",
       "cityId": 1,
-      "description": "Первый отель",
-      "priceFrom": 2000,
-      "images": [
-        "https://fastly.picsum.photos/id/623/400/250.jpg?hmac=5LDRXOCwzb1ZF1GtuATZhmbYPenIsqTNyxfkOhb5tww"
-      ],
-      "id": 1771066393437,
-      "ownerId": 1770832348065,
+      "description": "12",
+      "priceFrom": "12",
+      "images": [],
+      "comments": [],
+      "id": 1771079927889,
+      "ownerId": 1770711015637,
       "rating": 5,
       "reviewCount": 0,
       "rooms": [
         {
-          "type": "Стандарт ",
+          "type": "12",
           "capacity": 2,
-          "price": 2000,
-          "amenities": "вертолет",
-          "images": [
-            "https://fastly.picsum.photos/id/907/400/250.jpg?hmac=rTKzlax1i9VrXqtDQu6DNJDlzIfcn7cIud0VRbySW5Q"
-          ],
-          "id": 1771066501055,
-          "hotelId": 1771066393437
+          "price": 12,
+          "amenities": "",
+          "images": [],
+          "id": 1771079940806,
+          "hotelId": 1771079927889
         }
       ]
     }

@@ -1,15 +1,17 @@
-import { X } from 'lucide-react';
+import { Edit3, Trash2, X } from 'lucide-react';
 
 interface ItemInCardManagerProps {
 	hotel: any;
 	handleDeleteRoom: (hotelId: number, roomId: number) => void;
 	handleAddRoomPhoto: (hotelId: number, roomId: number, url: string) => void;
+	handleEditRoomClick: (hotel: any, room: any) => void;
 }
 
 export const ItemInCardManager = ({
 	hotel,
 	handleDeleteRoom,
 	handleAddRoomPhoto,
+	handleEditRoomClick,
 }: ItemInCardManagerProps) => {
 	// Функция-посредник для обработки клика
 	const onAddPhotoClick = (roomId: number) => {
@@ -38,10 +40,16 @@ export const ItemInCardManager = ({
 								{room.type} ({room.price}₽)
 							</span>
 							<button
-								onClick={() => handleDeleteRoom(hotel.id, room.id)}
-								className="text-gray-400 hover:text-red-500 transition"
+								onClick={() => handleEditRoomClick(hotel, room)}
+								className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition  ml-140"
 							>
-								<X size={16} />
+								<Edit3 size={18} />
+							</button>
+							<button
+								onClick={() => handleDeleteRoom(hotel.id, room.id)}
+								className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+							>
+								<Trash2 size={18} />
 							</button>
 						</div>
 

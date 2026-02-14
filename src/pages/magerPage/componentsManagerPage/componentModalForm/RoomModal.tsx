@@ -10,6 +10,8 @@ export const RoomModal = ({
 	photoUrl,
 	setPhotoUrl,
 	handleRemovePhotoFromNewRoom,
+	isEditMode,
+	handleOpenCreateModal,
 }) => {
 	if (!isRoomModalOpen) return null;
 
@@ -32,7 +34,9 @@ export const RoomModal = ({
 					<X size={24} />
 				</button>
 
-				<h2 className="text-2xl font-bold mb-1 text-gray-800">Добавить номер</h2>
+				<h2 className="text-2xl font-bold mb-1 text-gray-800">
+					{isEditMode ? 'Редактировать номер' : 'Добавить номер'}
+				</h2>
 				<p className="text-sm text-gray-500 mb-6">Отель: {selectedHotel?.name}</p>
 
 				<form onSubmit={handleAddRoom} className="space-y-4">
@@ -160,7 +164,7 @@ export const RoomModal = ({
 						type="submit"
 						className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100"
 					>
-						Сохранить номер
+						{isEditMode ? 'Сохранить изменения' : 'Создать номер'}
 					</button>
 				</form>
 			</div>

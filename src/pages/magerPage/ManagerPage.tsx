@@ -37,7 +37,7 @@ export const ManagerPage = () => {
 		description: '',
 		priceFrom: '',
 		images: [],
-		comments: '',
+		comments: [],
 	});
 	const [selectedHotel, setSelectedHotel] = useState<any>(null); // Для какой комнаты открыта модалка
 	const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
@@ -48,8 +48,12 @@ export const ManagerPage = () => {
 		amenities: '',
 		images: [],
 	});
-	const [users, setUsers] = useState([]);
+
 	const [photoUrl, setPhotoUrl] = useState('');
+
+	const [isEditMode, setIsEditMode] = useState(false); // Режим редактирования или создания
+	const [editingHotelId, setEditingHotelId] = useState<number | null>(null);
+	const [editingRoomId, setEditingRoomId] = useState<number | null>(null);
 
 	const myHotels = isAdmin
 		? allHotels
@@ -68,20 +72,10 @@ export const ManagerPage = () => {
 		if (!window.confirm('Вы уверены, что хотите удалить этот отель?')) return;
 
 		const success = await dispatch(deleteHotelThunk(hotelId));
-
-		if (success) {
-			// Мгновенно убираем из списка
-			// setMyHotels((prev) => prev.filter((h: any) => h.id !== hotelId));
-		}
 	};
 
 	// --- ФУНКЦИЯ УДАЛЕНИЯ НОМЕРА ---
 	const handleDeleteRoom = async (hotelId: number, roomId: number) => {
-		// Добавляем проверку (Optional Chaining или if)
-		// if (!selectedHotel || !selectedHotel.id) {
-		// 	console.error('Отель не выбран!');
-		// 	return;
-		// }
 		// Проверка: забронирован ли именно этот номер?
 		const isRoomBooked = myBookings.some((b: any) => b.roomId === roomId);
 
@@ -107,7 +101,7 @@ export const ManagerPage = () => {
 
 		dispatch({
 			type: 'hotels/updateHotel', //  тип экшена
-			payload: { id: selectedHotel.id, rooms: updatedRooms },
+			payload: { id: hotelId, rooms: updatedRooms },
 		});
 
 		setIsRoomModalOpen(false);
@@ -133,9 +127,6 @@ export const ManagerPage = () => {
 			updateHotelThunk(hotelId, { images: updatedImages }),
 		);
 		if (success) {
-			// setMyHotels((prev) =>
-			// 	prev.map((h) => (h.id === hotelId ? { ...h, images: updatedImages } : h)),
-			// );
 		}
 	};
 	const handleAddHotelPhoto = async (hotelId: number) => {
@@ -149,9 +140,6 @@ export const ManagerPage = () => {
 			updateHotelThunk(hotelId, { images: updatedImages }),
 		);
 		if (success) {
-			// setMyHotels((prev) =>
-			// 	prev.map((h) => (h.id === hotelId ? { ...h, images: updatedImages } : h)),
-			// );
 			// Если фото добавлялось в модалке, обновляем и выделенный отель
 			if (selectedHotel?.id === hotelId) {
 				setSelectedHotel({ ...selectedHotel, images: updatedImages });
@@ -159,40 +147,70 @@ export const ManagerPage = () => {
 			setPhotoUrl('');
 		}
 	};
+	// 1. Функция для открытия модалки редактирования номера
+	const handleEditRoomClick = (hotel, room) => {
+		setSelectedHotel(hotel); // Запоминаем, в каком отеле номер
+		setIsEditMode(true);
+		setEditingRoomId(room.id);
+
+		setNewRoom({
+			type: room.type,
+			capacity: room.capacity,
+			price: room.price,
+			amenities: room.amenities,
+			images: room.images || [],
+		});
+
+		setIsRoomModalOpen(true);
+	};
+
+	// 2. Обновленная функция сохранения номера
 	const handleAddRoom = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		// 1. Находим актуальный отель из Redux (allHotels)
 		const hotelToUpdate = allHotels.find((h) => h.id === selectedHotel.id);
 		if (!hotelToUpdate) return;
 
-		// 2. Проверка лимитов (для менеджеров)
-		const maxRooms = currentUser.limits?.maxRooms || 0;
-		if (!isAdmin && hotelToUpdate.rooms?.length >= maxRooms) {
-			alert(`Превышен лимит номеров! Ваш максимум: ${maxRooms}`);
-			return;
+		let updatedRooms;
+
+		if (isEditMode && editingRoomId) {
+			// РЕЖИМ РЕДАКТИРОВАНИЯ
+			updatedRooms = hotelToUpdate.rooms.map((room) =>
+				room.id === editingRoomId
+					? {
+							...room,
+							...newRoom,
+							price: Number(newRoom.price),
+							capacity: Number(newRoom.capacity),
+						}
+					: room,
+			);
+		} else {
+			// РЕЖИМ СОЗДАНИЯ
+			const maxRooms = currentUser.limits?.maxRooms || 0;
+			if (!isAdmin && (hotelToUpdate.rooms?.length || 0) >= maxRooms) {
+				alert(`Превышен лимит номеров! Ваш максимум: ${maxRooms}`);
+				return;
+			}
+
+			const roomData = {
+				...newRoom,
+				id: Date.now(),
+				hotelId: hotelToUpdate.id,
+				price: Number(newRoom.price),
+				capacity: Number(newRoom.capacity),
+			};
+			updatedRooms = [...(hotelToUpdate.rooms || []), roomData];
 		}
 
-		// 3. Формируем объект новой комнаты (фото уже внутри newRoom.images)
-		const roomData = {
-			...newRoom,
-			id: Date.now(),
-			hotelId: hotelToUpdate.id,
-			price: Number(newRoom.price),
-			capacity: Number(newRoom.capacity),
-		};
-
-		// 4. Создаем новый массив комнат
-		const updatedRooms = [...(hotelToUpdate.rooms || []), roomData];
-
-		// 5. Отправляем в Redux (Санк сам сделает PATCH на сервер и обновит Store)
 		const success = await dispatch(
 			updateHotelRoomsThunk(hotelToUpdate.id, updatedRooms),
 		);
 
 		if (success) {
 			setIsRoomModalOpen(false);
-			// Сбрасываем форму
+			setIsEditMode(false);
+			setEditingRoomId(null);
 			setNewRoom({ type: '', capacity: 2, price: '', amenities: '', images: [] });
 		}
 	};
@@ -221,13 +239,10 @@ export const ManagerPage = () => {
 		);
 
 		if (success) {
-			// Обновляем локальный стейт только после успеха
-			// setMyHotels((prev) =>
-			// 	prev.map((h) => (h.id === hotelId ? { ...h, rooms: updatedRooms } : h)),
-			// );
 			setPhotoUrl('');
 		}
 	};
+
 	// --- ИЗМЕНЕННЫЙ FETCH DATA ---
 	useEffect(() => {
 		// 1. Просто просим Redux загрузить данные
@@ -267,34 +282,44 @@ export const ManagerPage = () => {
 	const canAddHotel =
 		isAdmin || myHotels.length < (currentUser?.limits?.maxHotels || 0);
 
-	const handleAddHotel = async (e: React.FormEvent) => {
+	const handleSaveHotel = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		const hotelToSave = {
-			...newHotel,
-			id: Date.now(),
-			ownerId: currentUser.id,
-			cityId: Number(newHotel.cityId),
-			priceFrom: Number(newHotel.priceFrom),
-			rating: 5,
-			reviewCount: 0,
-			comments: newHotel.comments || '',
-			rooms: [],
-			images: newHotel.images.length > 0 ? newHotel.images : [],
-		};
+		if (isEditMode && editingHotelId) {
+			// Логика ОБНОВЛЕНИЯ
+			const success = await dispatch(updateHotelThunk(editingHotelId, newHotel));
+			if (success) {
+				setIsModalOpen(false);
+				setIsEditMode(false);
+			}
+		} else {
+			const hotelToSave = {
+				...newHotel,
+				id: Date.now(),
+				ownerId: currentUser.id,
+				cityId: Number(newHotel.cityId),
+				priceFrom: Number(newHotel.priceFrom),
+				rating: 5,
+				reviewCount: 0,
+				comments: newHotel.comments || [],
+				rooms: [],
+				images: newHotel.images.length > 0 ? newHotel.images : [],
+			};
 
-		const success = await dispatch(addHotelThunk(hotelToSave));
+			const success = await dispatch(addHotelThunk(hotelToSave));
 
-		if (success) {
-			// setMyHotels((myHotels) => [...myHotels, hotelToSave]);
-			setIsModalOpen(false);
-			setNewHotel({
-				name: '',
-				cityId: '',
-				description: '',
-				priceFrom: '',
-				images: [],
-			});
+			if (success) {
+				// setMyHotels((myHotels) => [...myHotels, hotelToSave]);
+				setIsModalOpen(false);
+				setNewHotel({
+					name: '',
+					cityId: '',
+					description: '',
+					priceFrom: '',
+					images: [],
+					comments: [],
+				});
+			}
 		}
 	};
 
@@ -304,6 +329,43 @@ export const ManagerPage = () => {
 			...prev,
 			images: prev.images.filter((img) => img !== urlToRemove),
 		}));
+	};
+
+	const handleEditHotelClick = (hotel: any) => {
+		setIsEditMode(true);
+		setEditingHotelId(hotel.id);
+		setNewHotel({
+			name: hotel.name,
+			cityId: hotel.cityId,
+			description: hotel.description,
+			priceFrom: hotel.priceFrom,
+			images: hotel.images || [],
+			comments: hotel.comments || [],
+		});
+		setIsModalOpen(true);
+	};
+
+	const handleOpenCreateModal = () => {
+		setIsEditMode(false);
+		setNewHotel({
+			/* пустой объект */
+		});
+		setIsModalOpen(true);
+	};
+	// Функция для открытия модалки создания НОМЕРА
+	const handleOpenAddRoomModal = (hotel) => {
+		setSelectedHotel(hotel); // Устанавливаем отель, в который добавляем
+		setIsEditMode(false); // СБРАСЫВАЕМ режим редактирования
+		setEditingRoomId(null); // Очищаем ID редактируемого номера
+		setNewRoom({
+			// Очищаем поля формы
+			type: '',
+			capacity: 2,
+			price: '',
+			amenities: '',
+			images: [],
+		});
+		setIsRoomModalOpen(true);
 	};
 
 	return (
@@ -332,15 +394,17 @@ export const ManagerPage = () => {
 							<HotelCardInManagerPage
 								hotel={hotel}
 								cities={cities}
-								setIsRoomModalOpen={setIsRoomModalOpen}
+								handleOpenAddRoomModal={handleOpenAddRoomModal}
 								setSelectedHotel={setSelectedHotel}
 								handleDeleteHotel={handleDeleteHotel}
+								handleEditHotelClick={handleEditHotelClick}
 							/>
 							{/* СПИСОК НОМЕРОВ ВНУТРИ КАРТОЧКИ */}
 							<ItemInCardManager
 								hotel={hotel}
 								handleDeleteRoom={handleDeleteRoom}
 								handleAddRoomPhoto={handleAddRoomPhoto}
+								handleEditRoomClick={handleEditRoomClick}
 							/>
 						</div>
 					))}
@@ -368,7 +432,8 @@ export const ManagerPage = () => {
 				setIsModalOpen={setIsModalOpen}
 				handleDeleteHotelPhoto={handleDeleteHotelPhoto}
 				handleAddHotelPhoto={handleAddHotelPhoto}
-				handleAddHotel={handleAddHotel}
+				handleSaveHotel={handleSaveHotel}
+				isEditMode={isEditMode}
 			/>
 			{/* Модалка добавления номера */}
 
@@ -382,6 +447,8 @@ export const ManagerPage = () => {
 				photoUrl={photoUrl}
 				setPhotoUrl={setPhotoUrl}
 				handleRemovePhotoFromNewRoom={handleRemovePhotoFromNewRoom}
+				isEditMode={isEditMode}
+				handleOpenCreateModal={handleOpenCreateModal}
 			/>
 		</div>
 	);

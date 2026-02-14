@@ -1,11 +1,13 @@
-import { Trash2 } from 'lucide-react';
+import { Edit3, Trash2 } from 'lucide-react';
 
 export const HotelCardInManagerPage = ({
 	hotel,
 	cities,
 	setSelectedHotel,
-	setIsRoomModalOpen,
+	// setIsRoomModalOpen,
 	handleDeleteHotel,
+	handleEditHotelClick,
+	handleOpenAddRoomModal,
 }) => (
 	<div className="flex justify-between items-start">
 		<div>
@@ -19,11 +21,18 @@ export const HotelCardInManagerPage = ({
 			<button
 				onClick={() => {
 					setSelectedHotel(hotel);
-					setIsRoomModalOpen(true);
+					// setIsRoomModalOpen(true);
+					handleOpenAddRoomModal(hotel);
 				}}
 				className="text-sm bg-teal-50 text-teal-700 px-3 py-1 rounded-lg hover:bg-teal-100 transition"
 			>
 				+ Номер
+			</button>
+			<button
+				onClick={() => handleEditHotelClick(hotel)}
+				className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+			>
+				<Edit3 size={18} />
 			</button>
 			<button
 				onClick={() => handleDeleteHotel(hotel.id)}

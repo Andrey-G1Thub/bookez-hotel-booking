@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// <!-- /\*_ Главная страница с поиском и каталогом городов/отелей _/
+//  Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = () => {
 	const navigate = useNavigate();
 	const { allHotels, cities } = useSelector((state) => state.hotels);
