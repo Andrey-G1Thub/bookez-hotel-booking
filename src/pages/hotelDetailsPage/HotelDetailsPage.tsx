@@ -1,25 +1,59 @@
 // /\*_ Страница деталей отеля: список номеров _/;
 
-import { ChevronRight, MapPin, Star, User } from 'lucide-react';
+import {
+	ChevronRight,
+	MapPin,
+	MessageSquare,
+	Send,
+	Star,
+	Trash2,
+	User,
+} from 'lucide-react';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
 import { Rating } from '../../components/index.js';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useRef } from 'react';
+import { addCommentThunk, deleteCommentThunk } from '../../store/actions/hotelActions.js';
 
 export const HotelDetailsPage = () => {
-	const navigate = useNavigate();
 	const { hotelId } = useParams();
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const commentsRef = useRef(null); // Для скролла к комментариям
 
 	const { allHotels, cities } = useSelector((state) => state.hotels);
+	const user = useSelector((state) => state.users.currentUser);
 
 	const hotel = allHotels.find((h) => Number(h.id) === Number(hotelId));
-
-	const rooms = hotel?.rooms || [];
-
-	// Ищем город по ID, который указан в объекте отеля
 	const city = cities.find((c) => Number(c.id) === Number(hotel?.cityId));
 
 	if (!hotel) return <NotFoundPage message="Отель не найден." />;
+
+	const comments = hotel.comments || [];
+	const rooms = hotel?.rooms || [];
+
+	const handleAddComment = (e) => {
+		e.preventDefault();
+		const text = e.target.comment.value;
+		if (!text.trim() || !user) return;
+
+		const newComment = {
+			id: Date.now(),
+			userId: user.id, // ID из db.json (например, 1770884155361)
+			userName: user.name, // Имя из db.json (например, "user1")
+			text: text,
+			date: new Date().toLocaleDateString('ru-RU'),
+		};
+		dispatch(addCommentThunk(hotel.id, newComment));
+		e.target.reset();
+	};
+
+	const handleDeleteComment = (commentId) => {
+		if (window.confirm('Удалить этот отзыв?')) {
+			dispatch(deleteCommentThunk(hotel.id, commentId));
+		}
+	};
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -105,6 +139,81 @@ export const HotelDetailsPage = () => {
 					<ChevronRight className="w-4 h-4 transform rotate-180 mr-1" />
 					Назад
 				</button>
+			</div>
+
+			{/* СЕКЦИЯ КОММЕНТАРИЕВ */}
+			<div id="comments" ref={commentsRef} className="mt-16 border-t pt-10">
+				<h2 className="text-3xl font-bold text-gray-800 mb-8 flex items-center">
+					<MessageSquare className="mr-3 accent-text" />
+					Отзывы ({comments.length})
+				</h2>
+
+				{/* Форма добавления (только для залогиненных) */}
+				{user ? (
+					<form
+						onSubmit={handleAddComment}
+						className="mb-10 bg-gray-50 p-6 rounded-xl border"
+					>
+						<label className="block text-gray-700 font-semibold mb-2">
+							Оставить отзыв
+						</label>
+						<div className="flex gap-4">
+							<textarea
+								name="comment"
+								className="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+								placeholder="Ваше впечатление об отеле..."
+								rows="3"
+							/>
+							<button
+								type="submit"
+								className="self-end p-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
+							>
+								<Send className="w-5 h-5" />
+							</button>
+						</div>
+					</form>
+				) : (
+					<div className="bg-blue-50 p-4 rounded-lg mb-8 text-blue-700">
+						Только зарегистрированные пользователи могут оставлять
+						комментарии.
+					</div>
+				)}
+
+				{/* Список комментариев */}
+				<div className="space-y-6">
+					{comments.length > 0 ? (
+						comments.map((c) => (
+							<div
+								key={c.id}
+								className="bg-white p-5 rounded-lg shadow-sm border flex justify-between"
+							>
+								<div>
+									<div className="flex items-center gap-3 mb-2">
+										<span className="font-bold text-gray-800">
+											{c.userName}
+										</span>
+										<span className="text-sm text-gray-400">
+											{c.date}
+										</span>
+									</div>
+									<p className="text-gray-600">{c.text}</p>
+								</div>
+								{user?.id === c.userId && (
+									<button
+										onClick={() => handleDeleteComment(c.id)}
+										className="text-red-400 hover:text-red-600 transition"
+									>
+										<Trash2 className="w-5 h-5" />
+									</button>
+								)}
+							</div>
+						))
+					) : (
+						<p className="text-gray-400 italic">
+							Пока никто не оставил отзыв. Будьте первыми!
+						</p>
+					)}
+				</div>
 			</div>
 		</div>
 	);

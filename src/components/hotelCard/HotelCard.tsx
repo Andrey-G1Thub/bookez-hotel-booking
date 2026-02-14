@@ -1,10 +1,14 @@
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, MessageSquare } from 'lucide-react';
 import { Rating } from '../rating/Rating';
 import { useNavigate } from 'react-router-dom';
 
 export const HotelCard = ({ hotel }) => {
 	const navigate = useNavigate();
-	// ПРИОРИТЕТ: Если есть массив изображений и он не пуст - берем первое, иначе заглушку
+
+	// Считаем количество отзывов динамически из массива comments
+	// Если массива нет, используем 0
+	const reviewsCount = hotel.comments ? hotel.comments.length : 0;
+
 	const hotelImage =
 		hotel.images && hotel.images.length > 0
 			? hotel.images[0]
@@ -29,7 +33,7 @@ export const HotelCard = ({ hotel }) => {
 				<div className="flex justify-between items-center mt-2">
 					<Rating rating={hotel.rating} />
 					<span className="text-sm text-gray-500">
-						({hotel.reviewCount} отзывов)
+						<MessageSquare className="w-3 h-3 mr-1" />({reviewsCount} отзывов)
 					</span>
 				</div>
 				<p className="text-2xl font-bold accent-text mt-3">
