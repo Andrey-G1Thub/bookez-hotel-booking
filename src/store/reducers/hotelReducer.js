@@ -3,6 +3,7 @@ import {
 	DELETE_HOTEL_SUCCESS,
 	SET_CITIES,
 	SET_HOTELS,
+	UPDATE_HOTEL_ROOM_SUCCESS,
 	UPDATE_HOTEL_SUCCESS,
 } from '../actions/hotelActions';
 
@@ -17,6 +18,7 @@ export const hotelReducer = (state = initialState, action) => {
 			return { ...state, allHotels: action.payload };
 		case SET_CITIES:
 			return { ...state, cities: action.payload };
+		case UPDATE_HOTEL_ROOM_SUCCESS:
 		case UPDATE_HOTEL_SUCCESS:
 			return {
 				...state,
@@ -24,6 +26,7 @@ export const hotelReducer = (state = initialState, action) => {
 					hotel.id === action.payload.id ? action.payload : hotel,
 				),
 			};
+
 		case ADD_HOTEL_SUCCESS:
 			return {
 				...state,

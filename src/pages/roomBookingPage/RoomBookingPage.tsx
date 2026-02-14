@@ -36,13 +36,20 @@ export const RoomBookingPage = () => {
 		return () => clearTimeout(timer);
 	}, []);
 
-	const targetHotelId = Number(hotelId);
-	const targetRoomId = Number(roomId);
+	// const targetHotelId = Number(hotelId);
+	// const targetRoomId = Number(roomId);
 
-	// 1. Сначала ищем отель
-	const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
-	// 2. Затем ищем комнату ВНУТРИ этого отеля
-	const room = hotel?.rooms?.find((r) => Number(r.id) === targetRoomId);
+	// // 1. Сначала ищем отель
+	// const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
+	// // 2. Затем ищем комнату ВНУТРИ этого отеля
+	// const room = hotel?.rooms?.find((r) => Number(r.id) === targetRoomId);
+	// Используем String(), чтобы точно сравнить значения,
+	// даже если одно из них пришло как строка из URL
+	const hotel = allHotels.find((h) => String(h.id) === String(hotelId));
+	const room = hotel?.rooms?.find((r) => String(r.id) === String(roomId));
+
+	const displayHotelId = hotelId || 'не указан';
+	const displayRoomId = roomId || 'не указан';
 
 	// 3. Создаем состояния для дат и итоговой цены
 	const [checkIn, setCheckIn] = useState('');
@@ -102,7 +109,7 @@ export const RoomBookingPage = () => {
 	if (!hotel || !room) {
 		return (
 			<NotFoundPage
-				message={`Отель #${targetHotelId} или номер #${targetRoomId} не найден.`}
+				message={`Отель #${displayHotelId} или номер #${displayRoomId} не найден.`}
 			/>
 		);
 	}
@@ -220,8 +227,25 @@ export const RoomBookingPage = () => {
 			<div className="bg-white p-6 card-shadow grid grid-cols-1 md:grid-cols-2 gap-8">
 				{/* Левая колонка: Детали Номера */}
 				<div>
-					<div className="bg-teal-100 w-full h-48 rounded-xl mb-4 flex items-center justify-center text-teal-700 font-bold text-center p-4">
-						Здесь могло быть фото <br /> {room.type}
+					{/* <div className="bg-teal-100 w-full h-48 rounded-xl mb-4 flex items-center justify-center text-teal-700 font-bold text-center p-4"> */}
+					<div className="w-full h-64 rounded-xl mb-4 overflow-hidden shadow-md">
+						{room.images && room.images.length > 0 ? (
+							<img
+								src={room.images[0]}
+								alt={room.type}
+								className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+								onError={(e) => {
+									e.target.onerror = null;
+									e.target.src =
+										'https://placehold.co/600x400?text=Room+Photo';
+								}}
+							/>
+						) : (
+							<div className="bg-teal-100 w-full h-full flex items-center justify-center text-teal-700 font-bold text-center p-4">
+								Фото для номера <br /> "{room.type}" еще не добавлено
+							</div>
+						)}
+						{/* </div> */}
 					</div>
 					<h3 className="text-2xl font-bold text-gray-800 mb-4">Детали</h3>
 					<ul className="space-y-3">

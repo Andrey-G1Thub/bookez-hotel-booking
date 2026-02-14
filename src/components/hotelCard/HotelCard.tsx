@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 export const HotelCard = ({ hotel }) => {
 	const navigate = useNavigate();
-	const hotelImage = `https://placehold.co/400x250/E6F6F6/007C80?text=${encodeURIComponent(hotel.name)}`;
+	// ПРИОРИТЕТ: Если есть массив изображений и он не пуст - берем первое, иначе заглушку
+	const hotelImage =
+		hotel.images && hotel.images.length > 0
+			? hotel.images[0]
+			: `https://placehold.co/400x250/E6F6F6/007C80?text=${encodeURIComponent(hotel.name)}`;
 
 	return (
 		<div

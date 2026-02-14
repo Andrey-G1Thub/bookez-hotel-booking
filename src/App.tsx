@@ -13,9 +13,9 @@ import { RoomBookingPage } from './pages/roomBookingPage/RoomBookingPage';
 
 import './App.css';
 import { SET_USER } from './store/actions/userActions';
-import { fetchHotels } from './store/actions/hotelActions';
+import { fetchHotelsThunk } from './store/actions/hotelActions';
 import { fetchBookings, fetchBookingsThunk } from './store/actions/bookingActions';
-import { fetchCities } from './store/actions/hotelActions';
+import { fetchCitiesThunk } from './store/actions/hotelActions';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRouter';
 import { AdminPage } from './pages/adminPage/AdminPage';
@@ -30,8 +30,8 @@ export const App = () => {
 
 	useEffect(() => {
 		// dispatch(fetchBookings());
-		dispatch(fetchHotels());
-		dispatch(fetchCities());
+		dispatch(fetchHotelsThunk());
+		dispatch(fetchCitiesThunk());
 
 		const savedUser = localStorage.getItem('bookez_user');
 		if (savedUser) {

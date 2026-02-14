@@ -45,31 +45,48 @@ export const HotelDetailsPage = () => {
 							key={room.id}
 							className="bg-white p-6 card-shadow flex flex-col md:flex-row items-center justify-between transition hover:shadow-xl"
 						>
-							<div className="md:w-3/5">
-								<h3 className="text-2xl font-semibold accent-text mb-1">
-									{room.type}
-								</h3>
-								<p className="text-gray-600 text-sm flex items-center mb-2">
-									<User className="w-4 h-4 mr-1 text-gray-500" /> Макс.
-									гостей: {room.capacity}
-								</p>
-								<p className="text-gray-500 text-sm">
-									Удобства: {room.amenities}
-								</p>
+							{/* БЛОК С ФОТО */}
+							<div className="md:w-1/4 h-48 md:h-auto relative bg-gray-200">
+								{room.images && room.images.length > 0 ? (
+									<img
+										src={room.images[0]}
+										alt={room.type}
+										className="w-full h-full object-cover"
+									/>
+								) : (
+									<div className="flex items-center justify-center h-full text-gray-400">
+										Нет фото
+									</div>
+								)}
 							</div>
-							<div className="md:w-2/5 mt-4 md:mt-0 md:text-right">
-								<p className="text-3xl font-bold text-gray-800">
-									{room.price} ₽
-								</p>
-								<p className="text-sm text-gray-500">за ночь</p>
-								<button
-									onClick={() =>
-										navigate(`/room/${room.hotelId}/${room.id}`)
-									}
-									className="mt-3 px-6 py-2 rounded-lg text-white font-semibold accent-color accent-hover shadow-md"
-								>
-									Забронировать
-								</button>
+							{/* ТЕКСТОВЫЙ БЛОК */}
+							<div className="flex-1 p-6 flex flex-col justify-between md:flex-row items-center">
+								<div className="md:w-3/5">
+									<h3 className="text-2xl font-semibold accent-text mb-1">
+										{room.type}
+									</h3>
+									<p className="text-gray-600 text-sm flex items-center mb-2">
+										<User className="w-4 h-4 mr-1 text-gray-500" />{' '}
+										Макс. гостей: {room.capacity}
+									</p>
+									<p className="text-gray-500 text-sm">
+										Удобства: {room.amenities}
+									</p>
+								</div>
+								<div className="md:w-2/5 mt-4 md:mt-0 md:text-right">
+									<p className="text-3xl font-bold text-gray-800">
+										{room.price} ₽
+									</p>
+									<p className="text-sm text-gray-500">за ночь</p>
+									<button
+										onClick={() =>
+											navigate(`/room/${room.hotelId}/${room.id}`)
+										}
+										className="mt-3 px-6 py-2 rounded-lg text-white font-semibold accent-color accent-hover shadow-md"
+									>
+										Забронировать
+									</button>
+								</div>
 							</div>
 						</div>
 					))
