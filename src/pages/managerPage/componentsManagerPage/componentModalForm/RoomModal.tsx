@@ -40,6 +40,52 @@ export const RoomModal = ({
 				<p className="text-sm text-gray-500 mb-6">Отель: {selectedHotel?.name}</p>
 
 				<form onSubmit={handleAddRoom} className="space-y-4">
+					{/* ДОБАВЛЕНИЕ ФОТО (Новый блок) */}
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">
+							Фотографии номера (URL)
+						</label>
+						<div className="flex gap-2">
+							<input
+								type="text"
+								value={photoUrl}
+								onChange={(e) => setPhotoUrl(e.target.value)}
+								className="flex-1 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none"
+								placeholder="https://example.com/image.jpg"
+							/>
+							<button
+								type="button"
+								onClick={addPhotoToState}
+								className="bg-teal-50 text-teal-600 p-3 rounded-xl hover:bg-teal-100 transition"
+							>
+								<Plus size={24} />
+							</button>
+						</div>
+						{/* Список добавленных превью */}
+						{newRoom.images.length > 0 && (
+							<div className="flex gap-2 mt-3 overflow-x-auto pb-2">
+								{newRoom.images.map((img, idx) => (
+									<div key={idx} className="relative min-w-[80px] h-20">
+										<img
+											src={img}
+											alt="preview"
+											className="w-full h-full object-cover rounded-lg border border-gray-100"
+										/>
+										<button
+											type="button"
+											onClick={() =>
+												handleRemovePhotoFromNewRoom(img)
+											}
+											className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600"
+										>
+											<X size={12} />
+										</button>
+									</div>
+								))}
+							</div>
+						)}
+					</div>
+					{/* Название номера */}
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Тип номера
@@ -94,51 +140,6 @@ export const RoomModal = ({
 								placeholder="3000"
 							/>
 						</div>
-					</div>
-					{/* ДОБАВЛЕНИЕ ФОТО (Новый блок) */}
-					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-1">
-							Фотографии номера (URL)
-						</label>
-						<div className="flex gap-2">
-							<input
-								type="text"
-								value={photoUrl}
-								onChange={(e) => setPhotoUrl(e.target.value)}
-								className="flex-1 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none"
-								placeholder="https://example.com/image.jpg"
-							/>
-							<button
-								type="button"
-								onClick={addPhotoToState}
-								className="bg-teal-50 text-teal-600 p-3 rounded-xl hover:bg-teal-100 transition"
-							>
-								<Plus size={24} />
-							</button>
-						</div>
-						{/* Список добавленных превью */}
-						{newRoom.images.length > 0 && (
-							<div className="flex gap-2 mt-3 overflow-x-auto pb-2">
-								{newRoom.images.map((img, idx) => (
-									<div key={idx} className="relative min-w-[80px] h-20">
-										<img
-											src={img}
-											alt="preview"
-											className="w-full h-full object-cover rounded-lg border border-gray-100"
-										/>
-										<button
-											type="button"
-											onClick={() =>
-												handleRemovePhotoFromNewRoom(img)
-											}
-											className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600"
-										>
-											<X size={12} />
-										</button>
-									</div>
-								))}
-							</div>
-						)}
 					</div>
 
 					{/* Удобства */}

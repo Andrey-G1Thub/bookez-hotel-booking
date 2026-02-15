@@ -20,7 +20,7 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRouter';
 import { AdminPage } from './pages/adminPage/AdminPage';
 import { ROLES } from './utils/permissions';
-import { ManagerPage } from './pages/magerPage/ManagerPage';
+import { ManagerPage } from './pages/managerPage/ManagerPage';
 // import { PrivateRoute } from './components/PrivateRouter';
 
 export const App = () => {

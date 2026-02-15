@@ -3,24 +3,24 @@ import { Edit3, Trash2, X } from 'lucide-react';
 interface ItemInCardManagerProps {
 	hotel: any;
 	handleDeleteRoom: (hotelId: number, roomId: number) => void;
-	handleAddRoomPhoto: (hotelId: number, roomId: number, url: string) => void;
+	// handleAddRoomPhoto: (hotelId: number, roomId: number, url: string) => void;
 	handleEditRoomClick: (hotel: any, room: any) => void;
 }
 
 export const ItemInCardManager = ({
 	hotel,
 	handleDeleteRoom,
-	handleAddRoomPhoto,
+	// handleAddRoomPhoto,
 	handleEditRoomClick,
 }: ItemInCardManagerProps) => {
 	// Функция-посредник для обработки клика
-	const onAddPhotoClick = (roomId: number) => {
-		const input = document.getElementById(`input-room-${roomId}`) as HTMLInputElement;
-		if (input && input.value) {
-			handleAddRoomPhoto(hotel.id, roomId, input.value);
-			input.value = ''; // очистка
-		}
-	};
+	// const onAddPhotoClick = (roomId: number) => {
+	// 	const input = document.getElementById(`input-room-${roomId}`) as HTMLInputElement;
+	// 	if (input && input.value) {
+	// 		handleAddRoomPhoto(hotel.id, roomId, input.value);
+	// 		input.value = ''; // очистка
+	// 	}
+	// };
 
 	if (!hotel.rooms || hotel.rooms.length === 0) return null;
 
@@ -54,7 +54,7 @@ export const ItemInCardManager = ({
 						</div>
 
 						{/* Поле добавления фото */}
-						<div className="flex gap-2">
+						{/* <div className="flex gap-2">
 							<input
 								type="text"
 								id={`input-room-${room.id}`}
@@ -68,7 +68,7 @@ export const ItemInCardManager = ({
 							>
 								ОК
 							</button>
-						</div>
+						</div> */}
 
 						{/* Галерея */}
 						{room.images && room.images.length > 0 && (

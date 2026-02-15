@@ -47,27 +47,51 @@
   ],
   "bookings": [
     {
-      "id": 1771075819756,
+      "id": 1771140718167,
       "userId": 1770711015637,
       "hotelId": 1771071321968,
-      "roomId": 1771074136002,
-      "hotelName": "HOTEL edit 3",
-      "roomType": "Стандарт",
-      "checkIn": "2026-02-14",
-      "checkOut": "2026-02-21",
-      "price": 7000,
+      "roomId": 1771140664698,
+      "hotelName": "HOTEL edit 4",
+      "roomType": "Люкс",
+      "checkIn": "2026-02-15",
+      "checkOut": "2026-02-22",
+      "price": 17500,
       "status": "Подтверждено"
     },
     {
-      "id": 1771091816120,
-      "userId": 1770711015637,
-      "hotelId": 1771091701917,
-      "roomId": 1771091768467,
-      "hotelName": "HOTEL admin 3",
+      "id": 1771143918374,
+      "userId": 1770832348065,
+      "hotelId": 1771143745288,
+      "roomId": 1771143887792,
+      "hotelName": "HOTEL manager 1",
       "roomType": "Стандарт",
-      "checkIn": "2026-02-14",
-      "checkOut": "2026-02-20",
-      "price": 12000,
+      "checkIn": "2026-02-15",
+      "checkOut": "2026-02-22",
+      "price": 10500,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771144063654,
+      "userId": 1770711015637,
+      "hotelId": 1771143745288,
+      "roomId": 1771143887792,
+      "hotelName": "HOTEL manager 1",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-22",
+      "checkOut": "2026-02-26",
+      "price": 6000,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771144177532,
+      "userId": 1770884155361,
+      "hotelId": 1771143745288,
+      "roomId": 1771143887792,
+      "hotelName": "HOTEL manager 1",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-26",
+      "checkOut": "2026-02-28",
+      "price": 3000,
       "status": "Подтверждено"
     }
   ],
@@ -95,17 +119,27 @@
   ],
   "hotels": [
     {
-      "name": "Теперь нормальное название Отеля",
+      "name": "HOTEL admin 11",
       "cityId": 1,
-      "description": "1111",
-      "priceFrom": 111,
+      "description": "много чаек",
+      "priceFrom": "999",
       "images": [],
       "id": 1771070135324,
       "ownerId": 1770711015637,
       "rating": 5,
       "reviewCount": 0,
       "comments": [],
-      "rooms": []
+      "rooms": [
+        {
+          "type": "Студия",
+          "capacity": 2,
+          "price": 3000,
+          "amenities": "вафли",
+          "images": [],
+          "id": 1771142444825,
+          "hotelId": 1771070135324
+        }
+      ]
     },
     {
       "name": "HOTEL edit 4",
@@ -160,29 +194,17 @@
           ],
           "id": 1771074136002,
           "hotelId": 1771071321968
-        }
-      ]
-    },
-    {
-      "name": "12",
-      "cityId": 1,
-      "description": "12",
-      "priceFrom": "12",
-      "images": [],
-      "comments": [],
-      "id": 1771079927889,
-      "ownerId": 1770711015637,
-      "rating": 5,
-      "reviewCount": 0,
-      "rooms": [
+        },
         {
-          "type": "12",
+          "type": "Люкс",
           "capacity": 2,
-          "price": 12,
-          "amenities": "",
-          "images": [],
-          "id": 1771079940806,
-          "hotelId": 1771079927889
+          "price": 2500,
+          "amenities": "скеит",
+          "images": [
+            "https://fastly.picsum.photos/id/409/400/250.jpg?hmac=EOCapY_Ek48Mech0Iw2b3lOWCtI-UhJtMKmpywPfnYs"
+          ],
+          "id": 1771140664698,
+          "hotelId": 1771071321968
         }
       ]
     },
@@ -210,6 +232,98 @@
           ],
           "id": 1771091768467,
           "hotelId": 1771091701917
+        }
+      ]
+    },
+    {
+      "name": "HOTEL admin 7",
+      "cityId": 3,
+      "description": "Хороший",
+      "priceFrom": 5000,
+      "images": [
+        "https://fastly.picsum.photos/id/259/400/250.jpg?hmac=5UUqYeg2NY3hvrzdFrun6bxjSmiUXZKvoKkHaDQibmw"
+      ],
+      "comments": [
+        {
+          "id": 1771141649103,
+          "userId": 1770711015637,
+          "userName": "admin",
+          "text": "о новый отель",
+          "date": "15.02.2026"
+        }
+      ],
+      "id": 1771141621576,
+      "ownerId": 1770711015637,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": []
+    },
+    {
+      "name": "HOTEL admin 15",
+      "cityId": 4,
+      "description": "15000",
+      "priceFrom": 15000,
+      "images": [
+        "https://fastly.picsum.photos/id/142/400/250.jpg?hmac=K22DCZAPDegx54LF0OoWVe70a4jzsbcp5rz6BZDlqbs"
+      ],
+      "comments": [],
+      "id": 1771142121243,
+      "ownerId": 1770711015637,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": []
+    },
+    {
+      "name": "HOTEL manager 1",
+      "cityId": 1,
+      "description": "Светлый, чистый",
+      "priceFrom": 1500,
+      "images": [
+        "https://fastly.picsum.photos/id/142/400/250.jpg?hmac=K22DCZAPDegx54LF0OoWVe70a4jzsbcp5rz6BZDlqbs"
+      ],
+      "comments": [],
+      "id": 1771143745288,
+      "ownerId": 1770832348065,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": [
+        {
+          "type": "Стандарт",
+          "capacity": 2,
+          "price": 1500,
+          "amenities": "Туалет",
+          "images": [
+            "https://fastly.picsum.photos/id/259/400/250.jpg?hmac=5UUqYeg2NY3hvrzdFrun6bxjSmiUXZKvoKkHaDQibmw"
+          ],
+          "id": 1771143887792,
+          "hotelId": 1771143745288
+        }
+      ]
+    },
+    {
+      "name": "HOTEL manager 2",
+      "cityId": 2,
+      "description": "Теплое море, приятный персонал",
+      "priceFrom": 2700,
+      "images": [
+        "https://fastly.picsum.photos/id/623/400/250.jpg?hmac=5LDRXOCwzb1ZF1GtuATZhmbYPenIsqTNyxfkOhb5tww"
+      ],
+      "comments": [],
+      "id": 1771144504300,
+      "ownerId": 1770832348065,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": [
+        {
+          "type": "Стандарт",
+          "capacity": 2,
+          "price": 2700,
+          "amenities": "Овощи в постель",
+          "images": [
+            "https://fastly.picsum.photos/id/94/400/250.jpg?hmac=-r0BB5946Fi-Os3LS6Vy6uX2DlDtaVNDrHsDUeCiGAM"
+          ],
+          "id": 1771144550309,
+          "hotelId": 1771144504300
         }
       ]
     }

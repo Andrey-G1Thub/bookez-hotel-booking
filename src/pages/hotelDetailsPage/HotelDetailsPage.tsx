@@ -33,6 +33,21 @@ export const HotelDetailsPage = () => {
 	const comments = hotel.comments || [];
 	const rooms = hotel?.rooms || [];
 
+	const canDeleteComment = (comment) => {
+		if (!user) return false;
+
+		// 1. Админ может удалять всё
+		if (user.role === 'admin') return true;
+
+		// 2. Менеджер может удалять в своих отелях
+
+		if (user.role === 'manager' && Number(hotel.ownerId) === Number(user.id))
+			return true;
+
+		// 3. Обычный пользователь удаляет только свои
+		return Number(user.id) === Number(comment.userId);
+	};
+
 	const handleAddComment = (e) => {
 		e.preventDefault();
 		const text = e.target.comment.value;
@@ -57,6 +72,7 @@ export const HotelDetailsPage = () => {
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+			{/* Заголовок и локация */}
 			<h1 className="text-4xl font-extrabold text-gray-800 mb-2">{hotel.name}</h1>
 			<div className="text-xl text-gray-600 mb-6 flex items-center">
 				<MapPin className="w-5 h-5 mr-2 accent-text" />
@@ -66,6 +82,24 @@ export const HotelDetailsPage = () => {
 				</span>
 			</div>
 
+			{/* --- ГЛАВНОЕ ФОТО ОТЕЛЯ --- */}
+			<div className="w-full h-[450px] mb-10 overflow-hidden rounded-3xl shadow-2xl bg-gray-200 relative group">
+				{hotel.images && hotel.images.length > 0 ? (
+					<img
+						src={hotel.images[0]}
+						alt={hotel.name}
+						className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+					/>
+				) : (
+					<div className="flex items-center justify-center h-full text-gray-400">
+						Фото отеля отсутствует
+					</div>
+				)}
+				{/* Легкий градиент поверх фото для красоты */}
+				<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+			</div>
+
+			{/* Описание */}
 			<p className="text-gray-700 mb-8 max-w-3xl">{hotel.description}</p>
 
 			<h2 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">
@@ -198,10 +232,11 @@ export const HotelDetailsPage = () => {
 									</div>
 									<p className="text-gray-600">{c.text}</p>
 								</div>
-								{user?.id === c.userId && (
+								{/* удаление комментов */}
+								{canDeleteComment(c) && (
 									<button
 										onClick={() => handleDeleteComment(c.id)}
-										className="text-red-400 hover:text-red-600 transition"
+										className="text-red-400 hover:text-red-600 transition self-start p-1"
 									>
 										<Trash2 className="w-5 h-5" />
 									</button>

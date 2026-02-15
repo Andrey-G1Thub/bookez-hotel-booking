@@ -50,6 +50,7 @@ export const ManagerPage = () => {
 	});
 
 	const [photoUrl, setPhotoUrl] = useState('');
+	const [hotelPhotoUrl, setHotelPhotoUrl] = useState('');
 
 	const [isEditMode, setIsEditMode] = useState(false); // Режим редактирования или создания
 	const [editingHotelId, setEditingHotelId] = useState<number | null>(null);
@@ -119,16 +120,6 @@ export const ManagerPage = () => {
 		setMyBookings((prev) => prev.filter((b) => b.id !== bookingId));
 	};
 
-	const handleDeleteHotelPhoto = async (hotelId: number, urlToDelete: string) => {
-		const hotel = myHotels.find((h: any) => h.id === hotelId);
-		const updatedImages = hotel.images.filter((img: string) => img !== urlToDelete);
-
-		const success = await dispatch(
-			updateHotelThunk(hotelId, { images: updatedImages }),
-		);
-		if (success) {
-		}
-	};
 	const handleAddHotelPhoto = async (hotelId: number) => {
 		if (!photoUrl) return;
 		const hotel = myHotels.find((h: any) => h.id === hotelId);
@@ -212,34 +203,6 @@ export const ManagerPage = () => {
 			setIsEditMode(false);
 			setEditingRoomId(null);
 			setNewRoom({ type: '', capacity: 2, price: '', amenities: '', images: [] });
-		}
-	};
-	// 2. Для номера (номера лежат внутри массива rooms отеля)
-	const handleAddRoomPhoto = async (hotelId: number, roomId: number, specificUrl) => {
-		const urlToUse = specificUrl || photoUrl;
-		if (!photoUrl) return;
-
-		const hotel = myHotels.find((h: any) => h.id === hotelId);
-		if (!hotel) return;
-
-		// Глубокое обновление: ищем нужную комнату и добавляем ей фото
-		const updatedRooms = hotel.rooms.map((room: any) => {
-			if (room.id === roomId) {
-				return {
-					...room,
-					images: [...(room.images || []), urlToUse],
-				};
-			}
-			return room;
-		});
-
-		// Отправляем на сервер обновленный массив комнат
-		const success = await dispatch(
-			updateHotelThunk(hotelId, { rooms: updatedRooms }),
-		);
-
-		if (success) {
-			setPhotoUrl('');
 		}
 	};
 
@@ -368,6 +331,13 @@ export const ManagerPage = () => {
 		setIsRoomModalOpen(true);
 	};
 
+	const handleRemovePhotoFromNewHotel = (urlToRemove) => {
+		setNewHotel((prev) => ({
+			...prev,
+			images: prev.images.filter((img) => img !== urlToRemove),
+		}));
+	};
+
 	return (
 		<div className="p-6 max-w-7xl mx-auto mt-10">
 			{/* HEADER */}
@@ -403,7 +373,7 @@ export const ManagerPage = () => {
 							<ItemInCardManager
 								hotel={hotel}
 								handleDeleteRoom={handleDeleteRoom}
-								handleAddRoomPhoto={handleAddRoomPhoto}
+								// handleAddRoomPhoto={handleAddRoomPhoto}
 								handleEditRoomClick={handleEditRoomClick}
 							/>
 						</div>
@@ -422,18 +392,16 @@ export const ManagerPage = () => {
 			{/* MODAL FORM добавления отеля*/}
 
 			<HotelModal
-				selectedHotel={selectedHotel}
 				newHotel={newHotel}
 				setNewHotel={setNewHotel}
 				cities={cities}
-				photoUrl={photoUrl}
-				setPhotoUrl={setPhotoUrl}
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
-				handleDeleteHotelPhoto={handleDeleteHotelPhoto}
-				handleAddHotelPhoto={handleAddHotelPhoto}
 				handleSaveHotel={handleSaveHotel}
 				isEditMode={isEditMode}
+				handleRemovePhotoFromNewHotel={handleRemovePhotoFromNewHotel}
+				setHotelPhotoUrl={setHotelPhotoUrl}
+				hotelPhotoUrl={hotelPhotoUrl}
 			/>
 			{/* Модалка добавления номера */}
 
