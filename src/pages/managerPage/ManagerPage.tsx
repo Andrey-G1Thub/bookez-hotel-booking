@@ -20,6 +20,7 @@ import { RoomModal } from './componentsManagerPage/componentModalForm/RoomModal'
 
 export const ManagerPage = () => {
 	const { currentUser } = useSelector((state: any) => state.users);
+	const allBookings = useSelector((state) => state.bookings.list);
 	const dispatch = useDispatch();
 
 	const isAdmin = currentUser?.role === ROLES.ADMIN;
@@ -55,6 +56,7 @@ export const ManagerPage = () => {
 	const [isEditMode, setIsEditMode] = useState(false); // Режим редактирования или создания
 	const [editingHotelId, setEditingHotelId] = useState<number | null>(null);
 	const [editingRoomId, setEditingRoomId] = useState<number | null>(null);
+	const [isOpen, setIsOpen] = useState(false);
 
 	const myHotels = isAdmin
 		? allHotels
@@ -373,8 +375,9 @@ export const ManagerPage = () => {
 							<ItemInCardManager
 								hotel={hotel}
 								handleDeleteRoom={handleDeleteRoom}
-								// handleAddRoomPhoto={handleAddRoomPhoto}
+								allBookings={myBookings}
 								handleEditRoomClick={handleEditRoomClick}
+								handleDeleteBooking={handleDeleteBooking}
 							/>
 						</div>
 					))}
@@ -382,11 +385,11 @@ export const ManagerPage = () => {
 
 				{/* ПРАВАЯ КОЛОНКА: БРОНИРОВАНИЯ */}
 
-				<BookingList
+				{/* <BookingList
 					myBookings={myBookings}
 					isAdmin={isAdmin}
 					handleDeleteBooking={handleDeleteBooking}
-				/>
+				/> */}
 			</div>
 
 			{/* MODAL FORM добавления отеля*/}

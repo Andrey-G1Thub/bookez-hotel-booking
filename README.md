@@ -12,6 +12,7 @@ npm run dev запуск проекта
 7. npm install lucide-react
 8. npm install typescript --save-dev
 9. npm install @hookform/resolvers yup
+10. npm install tailwindcss @tailwindcss/vite
 
 ## . Структура Папок: Создайть базовую структуру:
 

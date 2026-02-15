@@ -93,6 +93,54 @@
       "checkOut": "2026-02-28",
       "price": 3000,
       "status": "Подтверждено"
+    },
+    {
+      "id": 1771163117526,
+      "userId": 1770711015637,
+      "hotelId": 1771070135324,
+      "roomId": 1771163093326,
+      "hotelName": "HOTEL admin 11",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-15",
+      "checkOut": "2026-02-22",
+      "price": 10500,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771169718965,
+      "userId": 1770711015637,
+      "hotelId": 1771071321968,
+      "roomId": 1771074136002,
+      "hotelName": "HOTEL edit 4",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-15",
+      "checkOut": "2026-02-17",
+      "price": 6000,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771169768450,
+      "userId": 1770711015637,
+      "hotelId": 1771071321968,
+      "roomId": 1771074136002,
+      "hotelName": "HOTEL edit 4",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-17",
+      "checkOut": "2026-02-20",
+      "price": 9000,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771170369815,
+      "userId": 1770832348065,
+      "hotelId": 1771144504300,
+      "roomId": 1771144550309,
+      "hotelName": "HOTEL manager 2",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-15",
+      "checkOut": "2026-02-17",
+      "price": 5400,
+      "status": "Подтверждено"
     }
   ],
   "cities": [
@@ -131,12 +179,14 @@
       "comments": [],
       "rooms": [
         {
-          "type": "Студия",
+          "type": "Стандарт",
           "capacity": 2,
-          "price": 3000,
-          "amenities": "вафли",
-          "images": [],
-          "id": 1771142444825,
+          "price": 1500,
+          "amenities": "коты",
+          "images": [
+            "https://fastly.picsum.photos/id/259/400/250.jpg?hmac=5UUqYeg2NY3hvrzdFrun6bxjSmiUXZKvoKkHaDQibmw"
+          ],
+          "id": 1771163093326,
           "hotelId": 1771070135324
         }
       ]
@@ -225,7 +275,7 @@
         {
           "type": "Стандарт",
           "capacity": 2,
-          "price": 2000,
+          "price": 2500,
           "amenities": "велосипед",
           "images": [
             "https://fastly.picsum.photos/id/94/400/250.jpg?hmac=-r0BB5946Fi-Os3LS6Vy6uX2DlDtaVNDrHsDUeCiGAM"
