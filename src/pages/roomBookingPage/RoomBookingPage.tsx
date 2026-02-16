@@ -18,11 +18,12 @@ export const RoomBookingPage = () => {
 	const { allHotels } = useSelector((state) => state.hotels);
 	const bookings = useSelector((state) => state.bookings.list) || [];
 
-	// Считаем, сколько отелей уже есть у менеджера
-	const myHotels = allHotels.filter((h) => h.ownerId === currentUser.id);
-
+	// Если юзера нет, myHotels будет пустым массивом, а maxHotels — 0.
+	const myHotels = currentUser
+		? allHotels.filter((h) => h.ownerId === currentUser.id)
+		: [];
 	// Проверка лимита (берем из юзера или ставим дефолт)
-	const maxHotels = currentUser.limits?.maxHotels || 1;
+	const maxHotels = currentUser?.limits?.maxHotels || 1;
 
 	const canAddMore = myHotels.length < maxHotels;
 
@@ -36,13 +37,6 @@ export const RoomBookingPage = () => {
 		return () => clearTimeout(timer);
 	}, []);
 
-	// const targetHotelId = Number(hotelId);
-	// const targetRoomId = Number(roomId);
-
-	// // 1. Сначала ищем отель
-	// const hotel = allHotels.find((h) => Number(h.id) === targetHotelId);
-	// // 2. Затем ищем комнату ВНУТРИ этого отеля
-	// const room = hotel?.rooms?.find((r) => Number(r.id) === targetRoomId);
 	// Используем String(), чтобы точно сравнить значения,
 	// даже если одно из них пришло как строка из URL
 	const hotel = allHotels.find((h) => String(h.id) === String(hotelId));
