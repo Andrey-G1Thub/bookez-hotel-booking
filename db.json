@@ -27,8 +27,8 @@
       "password": "111111",
       "role": "user",
       "limits": {
-        "maxHotels": 0,
-        "maxRooms": 0
+        "maxHotels": 1,
+        "maxRooms": 5
       },
       "id": 1770884155361
     },
@@ -187,6 +187,30 @@
       "roomType": "Стандарт",
       "checkIn": "2026-02-19",
       "checkOut": "2026-02-20",
+      "price": 2500,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771246857223,
+      "userId": 1771241549492,
+      "hotelId": 1771091701917,
+      "roomId": 1771091768467,
+      "hotelName": "HOTEL admin 5",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-20",
+      "checkOut": "2026-02-21",
+      "price": 2500,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771247066023,
+      "userId": 1771241549492,
+      "hotelId": 1771091701917,
+      "roomId": 1771091768467,
+      "hotelName": "HOTEL admin 5",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-21",
+      "checkOut": "2026-02-22",
       "price": 2500,
       "status": "Подтверждено"
     }

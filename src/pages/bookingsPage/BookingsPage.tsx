@@ -1,13 +1,15 @@
-import { Hotel } from 'lucide-react';
+import { ArrowLeft, Hotel } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	deleteBookingThunk,
 	fetchBookingsThunk,
 } from '../../store/actions/bookingActions';
 import { useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const BookingsPage = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	// Получаем список всех бронирований из Redux
 	const allBookings = useSelector((state) => state.bookings.list);
@@ -41,6 +43,14 @@ export const BookingsPage = () => {
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+			<button
+				onClick={() => navigate(-1)}
+				className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mb-6 group"
+			>
+				<ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+				<span>Назад</span>
+			</button>
+
 			<h2 className="text-3xl font-bold text-gray-800 mb-6">Мои Бронирования</h2>
 
 			{/* Секция Активные */}

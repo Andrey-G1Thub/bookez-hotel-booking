@@ -191,7 +191,7 @@ export const RoomBookingPage = () => {
 
 			dispatch(addBookingThunk(newBooking));
 			alert(
-				`Сумма к оплате зафиксирована успешно! Номер "${room.type}" забронирован. Скоро с вами свяжется менеджер нашего отеля.`,
+				`Сумма к оплате зафиксирована успешно! Номер "${room.type}" забронирован. Скоро с Вами свяжется менеджер нашего отеля.`,
 			);
 			navigate('/bookings');
 		} catch (error) {
