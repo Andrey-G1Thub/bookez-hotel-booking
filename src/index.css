@@ -6,3 +6,16 @@ body {
 	color: #343a40;
 	margin: 0;
 }
+.password-input-custom::-ms-reveal,
+.password-input-custom::-ms-clear {
+	display: none;
+}
+
+/* Скрываем в других браузерах, если появятся */
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+	visibility: hidden;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+}

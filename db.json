@@ -43,6 +43,30 @@
         "maxRooms": 0
       },
       "id": 1770884566098
+    },
+    {
+      "name": "user3",
+      "email": "user3@user",
+      "password": "111111",
+      "phone": "9902202202",
+      "role": "user",
+      "limits": {
+        "maxHotels": 0,
+        "maxRooms": 0
+      },
+      "id": 1771240239475
+    },
+    {
+      "name": "user4",
+      "email": "user4@user",
+      "password": "5%tT##",
+      "phone": "9999999000",
+      "role": "user",
+      "limits": {
+        "maxHotels": 0,
+        "maxRooms": 0
+      },
+      "id": 1771241549492
     }
   ],
   "bookings": [
@@ -141,6 +165,30 @@
       "checkOut": "2026-02-17",
       "price": 5400,
       "status": "Подтверждено"
+    },
+    {
+      "id": 1771246371024,
+      "userId": 1771241549492,
+      "hotelId": 1771091701917,
+      "roomId": 1771091768467,
+      "hotelName": "HOTEL admin 5",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-16",
+      "checkOut": "2026-02-19",
+      "price": 7500,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771246610063,
+      "userId": 1771241549492,
+      "hotelId": 1771091701917,
+      "roomId": 1771091768467,
+      "hotelName": "HOTEL admin 5",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-19",
+      "checkOut": "2026-02-20",
+      "price": 2500,
+      "status": "Подтверждено"
     }
   ],
   "cities": [
@@ -227,6 +275,13 @@
           "userName": "admin",
           "text": "цуцйуйцу",
           "date": "14.02.2026"
+        },
+        {
+          "id": 1771239685793,
+          "userId": 1771239647434,
+          "userName": "user3",
+          "text": "привет я пришел вам на гадить!!!!!!!!",
+          "date": "16.02.2026"
         }
       ],
       "id": 1771071321968,

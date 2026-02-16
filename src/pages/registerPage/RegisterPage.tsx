@@ -1,8 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+
+import { PatternFormat } from 'react-number-format';
+import { Eye, EyeOff } from 'lucide-react';
 
 import * as yup from 'yup';
 import { registerThunk } from '../../store/actions/userActions';
@@ -13,29 +16,60 @@ export const registerSchema = yup.object().shape({
 	phone: yup
 		.string()
 		.required('Телефон обязателен')
-		.matches(/^[0-9+]+$/, 'Только цифры и знак +'),
+		// Валидация маски: проверяем, что все цифры заполнены (пример для РФ +7 (999) 999-99-99)
+		.test('len', 'Введите полный номер телефона', (val) => {
+			const digits = val?.replace(/\D/g, '');
+			return digits?.length === 10; // Проверка на 10 цифр
+		}),
 	password: yup
 		.string()
 		.required('Заполните пароль')
-		.min(6, 'Пароль минимум 6 символов')
-		.max(30, 'Пароль максимум 30 символов'),
+		.matches(
+			/^[\w#%]+$/,
+			'Неверно заполнен пароль. Допускаются только буквы, цифры и знаки # %',
+		)
+		.min(6, 'Неверно заполнен пароль. Минимум 6 символов')
+		.max(30, 'Неверно заполнен пароль. Максимум 30 символов'),
 	confirmPassword: yup
 		.string()
-		.oneOf([yup.ref('password'), null], 'Пароли должны совпадать')
-		.required('Подтвердите пароль'),
+		.required('Заполните повтор пароля')
+		.oneOf([yup.ref('password'), null], 'Пароли не совпадают'),
 });
 
 export const RegisterPage = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
+	// Состояния для видимости паролей
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 	const {
 		register,
 		handleSubmit,
+		control, // Нужен для интеграции маски
+		watch, //  для отслеживания пароля
 		formState: { errors },
 	} = useForm({
 		resolver: yupResolver(registerSchema),
+		mode: 'onChange',
 	});
+	const passwordValue = watch('password', '');
+	const strength = useMemo(() => {
+		if (!passwordValue) return { score: 0, label: '', color: 'bg-gray-200' };
+
+		let score = 0;
+		if (passwordValue.length >= 6) score++; // Базовая длина
+		if (/[A-Z]/.test(passwordValue) || /[a-z]/.test(passwordValue)) score++; // Есть буквы
+		if (/[0-9]/.test(passwordValue)) score++; // Есть цифры
+		if (/[#%_]/.test(passwordValue)) score++; // Есть спецсимволы
+
+		if (score <= 2)
+			return { score, label: 'Слабый', color: 'bg-red-500', width: '33%' };
+		if (score === 3)
+			return { score, label: 'Средний', color: 'bg-yellow-500', width: '66%' };
+		return { score, label: 'Сложный', color: 'bg-green-500', width: '100%' };
+	}, [passwordValue]);
 
 	const onSubmit = async (data) => {
 		const success = await dispatch(registerThunk(data));
@@ -45,65 +79,13 @@ export const RegisterPage = () => {
 		}
 	};
 
-	// return (
-	// 	<div className="max-w-md mx-auto p-8 mt-16 bg-white card-shadow border border-gray-100">
-	// 		<h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-	// 			Регистрация
-	// 		</h2>
-	// 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-	// 			<input
-	// 				type="text"
-	// 				name="name"
-	// 				placeholder="Имя"
-	// 				required
-	// 				className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border"
-	// 			/>
-	// 			<input
-	// 				type="email"
-	// 				name="email"
-	// 				placeholder="Email"
-	// 				required
-	// 				className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border"
-	// 			/>
-	// 			<input
-	// 				type="password"
-	// 				name="password"
-	// 				placeholder="Пароль"
-	// 				required
-	// 				className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border"
-	// 			/>
-	// 			{/* ПОЛЕ ПОДТВЕРЖДЕНИЯ ПАРОЛЯ */}
-	// 			<input
-	// 				type="password"
-	// 				name="confirmPassword"
-	// 				placeholder="Подтверждение Пароля"
-	// 				required
-	// 				className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border"
-	// 			/>
-	// 			<button
-	// 				type="submit"
-	// 				className="w-full py-3 rounded-lg text-white font-semibold accent-color accent-hover transition shadow-lg"
-	// 			>
-	// 				Зарегистрироваться
-	// 			</button>
-	// 		</form>
-	// 		<p className="mt-4 text-center text-sm text-gray-600">
-	// 			Уже есть аккаунт?{' '}
-	// 			<button
-	// 				onClick={() => navigate('/login')}
-	// 				className="accent-text hover:underline font-medium"
-	// 			>
-	// 				Войти
-	// 			</button>
-	// 		</p>
-	// 	</div>
-	// );
 	return (
 		<div className="max-w-md mx-auto p-8 mt-16 bg-white card-shadow border border-gray-100 rounded-xl">
 			<h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
 				Регистрация
 			</h2>
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+				{/* Имя */}
 				<div>
 					<input
 						{...register('name')}
@@ -112,7 +94,7 @@ export const RegisterPage = () => {
 					/>
 					<p className="text-red-500 text-xs mt-1">{errors.name?.message}</p>
 				</div>
-
+				{/* Email */}
 				<div>
 					<input
 						{...register('email')}
@@ -121,35 +103,77 @@ export const RegisterPage = () => {
 					/>
 					<p className="text-red-500 text-xs mt-1">{errors.email?.message}</p>
 				</div>
-
+				{/* Телефон с современной маской */}
 				<div>
-					<input
-						{...register('phone')}
-						placeholder="Телефон"
-						className={`w-full p-3 border rounded-lg focus:ring-2 outline-none ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+					<Controller
+						name="phone"
+						control={control}
+						render={({ field: { onChange, value } }) => (
+							<PatternFormat
+								format="+7 (###) ###-##-##"
+								mask="_"
+								value={value}
+								onValueChange={(values) => {
+									// Передаем форматированное значение в react-hook-form
+									onChange(values.value);
+								}}
+								placeholder="Телефон +7 (___) ___-__-__"
+								className={`w-full p-3 border rounded-lg focus:ring-2 outline-none ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+							/>
+						)}
 					/>
 					<p className="text-red-500 text-xs mt-1">{errors.phone?.message}</p>
 				</div>
-
-				<div>
+				{/* Пароль */}
+				<div className="relative">
 					<input
-						type="password"
+						type={showPassword ? 'text' : 'password'}
 						{...register('password')}
 						placeholder="Пароль"
-						className={`w-full p-3 border rounded-lg focus:ring-2 outline-none ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+						className={`w-full p-3 border rounded-lg focus:ring-2 outline-none password-input-custom ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
 					/>
+					<button
+						type="button" //  Чтобы не сабмитил форму
+						onClick={() => setShowPassword(!showPassword)}
+						className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+					>
+						{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+					</button>
 					<p className="text-red-500 text-xs mt-1">
 						{errors.password?.message}
 					</p>
 				</div>
-
-				<div>
+				{/* Визуальный индикатор сложности */}
+				{passwordValue && (
+					<div className="mt-2">
+						<div className="flex h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+							<div
+								className={`transition-all duration-500 ${strength.color}`}
+								style={{ width: strength.width }}
+							></div>
+						</div>
+						<p
+							className={`text-[10px] mt-1 font-semibold ${strength.color.replace('bg-', 'text-')}`}
+						>
+							Сложность: {strength.label}
+						</p>
+					</div>
+				)}
+				{/* Подтверждение пароля */}
+				<div className="relative">
 					<input
-						type="password"
+						type={showConfirmPassword ? 'text' : 'password'}
 						{...register('confirmPassword')}
 						placeholder="Подтверждение пароля"
-						className={`w-full p-3 border rounded-lg focus:ring-2 outline-none ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+						className={`w-full p-3 border rounded-lg focus:ring-2 outline-none password-input-custom ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
 					/>
+					<button
+						type="button"
+						onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+						className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+					>
+						{showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+					</button>
 					<p className="text-red-500 text-xs mt-1">
 						{errors.confirmPassword?.message}
 					</p>
