@@ -1,17 +1,22 @@
 // - Компонент верхнего навигационного меню.
 
 import { Hotel, LogOut, ShieldAlert, User } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutThunk } from '../../store/actions/userActions';
 import { useNavigate, Link } from 'react-router-dom';
 import { ROLES } from '../../utils/permissions';
+import { WeatherWidget } from './components/WeatherWidget';
 
 export const Header = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const currentUser = useSelector((state) => state.users.currentUser);
+
+	const [city, setCity] = useState('');
+	const [temperature, setTemperature] = useState('');
+	const [weather, setWeather] = useState('');
 
 	const userName = useMemo(
 		() => currentUser?.name || currentUser?.email || 'Профиль',
@@ -27,96 +32,101 @@ export const Header = () => {
 	};
 
 	return (
-		<div className="bg-white shadow-lg sticky top-0 z-10">
+		<div className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex justify-between items-center h-16">
-					<div className="flex-shrink-0">
+				<div className="flex justify-between items-center h-20">
+					{' '}
+					{/* Увеличили высоту до h-20 для воздуха */}
+					{/* ЛЕВАЯ ЧАСТЬ: Лого и Погода */}
+					<div className="flex items-center gap-8">
 						<Link
 							to="/"
-							className="text-2xl font-bold accent-text hover:opacity-80"
+							className="text-2xl font-black text-teal-600 tracking-tight hover:opacity-80 transition"
 						>
-							BookEZ
+							Book<span className="text-amber-500">EZ</span>
 						</Link>
-					</div>
 
-					{/* Навигация */}
-					<nav className="hidden md:flex space-x-6">
+						<WeatherWidget />
+					</div>
+					{/* ЦЕНТР: Навигация */}
+					<nav className="hidden md:flex items-center space-x-1">
 						<Link
 							to="/"
-							className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium"
+							className="px-4 py-2 text-gray-600 hover:text-teal-600 transition font-semibold text-sm rounded-lg hover:bg-gray-50"
 						>
 							Главная
 						</Link>
 						{currentUser && (
 							<Link
 								to="/bookings"
-								className="text-gray-600 hover:text-gray-900 transition duration-150 font-medium"
+								className="px-4 py-2 text-gray-600 hover:text-teal-600 transition font-semibold text-sm rounded-lg hover:bg-gray-50"
 							>
 								Мои Брони
 							</Link>
 						)}
-						{/* КНОПКА АДМИНА (Яркая, видна только админу) */}
+
+						{(currentUser?.role === ROLES.MANAGER ||
+							currentUser?.role === ROLES.ADMIN) && (
+							<div className="h-6 w-[1px] bg-gray-200 mx-2"></div>
+						)}
+
 						{currentUser?.role === ROLES.ADMIN && (
 							<Link
 								to="/admin"
-								className="flex items-center gap-1 text-red-600 hover:text-red-800 transition duration-150 font-bold border-l pl-4 border-gray-200"
+								className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 transition font-bold text-sm rounded-lg"
 							>
-								<ShieldAlert className="w-4 h-4" />
-								Админ-панель
+								<ShieldAlert size={16} />
+								Админ
 							</Link>
 						)}
 
-						{/* Кнопка Менеджера - теперь видна и Менеджеру, и Админу */}
 						{(currentUser?.role === ROLES.MANAGER ||
 							currentUser?.role === ROLES.ADMIN) && (
 							<Link
 								to="/manager"
-								className="flex items-center gap-1 text-amber-600 hover:text-amber-800 transition duration-150 font-bold border-l pl-4 border-gray-200"
+								className="flex items-center gap-2 px-4 py-2 text-amber-600 hover:bg-amber-50 transition font-bold text-sm rounded-lg"
 							>
-								<Hotel className="w-4 h-4" />
-								Панель Менеджера
+								<Hotel size={16} />
+								Менеджер
 							</Link>
 						)}
 					</nav>
-
-					{/* Блок пользователя / Авторизация */}
-					<div className="flex items-center space-x-3">
+					{/* ПРАВАЯ ЧАСТЬ: Юзер */}
+					<div className="flex items-center">
 						{currentUser ? (
 							<div className="relative group">
-								{/* Кнопка Профиля */}
-								<div className="flex items-center p-2 rounded-full bg-gray-100 group-hover:bg-gray-200 transition cursor-pointer">
-									<User className="h-6 w-6 accent-text" />
-									<span className="ml-2 hidden sm:inline font-semibold text-gray-700">
+								<div className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-gray-50 border border-gray-100 group-hover:bg-white group-hover:shadow-md transition cursor-pointer">
+									<div className="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white shadow-sm">
+										<User size={18} />
+									</div>
+									<span className="hidden sm:inline font-bold text-sm text-gray-700">
 										{userName}
 									</span>
 								</div>
 
-								{/* Выпадающее меню при наведении */}
-								<div className="absolute right-0 mt-0 w-48 bg-white shadow-xl rounded-b-lg border-t-2 accent-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-									<div className="py-1">
-										<button
-											onClick={handleLogout}
-											className="w-full text-left flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition font-medium"
-										>
-											<LogOut className="w-4 h-4 mr-2 " />
-											Выйти
-										</button>
-									</div>
+								<div className="absolute right-0 mt-2 w-48 bg-white shadow-xl rounded-xl border border-gray-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+									<button
+										onClick={handleLogout}
+										className="w-full text-left flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition font-semibold"
+									>
+										<LogOut className="w-4 h-4 mr-2" />
+										Выйти
+									</button>
 								</div>
 							</div>
 						) : (
-							<div className="flex items-center space-x-2">
+							<div className="flex items-center gap-3">
 								<Link
 									to="/login"
-									className="px-4 py-2 text-sm rounded-full border-2 accent-border accent-text hover:bg-gray-50 transition font-semibold"
+									className="text-sm font-bold text-gray-600 hover:text-teal-600 transition"
 								>
 									Войти
 								</Link>
 								<Link
 									to="/register"
-									className="px-4 py-2 text-sm rounded-full text-white accent-color accent-hover transition hidden sm:inline font-semibold shadow-md"
+									className="px-5 py-2.5 bg-teal-600 text-white text-sm font-bold rounded-full hover:bg-teal-700 transition shadow-md shadow-teal-100"
 								>
-									Регистрация
+									Начать
 								</Link>
 							</div>
 						)}
