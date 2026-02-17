@@ -14,15 +14,31 @@ interface WeatherResponse {
 
 export const WeatherWidget = () => {
 	const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
+	const [loading, setLoading] = useState(true); // Состояние загрузки
 
 	useEffect(() => {
 		fetch(
 			'https://api.openweathermap.org/data/2.5/weather?q=Genichesk&units=metric&lang=ru&appid=08399ac1acb42de7366d5aef660f772a',
 		)
 			.then((res) => res.json())
-			.then((data) => setWeatherData(data))
-			.catch((err) => console.error('Weather error:', err));
+			.then((data: WeatherResponse) => {
+				setWeatherData(data);
+				setLoading(false);
+			})
+			.catch((err) => {
+				console.error('Weather error:', err);
+				setLoading(false);
+			});
 	}, []);
+
+	if (loading) {
+		return (
+			<div className="hidden lg:flex items-center gap-3 px-4 py-1.5 bg-gray-50 rounded-2xl border border-gray-100 animate-pulse">
+				<div className="w-12 h-8 bg-gray-200 rounded-lg"></div>
+				<div className="w-16 h-8 bg-gray-200 rounded-lg"></div>
+			</div>
+		);
+	}
 
 	if (!weatherData || !weatherData.main) return null;
 

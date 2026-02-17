@@ -3,16 +3,29 @@ import {
 	LOGOUT_USER,
 	FETCH_USERS_SUCCESS,
 	DELETE_USER_SUCCESS,
+	type UserActions,
 } from '../actions/userActions';
+
+export interface User {
+	id: number;
+	name: string;
+	email: string;
+	role: string;
+}
+
+interface UserState {
+	currentUser: User | null;
+	usersList: User[];
+}
 
 const savedUser = localStorage.getItem('bookez_user');
 
-const initialState = {
+const initialState: UserState = {
 	currentUser: savedUser ? JSON.parse(savedUser) : null,
 	usersList: [],
 };
 
-export const userReducer = (state = initialState, action) => {
+export const userReducer = (state = initialState, action: UserActions): UserState => {
 	switch (action.type) {
 		case SET_USER:
 			return { ...state, currentUser: action.payload };

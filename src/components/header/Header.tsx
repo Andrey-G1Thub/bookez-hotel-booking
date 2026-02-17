@@ -9,12 +9,14 @@ import { WeatherWidget } from './components/WeatherWidget';
 import { selectCurrentUser } from '../../selectors';
 import { NAVIGATION_CONFIG } from '../constants/navigation';
 import { ROLES } from '../../utils/permissions';
+import { useAppSelector } from '../../store/hooks';
 
 export const Header = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const currentUser = useSelector(selectCurrentUser);
+	// const currentUser = useSelector(selectCurrentUser);
+	const currentUser = useAppSelector(selectCurrentUser);
 
 	const filteredLinks = useMemo(() => {
 		return NAVIGATION_CONFIG.filter((link) => {
