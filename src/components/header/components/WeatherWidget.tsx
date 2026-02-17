@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { logoutThunk } from '../../store/actions/userActions';
-// import { useNavigate, Link } from 'react-router-dom';
-// import { ROLES } from '../../utils/permissions';
 import { CloudSun, MapPin } from 'lucide-react';
 
-// Микро-компонент для погоды
+interface WeatherResponse {
+	name: string;
+	main: {
+		temp: number;
+	};
+	weather: Array<{
+		description: string;
+		icon: string;
+	}>;
+}
+
 export const WeatherWidget = () => {
-	const [weatherData, setWeatherData] = useState<any>(null);
+	const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
 
 	useEffect(() => {
 		fetch(

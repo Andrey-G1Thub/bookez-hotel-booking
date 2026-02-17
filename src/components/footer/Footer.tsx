@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { NAVIGATION_CONFIG } from '../constants/navigation';
 
 export const Footer = () => (
 	<footer className="bg-gray-800 mt-12">
@@ -10,25 +11,24 @@ export const Footer = () => (
 						Ваш надёжный сервис бронирования отелей.
 					</p>
 				</div>
+
 				<div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
 					<div>
 						<h3 className="text-sm font-semibold text-gray-100 uppercase mb-4">
 							Навигация
 						</h3>
 						<ul className="text-gray-400 space-y-2">
-							<li>
-								<Link to="/" className="hover:text-white transition">
-									Главная
-								</Link>
-							</li>
-							<li>
-								<Link
-									to="/bookings"
-									className="hover:text-white transition"
-								>
-									Мои Брони
-								</Link>
-							</li>
+							{/* Используем map для чистоты кода */}
+							{NAVIGATION_CONFIG.map((link) => (
+								<li key={link.path}>
+									<Link
+										to={link.path}
+										className="hover:text-white transition"
+									>
+										{link.title}
+									</Link>
+								</li>
+							))}
 						</ul>
 					</div>
 				</div>
