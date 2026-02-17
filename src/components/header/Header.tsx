@@ -18,6 +18,10 @@ export const Header = () => {
 	// const currentUser = useSelector(selectCurrentUser);
 	const currentUser = useAppSelector(selectCurrentUser);
 
+	// const bookings = useAppSelector((state) => state.bookings.list);
+
+	// bookings[0].ho
+
 	const filteredLinks = useMemo(() => {
 		return NAVIGATION_CONFIG.filter((link) => {
 			// Если ссылка только для авторизованных

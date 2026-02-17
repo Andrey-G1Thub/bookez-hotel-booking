@@ -1,59 +1,76 @@
-export const SET_BOOKINGS = 'SET_BOOKINGS';
-export const ADD_BOOKING = 'ADD_BOOKING';
-export const DELETE_BOOKING = 'DELETE_BOOKING';
+import type { Dispatch } from 'redux';
+import type { Booking } from '../reducers/bookingReducer';
 
+export const SET_BOOKINGS = 'SET_BOOKINGS' as const;
+export const ADD_BOOKING = 'ADD_BOOKING' as const;
+export const DELETE_BOOKING = 'DELETE_BOOKING' as const;
+
+interface SetBookingsAction {
+	type: typeof SET_BOOKINGS;
+	payload: Booking[];
+}
+interface AddBookingAction {
+	type: typeof ADD_BOOKING;
+	payload: Booking;
+}
+interface DeleteBookingAction {
+	type: typeof DELETE_BOOKING;
+	payload: number | string;
+}
+export type BookingActions = SetBookingsAction | AddBookingAction | DeleteBookingAction;
 // GET - получение данных
-export const fetchBookingsThunk = (userId) => async (dispatch) => {
-	try {
-		// Если userId не передан, мы можем либо не грузить ничего,
-		// либо грузить всё (если это админ). Для обычного юзера фильтруем:
-		const url = userId
-			? `http://localhost:3001/bookings?userId=${userId}`
-			: `http://localhost:3001/bookings`;
-		const res = await fetch(url);
-		if (!res.ok) throw new Error('Ошибка сети');
-		const data = await res.json();
+export const fetchBookingsThunk =
+	(userId: number | null) => async (dispatch: Dispatch<BookingActions>) => {
+		try {
+			// Если userId не передан, мы можем либо не грузить ничего,
+			// либо грузить всё (если это админ). Для обычного юзера фильтруем:
+			const url = userId
+				? `http://localhost:3001/bookings?userId=${userId}`
+				: `http://localhost:3001/bookings`;
+			const res = await fetch(url);
+			if (!res.ok) throw new Error('Ошибка сети');
+			const data = await res.json();
 
-		dispatch({ type: SET_BOOKINGS, payload: data });
-	} catch (e) {
-		console.error('Ошибка загрузки броней', e);
-	}
-};
+			dispatch({ type: SET_BOOKINGS, payload: data });
+		} catch (e) {
+			console.error('Ошибка загрузки броней', e);
+		}
+	};
 
 // POST - добавление новой брони
-export const addBookingThunk = (newBooking) => async (dispatch) => {
-	try {
-		const response = await fetch('http://localhost:3001/bookings', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(newBooking),
-		});
+export const addBookingThunk =
+	(newBooking: Booking) => async (dispatch: Dispatch<BookingActions>) => {
+		try {
+			const response = await fetch('http://localhost:3001/bookings', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(newBooking),
+			});
 
-		if (response.ok) {
-			const savedBooking = await response.json();
-			// Обновляем Redux только если сервер ответил "ОК"
-			dispatch({ type: ADD_BOOKING, payload: savedBooking });
+			if (response.ok) {
+				const savedBooking = await response.json();
+				// Обновляем Redux только если сервер ответил "ОК"
+				dispatch({ type: ADD_BOOKING, payload: savedBooking });
+			}
+		} catch (error) {
+			console.error('Ошибка при записи в db.json:', error);
 		}
-	} catch (error) {
-		console.error('Ошибка при записи в db.json:', error);
-	}
-};
+	};
 
-// store/actions/bookingActions.js
+export const deleteBookingThunk =
+	(id: number | string) => async (dispatch: Dispatch<BookingActions>) => {
+		try {
+			// Отправляем запрос на удаление конкретного ID
+			const response = await fetch(`http://localhost:3001/bookings/${id}`, {
+				method: 'DELETE',
+			});
 
-export const deleteBookingThunk = (id) => async (dispatch) => {
-	try {
-		// Отправляем запрос на удаление конкретного ID
-		const response = await fetch(`http://localhost:3001/bookings/${id}`, {
-			method: 'DELETE', // Метод DELETE удаляет запись в db.json
-		});
-
-		if (response.ok) {
-			dispatch({ type: DELETE_BOOKING, payload: id });
+			if (response.ok) {
+				dispatch({ type: DELETE_BOOKING, payload: id });
+			}
+		} catch (error) {
+			console.error('Ошибка при удалении из db.json:', error);
 		}
-	} catch (error) {
-		console.error('Ошибка при удалении из db.json:', error);
-	}
-};
+	};
