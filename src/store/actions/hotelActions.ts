@@ -1,9 +1,45 @@
+import type { City, Hotel } from '../reducers/hotelReducer';
+
 export const SET_HOTELS = 'SET_HOTELS';
-export const UPDATE_HOTEL_ROOM_SUCCESS = 'UPDATE_HOTEL_ROOM_SUCCESS';
-export const UPDATE_HOTEL_SUCCESS = 'UPDATE_HOTEL_SUCCESS';
+export const SET_CITIES = 'SET_CITIES';
 export const ADD_HOTEL_SUCCESS = 'ADD_HOTEL_SUCCESS';
 export const DELETE_HOTEL_SUCCESS = 'DELETE_HOTEL_SUCCESS';
-export const SET_CITIES = 'SET_CITIES';
+export const UPDATE_HOTEL_SUCCESS = 'UPDATE_HOTEL_SUCCESS';
+export const UPDATE_HOTEL_ROOM_SUCCESS = 'UPDATE_HOTEL_ROOM_SUCCESS';
+
+interface SetHotelsAction {
+	type: typeof SET_HOTELS;
+	payload: Hotel[];
+}
+interface SetCitiesAction {
+	type: typeof SET_CITIES;
+	payload: City[];
+}
+interface AddHotelAction {
+	type: typeof ADD_HOTEL_SUCCESS;
+	payload: Hotel;
+}
+interface DeleteHotelAction {
+	type: typeof DELETE_HOTEL_SUCCESS;
+	payload: number;
+}
+interface UpdateHotelAction {
+	type: typeof UPDATE_HOTEL_SUCCESS;
+	payload: Hotel;
+}
+interface UpdateHotelRoomAction {
+	type: typeof UPDATE_HOTEL_ROOM_SUCCESS;
+	payload: Hotel;
+}
+
+export type HotelActions =
+	| SetHotelsAction
+	| SetCitiesAction
+	| AddHotelAction
+	| DeleteHotelAction
+	| UpdateHotelAction
+	| UpdateHotelRoomAction;
+
 // Загрузка данных
 export const fetchHotelsThunk = () => async (dispatch) => {
 	try {

@@ -1,7 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
-// import { bookingReducer } from './reducers/bookingReducer';
-// import { hotelReducer } from './reducers/hotelReducer';
 import { userReducer } from './reducers/userReducer';
 import { hotelReducer } from './reducers/hotelReducer';
 import { bookingReducer } from './reducers/bookingReducer';

@@ -81,7 +81,20 @@
       "id": 1771323138773
     }
   ],
-  "bookings": [],
+  "bookings": [
+    {
+      "id": 1771339215667,
+      "userId": 1771323138773,
+      "hotelId": 1771143745288,
+      "roomId": 1771143887792,
+      "hotelName": "HOTEL manager 1",
+      "roomType": "Стандарт",
+      "checkIn": "2026-02-17",
+      "checkOut": "2026-02-24",
+      "price": 10500,
+      "status": "Подтверждено"
+    }
+  ],
   "cities": [
     {
       "id": 1,
@@ -138,7 +151,15 @@
       "images": [
         "https://fastly.picsum.photos/id/142/400/250.jpg?hmac=K22DCZAPDegx54LF0OoWVe70a4jzsbcp5rz6BZDlqbs"
       ],
-      "comments": [],
+      "comments": [
+        {
+          "id": 1771338460953,
+          "userId": 1771323138773,
+          "userName": "uer5",
+          "text": "привет",
+          "date": "17.02.2026"
+        }
+      ],
       "id": 1771143745288,
       "ownerId": 1770832348065,
       "rating": 5,
