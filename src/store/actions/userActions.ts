@@ -1,12 +1,17 @@
 import type { Dispatch } from 'redux';
 import { ROLES } from '../../utils/permissions';
 import type { User } from '../reducers/userReducer';
+import type { RootState } from '..';
 
 export const SET_USER = 'SET_USER' as const;
 export const LOGOUT_USER = 'LOGOUT_USER' as const;
 export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS' as const;
 export const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS' as const;
 
+interface RegisterData extends Credentials {
+	name: string;
+	confirmPassword?: string;
+}
 interface SetUserAction {
 	type: typeof SET_USER;
 	payload: User;
@@ -24,7 +29,11 @@ interface DeleteUserAction {
 }
 interface Credentials {
 	email: string;
-	password?: string; // пароль может быть необязательным при некоторых проверках
+	password?: string;
+}
+interface UserLimits {
+	maxHotels: number;
+	maxRooms: number;
 }
 
 export type UserActions =
@@ -33,11 +42,52 @@ export type UserActions =
 	| FetchUsersAction
 	| DeleteUserAction;
 
+export const registerThunk =
+	(userData: RegisterData) => async (dispatch: Dispatch<UserActions>) => {
+		try {
+			// Проверяем, существует ли пользователь
+			const checkRes = await fetch(
+				`http://localhost:3001/users?email=${userData.email}`,
+			);
+			const existing = await checkRes.json();
+
+			if (existing.length > 0) {
+				alert('Пользователь с таким email уже существует!');
+				return false;
+			}
+			// Убираем confirmPassword перед отправкой и добавляем роль
+			const { confirmPassword, ...dataToInscribe } = userData;
+			const newUser = {
+				...dataToInscribe,
+				role: ROLES.USER, // Используй константу
+				limits: {
+					maxHotels: 0, // У обычного юзера нет отелей
+					maxRooms: 0,
+				},
+				id: Date.now(), // Если json-server не настроен на авто-id
+			};
+
+			const response = await fetch('http://localhost:3001/users', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(newUser),
+			});
+
+			if (response.ok) {
+				return true;
+			}
+			return false;
+		} catch (error) {
+			console.error('Register Error:', error);
+			return false;
+		}
+	};
+
 export const loginThunk =
 	(credentials: Credentials) => async (dispatch: Dispatch<UserActions>) => {
 		try {
 			const email = encodeURIComponent(credentials.email);
-			const password = encodeURIComponent(credentials.password);
+			const password = encodeURIComponent(credentials.password || '');
 			const res = await fetch(
 				`http://localhost:3001/users?email=${email}&password=${password}`,
 			);
@@ -50,10 +100,15 @@ export const loginThunk =
 			const user = users[0]; // Нашли пользователя
 
 			// 3. Сохраняем "сессию"
-			localStorage.setItem('bookez_user', JSON.stringify(user));
-			// 4. Обновляем Redux
-			dispatch({ type: SET_USER, payload: user });
-			return true;
+			if (user) {
+				localStorage.setItem('bookez_user', JSON.stringify(user));
+				// 4. Обновляем Redux
+				dispatch({ type: SET_USER, payload: user });
+				return true;
+			} else {
+				alert('Пользователь не найден.');
+				return false;
+			}
 		} catch (error) {
 			console.error('Login Error:', error);
 			alert('Произошла ошибка при входе. Проверьте соединение с сервером.');
@@ -67,49 +122,10 @@ export const logoutThunk = () => (dispatch: Dispatch<UserActions>) => {
 };
 // store/actions/userActions.js
 
-export const registerThunk = (userData) => async (dispatch: Dispatch<UserActions>) => {
-	try {
-		// Проверяем, существует ли пользователь
-		const checkRes = await fetch(
-			`http://localhost:3001/users?email=${userData.email}`,
-		);
-		const existing = await checkRes.json();
-
-		if (existing.length > 0) {
-			alert('Пользователь с таким email уже существует!');
-			return false;
-		}
-		// Убираем confirmPassword перед отправкой и добавляем роль
-		const { confirmPassword, ...dataToInscribe } = userData;
-		const newUser = {
-			...dataToInscribe,
-			role: ROLES.USER, // Используй константу
-			limits: {
-				maxHotels: 0, // У обычного юзера нет отелей
-				maxRooms: 0,
-			},
-			id: Date.now(), // Если json-server не настроен на авто-id
-		};
-
-		const response = await fetch('http://localhost:3001/users', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(newUser),
-		});
-
-		if (response.ok) {
-			return true;
-		}
-		return false;
-	} catch (error) {
-		console.error('Register Error:', error);
-		return false;
-	}
-};
 // userActions.js
 export const updateUserRoleThunk =
-	(userId, newRole, limits = null) =>
-	async (dispatch, getState) => {
+	(userId: number, newRole: string, limits: UserLimits | null = null) =>
+	async (dispatch: any, getState: () => RootState) => {
 		try {
 			const response = await fetch(`http://localhost:3001/users/${userId}`, {
 				method: 'PATCH',

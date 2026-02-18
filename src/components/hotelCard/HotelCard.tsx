@@ -1,8 +1,13 @@
 import { ChevronRight, MessageSquare } from 'lucide-react';
 import { Rating } from '../rating/Rating';
 import { useNavigate } from 'react-router-dom';
+import type { Hotel } from '../../store/reducers/hotelReducer';
 
-export const HotelCard = ({ hotel }) => {
+interface HotelCardProps {
+	hotel: Hotel;
+}
+
+export const HotelCard = ({ hotel }: HotelCardProps) => {
 	const navigate = useNavigate();
 
 	// Считаем количество отзывов динамически из массива comments
@@ -23,9 +28,10 @@ export const HotelCard = ({ hotel }) => {
 				src={hotelImage}
 				alt={hotel.name}
 				className="w-full h-48 object-cover"
-				onError={(e) => {
-					e.target.onerror = null;
-					e.target.src = 'https://placehold.co/400x250?text=No+Photo';
+				onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+					const target = e.currentTarget;
+					target.onerror = null;
+					target.src = 'https://placehold.co/400x250?text=No+Photo';
 				}}
 			/>
 			<div className="p-4">

@@ -48,7 +48,7 @@ export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) =
 		const response = await fetch('http://localhost:3001/hotels');
 		if (!response.ok) throw new Error('Ошибка при загрузке отелей');
 
-		const data = await response.json();
+		const data: Hotel[] = await response.json();
 		dispatch({ type: SET_HOTELS, payload: data });
 	} catch (error) {
 		console.error('Hotel Fetch Error:', error);
@@ -57,7 +57,7 @@ export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) => {
 	const response = await fetch('http://localhost:3001/cities');
-	const data = await response.json();
+	const data: City[] = await response.json();
 	dispatch({ type: SET_CITIES, payload: data });
 };
 
@@ -72,8 +72,8 @@ export const updateHotelThunk =
 				body: JSON.stringify(updatedData),
 			});
 			if (response.ok) {
-				const data = await response.json();
-				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: data });
+				const updatedHotel: Hotel = await response.json();
+				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
 				return true;
 			}
 		} catch (error) {
@@ -94,12 +94,12 @@ export const updateHotelRoomsThunk =
 			});
 
 			if (response.ok) {
-				const updatedHotel = await response.json();
+				const updatedRoomHotel: Hotel = await response.json();
 
 				// Отправляем обновленный объект отеля в редьюсер
 				dispatch({
 					type: UPDATE_HOTEL_ROOM_SUCCESS,
-					payload: updatedHotel,
+					payload: updatedRoomHotel,
 				});
 				return true;
 			}
@@ -120,7 +120,7 @@ export const addHotelThunk =
 			});
 
 			if (response.ok) {
-				const savedHotel = await response.json();
+				const savedHotel: Hotel = await response.json();
 				dispatch({
 					type: ADD_HOTEL_SUCCESS,
 					payload: savedHotel,
@@ -172,7 +172,7 @@ export const addCommentThunk =
 			});
 
 			if (res.ok) {
-				const updatedHotel = await res.json();
+				const updatedHotel: Hotel = await res.json();
 				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
 			}
 		} catch (error) {
@@ -196,7 +196,7 @@ export const deleteCommentThunk =
 			});
 
 			if (res.ok) {
-				const updatedHotel = await res.json();
+				const updatedHotel: Hotel = await res.json();
 				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
 			}
 		} catch (error) {

@@ -29,7 +29,7 @@ export const fetchBookingsThunk =
 				: `http://localhost:3001/bookings`;
 			const res = await fetch(url);
 			if (!res.ok) throw new Error('Ошибка сети');
-			const data = await res.json();
+			const data: Booking[] = await res.json();
 
 			dispatch({ type: SET_BOOKINGS, payload: data });
 		} catch (e) {
@@ -50,7 +50,7 @@ export const addBookingThunk =
 			});
 
 			if (response.ok) {
-				const savedBooking = await response.json();
+				const savedBooking: Booking = await response.json();
 				// Обновляем Redux только если сервер ответил "ОК"
 				dispatch({ type: ADD_BOOKING, payload: savedBooking });
 			}

@@ -14,6 +14,7 @@ npm run dev запуск проекта
 9. npm install @hookform/resolvers yup
 10. npm install tailwindcss @tailwindcss/vite
 11. npm install react-number-format
+12. npm install -D @types/node
 
 ## . Структура Папок: Создайть базовую структуру:
 
