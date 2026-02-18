@@ -1,6 +1,4 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
 import { Footer, Header } from './components';
 import { BookingsPage } from './pages/bookingsPage/BookingsPage';
 import { CityDetailsPage } from './pages/cityDetailsPage/CityDetailsPage';
@@ -11,39 +9,40 @@ import { NotFoundPage } from './pages/notFoundPage/NotFoundPage';
 import { RegisterPage } from './pages/registerPage/RegisterPage';
 import { RoomBookingPage } from './pages/roomBookingPage/RoomBookingPage';
 
-import './App.css';
+// import './App.css';
 import { SET_USER } from './store/actions/userActions';
 import { fetchHotelsThunk } from './store/actions/hotelActions';
-import { fetchBookings, fetchBookingsThunk } from './store/actions/bookingActions';
+import { fetchBookingsThunk } from './store/actions/bookingActions';
 import { fetchCitiesThunk } from './store/actions/hotelActions';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRouter';
 import { AdminPage } from './pages/adminPage/AdminPage';
 import { ROLES } from './utils/permissions';
 import { ManagerPage } from './pages/managerPage/ManagerPage';
-// import { PrivateRoute } from './components/PrivateRouter';
+import { useAppDispatch } from './store/hooks';
+
+import type { User } from './store/reducers/userReducer';
 
 export const App = () => {
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
-	const currentUser = useSelector((state) => state.users.currentUser);
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		// dispatch(fetchBookings());
 		dispatch(fetchHotelsThunk());
 		dispatch(fetchCitiesThunk());
 
 		const savedUser = localStorage.getItem('bookez_user');
 		if (savedUser) {
-			const user = JSON.parse(savedUser);
-			dispatch({ type: SET_USER, payload: user });
-			dispatch(fetchBookingsThunk(user.id));
+			try {
+				const user: User = JSON.parse(savedUser);
+				dispatch({ type: SET_USER, payload: user });
+				dispatch(fetchBookingsThunk(user.id));
+			} catch (error) {
+				const user: User = JSON.parse(savedUser);
+				dispatch({ type: SET_USER, payload: user });
+				dispatch(fetchBookingsThunk(user.id));
+			}
 		}
 	}, [dispatch]);
-
-	// 4. Определение содержимого страницы
-	const isUserLoggedIn = !!currentUser;
-	const isManager = currentUser?.role === 'manager';
 
 	return (
 		<div className="min-h-screen flex flex-col">
@@ -54,7 +53,7 @@ export const App = () => {
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 
-					{/* Параметризованные маршруты */}
+					{/* Публичные маршруты */}
 					<Route path="/city/:cityId" element={<CityDetailsPage />} />
 					<Route path="/hotel/:hotelId" element={<HotelDetailsPage />} />
 					<Route path="/room/:hotelId/:roomId" element={<RoomBookingPage />} />

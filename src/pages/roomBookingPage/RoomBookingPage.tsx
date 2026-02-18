@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addBookingThunk } from '../../store/actions/bookingActions.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Skeleton } from '../../components/Skeleton.js';
+import { Skeleton } from '../../components/componentsLoading/Skeleton.js';
 
 /\*_ Страница бронирования конкретного номера _/;
 export const RoomBookingPage = () => {
