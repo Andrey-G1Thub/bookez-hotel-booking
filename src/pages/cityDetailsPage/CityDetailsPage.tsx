@@ -1,18 +1,35 @@
 import { ChevronRight } from 'lucide-react';
-import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
-import { HotelCard } from '../../components/index.js';
-import { useSelector } from 'react-redux';
+import { NotFoundPage } from '../notFoundPage/NotFoundPage';
+import { HotelCard } from '../../components/index';
+
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAppSelector } from '../../store/hooks';
+import {
+	selectAllHotels,
+	selectCities,
+	selectIsLoading,
+} from '../../selectors/hotelSelectors';
+import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 
 export const CityDetailsPage = () => {
 	const navigate = useNavigate();
-	// const params = useParams()
-	const { cityId } = useParams();
-	// Находим текущий город, чтобы показать его название
-	const { allHotels, cities } = useSelector((state) => state.hotels);
+
+	const { cityId } = useParams<{ cityId: string }>();
+
+	const allHotels = useAppSelector(selectAllHotels);
+	const cities = useAppSelector(selectCities);
+
+	const isLoading = useAppSelector(selectIsLoading);
 	// 1. Сначала проверяем, загрузились ли данные вообще
-	if (cities.length === 0 || allHotels.length === 0) {
-		return <div className="p-10 text-center text-xl">Загрузка данных...</div>;
+	if (isLoading) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+				<LoadingSpinner />
+				<p className="text-[#00a3a8] font-medium animate-pulse">
+					Загрузка данных о городе...
+				</p>
+			</div>
+		);
 	}
 
 	const city = cities.find((c) => Number(c.id) === Number(cityId));

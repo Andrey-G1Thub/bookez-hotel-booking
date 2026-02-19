@@ -8,6 +8,7 @@ export const ADD_HOTEL_SUCCESS = 'ADD_HOTEL_SUCCESS';
 export const DELETE_HOTEL_SUCCESS = 'DELETE_HOTEL_SUCCESS';
 export const UPDATE_HOTEL_SUCCESS = 'UPDATE_HOTEL_SUCCESS';
 export const UPDATE_HOTEL_ROOM_SUCCESS = 'UPDATE_HOTEL_ROOM_SUCCESS';
+export const FETCH_HOTELS_START = 'FETCH_HOTELS_START';
 
 interface SetHotelsAction {
 	type: typeof SET_HOTELS;
@@ -33,8 +34,12 @@ interface UpdateHotelRoomAction {
 	type: typeof UPDATE_HOTEL_ROOM_SUCCESS;
 	payload: Hotel;
 }
+interface FetchHotelsStartAction {
+	type: typeof FETCH_HOTELS_START;
+}
 
 export type HotelActions =
+	| FetchHotelsStartAction
 	| SetHotelsAction
 	| SetCitiesAction
 	| AddHotelAction
@@ -45,10 +50,14 @@ export type HotelActions =
 // Загрузка данных
 export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) => {
 	try {
+		// ШАГ 1: Включаем спиннер
+		dispatch({ type: FETCH_HOTELS_START });
+
 		const response = await fetch('http://localhost:3001/hotels');
 		if (!response.ok) throw new Error('Ошибка при загрузке отелей');
 
 		const data: Hotel[] = await response.json();
+
 		dispatch({ type: SET_HOTELS, payload: data });
 	} catch (error) {
 		console.error('Hotel Fetch Error:', error);

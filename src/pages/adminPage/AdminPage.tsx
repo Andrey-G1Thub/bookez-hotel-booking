@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
 	deleteUserThunk,
 	fetchAllUsersThunk,
 	updateUserRoleThunk,
 } from '../../store/actions/userActions';
 import { ROLES } from '../../utils/permissions';
-// import { ROLES } from '../../utils/roles'; //
+import type { AppDispatch } from '../../store';
+import { selectCurrentUser, selectUsersList } from '../../selectors';
+import { useAppSelector } from '../../store/hooks';
+import type { User, UserLimits } from '../../store/reducers/userReducer';
 
 export const AdminPage = () => {
-	const dispatch = useDispatch();
-	// сохраняю список всех юзеров в users.usersList
-	const { usersList, currentUser } = useSelector((state: any) => state.users);
+	const dispatch = useDispatch<AppDispatch>();
+
+	const currentUser = useAppSelector(selectCurrentUser);
+	const usersList = useAppSelector(selectUsersList);
 
 	useEffect(() => {
 		dispatch(fetchAllUsersThunk());
@@ -24,25 +28,26 @@ export const AdminPage = () => {
 		dispatch(updateUserRoleThunk(userId, newRole, defaultLimits));
 	};
 
-	// НОВАЯ ФУНКЦИЯ: Изменение конкретного лимита
+	//Изменение конкретного лимита
 	const handleLimitChange = (
 		userId: number,
 		currentRole: string,
-		field: string,
+		field: keyof UserLimits,
 		value: string,
 	) => {
-		const user = usersList.find((u: any) => u.id === userId);
+		const user = usersList.find((u: User) => u.id === userId);
 		if (!user) return;
 
-		const newLimits = {
-			...user.limits,
+		const newLimits: UserLimits = {
+			maxHotels: user.limits?.maxHotels || 1,
+			maxRooms: user.limits?.maxRooms || 5,
 			[field]: parseInt(value) || 0,
 		};
 
 		dispatch(updateUserRoleThunk(userId, currentRole, newLimits));
 	};
 
-	// НОВАЯ ФУНКЦИЯ УДАЛЕНИЯ
+	// УДАЛЕНИЯ
 	const handleDeleteUser = (userId: number, userName: string) => {
 		if (window.confirm(`Вы уверены, что хотите удалить пользователя ${userName}?`)) {
 			dispatch(deleteUserThunk(userId));
@@ -50,39 +55,38 @@ export const AdminPage = () => {
 	};
 
 	return (
-		<div className="p-8 mt-10">
+		<div className="p-8 mt-10 max-w-7xl mx-auto">
 			<h1 className="text-3xl font-bold mb-6 text-gray-800">
 				Управление пользователями
 			</h1>
 
-			<div className="overflow-x-auto bg-white rounded-lg shadow">
+			<div className="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
 				<table className="w-full text-left border-collapse">
 					<thead>
-						<tr className="bg-gray-100 border-b">
-							<th className="p-4 font-semibold text-gray-700">Имя</th>
-							<th className="p-4 font-semibold text-gray-700">Email</th>
-							<th className="p-4 font-semibold text-gray-700">
-								Текущая роль
-							</th>
-							<th className="p-4 font-semibold text-gray-700">
+						<tr className="bg-gray-50 border-b">
+							<th className="p-4 font-semibold text-gray-600">Имя</th>
+							<th className="p-4 font-semibold text-gray-600">Email</th>
+							<th className="p-4 font-semibold text-gray-600">Роль</th>
+							<th className="p-4 font-semibold text-gray-600">
 								Изменить роль
 							</th>
-							<th className="p-4 font-semibold text-gray-700">
+							<th className="p-4 font-semibold text-gray-600 text-center">
 								Лимиты (H/R)
 							</th>
+							<th className="p-4 font-semibold text-gray-600">Действия</th>
 						</tr>
 					</thead>
 					<tbody>
-						{usersList?.map((user: any) => (
+						{usersList?.map((user: User) => (
 							<tr
 								key={user.id}
-								className="border-b hover:bg-gray-50 transition"
+								className="border-b hover:bg-gray-50/50 transition"
 							>
-								<td className="p-4">{user.name}</td>
+								<td className="p-4 font-medium">{user.name}</td>
 								<td className="p-4 text-gray-600">{user.email}</td>
 								<td className="p-4">
 									<span
-										className={`px-2 py-1 rounded text-xs font-bold uppercase ${
+										className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
 											user.role === 'admin'
 												? 'bg-red-100 text-red-700'
 												: user.role === 'manager'
@@ -93,15 +97,14 @@ export const AdminPage = () => {
 										{user.role}
 									</span>
 								</td>
-
 								<td className="p-4">
 									<select
 										value={user.role}
-										disabled={user.id === currentUser?.id} // Не даем админу случайно снять роль с самого себя
+										disabled={user.id === currentUser?.id}
 										onChange={(e) =>
 											handleRoleChange(user.id, e.target.value)
 										}
-										className="border rounded p-1 outline-none focus:ring-2 focus:ring-teal-500"
+										className="border rounded p-1 text-sm outline-none focus:ring-2 focus:ring-teal-500 bg-white"
 									>
 										<option value={ROLES.USER}>User</option>
 										<option value={ROLES.MANAGER}>Manager</option>
@@ -110,11 +113,8 @@ export const AdminPage = () => {
 								</td>
 								<td className="p-4">
 									{user.role === ROLES.MANAGER ? (
-										<div className="flex items-center justify-center gap-2">
+										<div className="flex items-center justify-center gap-3">
 											<div className="flex flex-col items-center">
-												<span className="text-[10px] text-gray-400 uppercase">
-													Отели
-												</span>
 												<input
 													type="number"
 													min="1"
@@ -127,14 +127,11 @@ export const AdminPage = () => {
 															e.target.value,
 														)
 													}
-													className="w-16 border rounded p-1 text-center font-bold text-blue-600"
+													className="w-12 border rounded p-1 text-center text-xs font-bold text-blue-600"
 												/>
 											</div>
-											<span className="text-gray-300 mt-4">/</span>
+											<span className="text-gray-300">/</span>
 											<div className="flex flex-col items-center">
-												<span className="text-[10px] text-gray-400 uppercase">
-													Номера
-												</span>
 												<input
 													type="number"
 													min="1"
@@ -147,7 +144,7 @@ export const AdminPage = () => {
 															e.target.value,
 														)
 													}
-													className="w-16 border rounded p-1 text-center font-bold text-teal-600"
+													className="w-12 border rounded p-1 text-center text-xs font-bold text-teal-600"
 												/>
 											</div>
 										</div>
@@ -160,11 +157,11 @@ export const AdminPage = () => {
 										onClick={() =>
 											handleDeleteUser(user.id, user.name)
 										}
-										disabled={user.id === currentUser?.id} // Себя удалять нельзя
-										className={`px-3 py-1 rounded text-white transition ${
+										disabled={user.id === currentUser?.id}
+										className={`px-3 py-1.5 rounded text-xs font-medium transition ${
 											user.id === currentUser?.id
-												? 'bg-gray-300 cursor-not-allowed'
-												: 'bg-red-500 hover:bg-red-600'
+												? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+												: 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white'
 										}`}
 									>
 										Удалить

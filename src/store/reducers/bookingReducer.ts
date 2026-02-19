@@ -2,6 +2,7 @@ import {
 	ADD_BOOKING,
 	DELETE_BOOKING,
 	SET_BOOKINGS,
+	SET_BOOKINGS_LOADING,
 	type BookingActions,
 } from '../actions/bookingActions';
 
@@ -28,8 +29,14 @@ const initialState: BookingState = {
 	loading: false,
 };
 
-export const bookingReducer = (state = initialState, action: BookingActions) => {
+export const bookingReducer = (
+	state = initialState,
+	action: BookingActions,
+): BookingState => {
 	switch (action.type) {
+		case SET_BOOKINGS_LOADING:
+			return { ...state, loading: action.payload };
+
 		case SET_BOOKINGS:
 			return { ...state, list: action.payload };
 

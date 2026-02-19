@@ -11,8 +11,7 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
 	const navigate = useNavigate();
 
 	// Считаем количество отзывов динамически из массива comments
-	// Если массива нет, используем 0
-	const reviewsCount = hotel.comments ? hotel.comments.length : 0;
+	const reviewsCount = hotel.comments ? hotel.comments?.length : 0;
 
 	const hotelImage =
 		hotel.images && hotel.images.length > 0

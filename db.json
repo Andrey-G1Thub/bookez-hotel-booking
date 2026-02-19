@@ -1,14 +1,6 @@
 {
   "users": [
     {
-      "name": "admin",
-      "email": "admin@admin",
-      "phone": "+99099999999",
-      "password": "111111",
-      "role": "admin",
-      "id": 1770711015637
-    },
-    {
       "name": "Lena",
       "email": "lena@lena",
       "phone": "+99011111111",
@@ -25,7 +17,7 @@
       "email": "user1@user",
       "phone": "+9901111110",
       "password": "111111",
-      "role": "user",
+      "role": "admin",
       "limits": {
         "maxHotels": 1,
         "maxRooms": 5

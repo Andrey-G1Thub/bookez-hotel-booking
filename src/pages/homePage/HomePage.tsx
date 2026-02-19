@@ -6,7 +6,8 @@ import { fetchHotelsThunk } from '../../store/actions/hotelActions';
 import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectAllHotels, selectCities } from '../../selectors/hotelSelectors';
-import { selectBooking } from '../../selectors/bookingSelectors';
+import { selectBookingList } from '../../selectors/bookingSelectors';
+// import { selectBooking } from '../../selectors/bookingSelectors';
 
 interface SearchFilters {
 	cityId: number | null;
@@ -19,7 +20,7 @@ export const HomePage = () => {
 	const allHotels = useAppSelector(selectAllHotels);
 	const cities = useAppSelector(selectCities);
 
-	const bookingsList = useAppSelector(selectBooking); //
+	const bookingsList = useAppSelector(selectBookingList); //
 
 	const [nameSearch, setNameSearch] = useState('');
 	const [sortBy, setSortBy] = useState('rating'); // 'rating' или 'price'

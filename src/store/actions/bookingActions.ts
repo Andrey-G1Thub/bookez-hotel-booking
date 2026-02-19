@@ -4,7 +4,7 @@ import type { Booking } from '../reducers/bookingReducer';
 export const SET_BOOKINGS = 'SET_BOOKINGS' as const;
 export const ADD_BOOKING = 'ADD_BOOKING' as const;
 export const DELETE_BOOKING = 'DELETE_BOOKING' as const;
-
+export const SET_BOOKINGS_LOADING = 'SET_BOOKINGS_LOADING' as const;
 interface SetBookingsAction {
 	type: typeof SET_BOOKINGS;
 	payload: Booking[];
@@ -17,11 +17,22 @@ interface DeleteBookingAction {
 	type: typeof DELETE_BOOKING;
 	payload: number | string;
 }
-export type BookingActions = SetBookingsAction | AddBookingAction | DeleteBookingAction;
+interface SetLoadingAction {
+	type: typeof SET_BOOKINGS_LOADING;
+	payload: boolean;
+}
+
+export type BookingActions =
+	| SetBookingsAction
+	| AddBookingAction
+	| DeleteBookingAction
+	| SetLoadingAction;
+
 // GET - получение данных
 export const fetchBookingsThunk =
 	(userId: number | null) => async (dispatch: Dispatch<BookingActions>) => {
 		try {
+			dispatch({ type: SET_BOOKINGS_LOADING, payload: true });
 			// Если userId не передан, мы можем либо не грузить ничего,
 			// либо грузить всё (если это админ). Для обычного юзера фильтруем:
 			const url = userId
@@ -34,6 +45,8 @@ export const fetchBookingsThunk =
 			dispatch({ type: SET_BOOKINGS, payload: data });
 		} catch (e) {
 			console.error('Ошибка загрузки броней', e);
+		} finally {
+			dispatch({ type: SET_BOOKINGS_LOADING, payload: false }); // Выключаем спиннер
 		}
 	};
 

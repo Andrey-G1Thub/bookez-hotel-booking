@@ -6,11 +6,16 @@ import {
 	type UserActions,
 } from '../actions/userActions';
 
+export interface UserLimits {
+	maxHotels: number;
+	maxRooms: number;
+}
 export interface User {
 	id: number;
 	name: string;
 	email: string;
 	role: string;
+	limits?: UserLimits;
 }
 
 interface UserState {
@@ -42,7 +47,7 @@ export const userReducer = (state = initialState, action: UserActions): UserStat
 			return {
 				...state,
 				usersList: state.usersList.filter(
-					(user: any) => user.id !== action.payload,
+					(user: User) => user.id !== action.payload,
 				),
 			};
 

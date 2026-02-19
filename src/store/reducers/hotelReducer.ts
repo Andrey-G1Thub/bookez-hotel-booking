@@ -1,6 +1,7 @@
 import {
 	ADD_HOTEL_SUCCESS,
 	DELETE_HOTEL_SUCCESS,
+	FETCH_HOTELS_START,
 	SET_CITIES,
 	SET_HOTELS,
 	UPDATE_HOTEL_ROOM_SUCCESS,
@@ -51,15 +52,26 @@ export interface City {
 interface HotelState {
 	allHotels: Hotel[];
 	cities: City[];
+	isLoading: boolean;
+	error: string | null;
 }
 
 const initialState: HotelState = {
 	allHotels: [],
 	cities: [],
+	isLoading: false,
+	error: null,
 };
 
 export const hotelReducer = (state = initialState, action: HotelActions): HotelState => {
 	switch (action.type) {
+		// Если загрузка началась
+		case FETCH_HOTELS_START:
+			return {
+				...state,
+				isLoading: true,
+				error: null,
+			};
 		case SET_HOTELS:
 			return { ...state, allHotels: action.payload };
 		case SET_CITIES:

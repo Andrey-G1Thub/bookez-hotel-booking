@@ -1,51 +1,63 @@
 import { ArrowLeft, Hotel } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
 	deleteBookingThunk,
 	fetchBookingsThunk,
 } from '../../store/actions/bookingActions';
-import { useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import type { AppDispatch } from '../../store';
+import {
+	selectBookingIsLoading,
+	selectBookingList,
+} from '../../selectors/bookingSelectors';
+import { selectCurrentUser } from '../../selectors';
+import type { Booking } from '../../store/reducers/bookingReducer';
+import { useAppSelector } from '../../store/hooks';
+import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 
 export const BookingsPage = () => {
-	const dispatch = useDispatch();
+	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
-	// Получаем список всех бронирований из Redux
-	const allBookings = useSelector((state) => state.bookings.list);
-	const currentUser = useSelector((state) => state.users.currentUser);
+	const allBookings = useAppSelector(selectBookingList);
+	const currentUser = useAppSelector(selectCurrentUser);
+	const isLoading = useAppSelector(selectBookingIsLoading);
 
 	//  Загружаем бронирования при заходе на страницу
 	useEffect(() => {
-		dispatch(fetchBookingsThunk());
-	}, [dispatch]);
+		if (currentUser?.id) {
+			dispatch(fetchBookingsThunk(currentUser.id));
+		}
+	}, [dispatch, currentUser?.id]);
 
-	const activeBookings = useMemo(() => {
+	const activeBookings = useMemo<Booking[]>(() => {
 		if (!currentUser) return [];
 		return allBookings.filter(
 			(b) => b.userId === currentUser?.id && b.status === 'Подтверждено',
 		);
 	}, [allBookings, currentUser]);
 
-	const canceledBookings = useMemo(() => {
+	const canceledBookings = useMemo<Booking[]>(() => {
 		if (!currentUser) return [];
 		return allBookings.filter(
 			(b) => b.userId === currentUser.id && b.status === 'Отменено',
 		);
 	}, [allBookings, currentUser]);
 
-	const handleDelete = (id) => {
+	const handleDelete = (id: number | string) => {
 		if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
 			dispatch(deleteBookingThunk(id));
 		}
 	};
 	if (!currentUser) return <div className="p-10 text-center">Загрузка...</div>;
+	if (isLoading) return <LoadingSpinner />;
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 			<button
 				onClick={() => navigate(-1)}
-				className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mb-6 group"
+				className="flex items-center text-gray-500 hover:text-[#00a3a8] transition-colors mb-8 group"
 			>
 				<ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
 				<span>Назад</span>

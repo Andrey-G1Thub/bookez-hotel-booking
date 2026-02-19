@@ -1,4 +1,4 @@
-// /\*_ Страница деталей отеля: список номеров _/;
+// Страница деталей отеля: список номеров _/;
 
 import {
 	ChevronRight,
@@ -9,21 +9,27 @@ import {
 	Trash2,
 	User,
 } from 'lucide-react';
-import { NotFoundPage } from '../notFoundPage/NotFoundPage.js';
-import { Rating } from '../../components/index.js';
+import { NotFoundPage } from '../notFoundPage/NotFoundPage';
+import { Rating } from '../../components/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRef } from 'react';
-import { addCommentThunk, deleteCommentThunk } from '../../store/actions/hotelActions.js';
+import { addCommentThunk, deleteCommentThunk } from '../../store/actions/hotelActions';
+import type { AppDispatch } from '../../store';
+import { useAppSelector } from '../../store/hooks';
+import { selectCurrentUser } from '../../selectors';
+import { selectAllHotels, selectCities } from '../../selectors/hotelSelectors';
+import type { Comments } from '../../store/reducers/hotelReducer';
 
 export const HotelDetailsPage = () => {
-	const { hotelId } = useParams();
-	const dispatch = useDispatch();
+	const { hotelId } = useParams<{ hotelId: string }>();
+	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
-	const commentsRef = useRef(null); // Для скролла к комментариям
+	const commentsRef = useRef<HTMLDivElement>(null);
 
-	const { allHotels, cities } = useSelector((state) => state.hotels);
-	const user = useSelector((state) => state.users.currentUser);
+	const allHotels = useAppSelector(selectAllHotels);
+	const cities = useAppSelector(selectCities);
+	const user = useAppSelector(selectCurrentUser);
 
 	const hotel = allHotels.find((h) => Number(h.id) === Number(hotelId));
 	const city = cities.find((c) => Number(c.id) === Number(hotel?.cityId));
@@ -33,14 +39,9 @@ export const HotelDetailsPage = () => {
 	const comments = hotel.comments || [];
 	const rooms = hotel?.rooms || [];
 
-	const canDeleteComment = (comment) => {
+	const canDeleteComment = (comment: Comments): boolean => {
 		if (!user) return false;
-
-		// 1. Админ может удалять всё
 		if (user.role === 'admin') return true;
-
-		// 2. Менеджер может удалять в своих отелях
-
 		if (user.role === 'manager' && Number(hotel.ownerId) === Number(user.id))
 			return true;
 
@@ -48,23 +49,25 @@ export const HotelDetailsPage = () => {
 		return Number(user.id) === Number(comment.userId);
 	};
 
-	const handleAddComment = (e) => {
+	const handleAddComment = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const text = e.target.comment.value;
+		const formData = new FormData(e.currentTarget);
+		const text = formData.get('comment') as string;
+
 		if (!text.trim() || !user) return;
 
-		const newComment = {
+		const newComment: Comments = {
 			id: Date.now(),
-			userId: user.id, // ID из db.json (например, 1770884155361)
-			userName: user.name, // Имя из db.json (например, "user1")
+			userId: user.id,
+			userName: user.name,
 			text: text,
 			date: new Date().toLocaleDateString('ru-RU'),
 		};
 		dispatch(addCommentThunk(hotel.id, newComment));
-		e.target.reset();
+		e.currentTarget.reset();
 	};
 
-	const handleDeleteComment = (commentId) => {
+	const handleDeleteComment = (commentId: number) => {
 		if (window.confirm('Удалить этот отзыв?')) {
 			dispatch(deleteCommentThunk(hotel.id, commentId));
 		}
@@ -72,171 +75,182 @@ export const HotelDetailsPage = () => {
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-			{/* Заголовок и локация */}
-			<h1 className="text-4xl font-extrabold text-gray-800 mb-2">{hotel.name}</h1>
-			<div className="text-xl text-gray-600 mb-6 flex items-center">
-				<MapPin className="w-5 h-5 mr-2 accent-text" />
-				Город: {city?.name || 'Неизвестно'}
-				<span className="ml-4">
-					<Rating rating={hotel.rating} />
-				</span>
-			</div>
+			{/* Заголовок */}
+			<header className="mb-8">
+				<h1 className="text-4xl font-extrabold text-gray-800 mb-2">
+					{hotel.name}
+				</h1>
+				<div className="text-xl text-gray-600 flex items-center flex-wrap gap-4">
+					<span className="flex items-center">
+						<MapPin className="w-5 h-5 mr-2 text-[#00a3a8]" />
+						Город: {city?.name || 'Неизвестно'}
+					</span>
+					<Rating rating={hotel.rating ?? 0} />
+				</div>
+			</header>
 
-			{/* --- ГЛАВНОЕ ФОТО ОТЕЛЯ --- */}
-			<div className="w-full h-[450px] mb-10 overflow-hidden rounded-3xl shadow-2xl bg-gray-200 relative group">
-				{hotel.images && hotel.images.length > 0 ? (
+			{/* Главное фото */}
+			<div className="w-full h-[450px] mb-10 overflow-hidden rounded-3xl shadow-2xl bg-gray-100 relative group">
+				{hotel.images?.[0] ? (
 					<img
 						src={hotel.images[0]}
 						alt={hotel.name}
-						className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+						className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 					/>
 				) : (
-					<div className="flex items-center justify-center h-full text-gray-400">
-						Фото отеля отсутствует
+					<div className="flex items-center justify-center h-full text-gray-400 italic">
+						Фото отеля временно отсутствует
 					</div>
 				)}
-				{/* Легкий градиент поверх фото для красоты */}
-				<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+				<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 			</div>
 
-			{/* Описание */}
-			<p className="text-gray-700 mb-8 max-w-3xl">{hotel.description}</p>
+			<section className="mb-12">
+				<p className="text-gray-700 text-lg leading-relaxed max-w-4xl">
+					{hotel.description}
+				</p>
+			</section>
 
-			<h2 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">
-				Доступные Номера
-			</h2>
-
-			<div className="space-y-6">
-				{rooms.length > 0 ? (
-					rooms.map((room) => (
-						<div
-							key={room.id}
-							className="bg-white p-6 card-shadow flex flex-col md:flex-row items-center justify-between transition hover:shadow-xl"
-						>
-							{/* БЛОК С ФОТО */}
-							<div className="md:w-1/4 h-48 md:h-auto relative bg-gray-200">
-								{room.images && room.images.length > 0 ? (
+			{/* Номера */}
+			<section className="mb-16">
+				<h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-4">
+					Доступные Номера
+				</h2>
+				<div className="grid gap-6">
+					{rooms.length > 0 ? (
+						rooms.map((room) => (
+							<div
+								key={room.id}
+								className="bg-white rounded-xl shadow-md border overflow-hidden flex flex-col md:flex-row hover:shadow-xl transition-shadow"
+							>
+								<div className="md:w-1/3 h-52 md:h-auto bg-gray-200">
 									<img
-										src={room.images[0]}
+										src={
+											room.images?.[0] ||
+											'https://placehold.co/400x300?text=No+Photo'
+										}
 										alt={room.type}
 										className="w-full h-full object-cover"
 									/>
-								) : (
-									<div className="flex items-center justify-center h-full text-gray-400">
-										Нет фото
+								</div>
+								<div className="p-6 flex-1 flex flex-col justify-between">
+									<div>
+										<h3 className="text-2xl font-bold text-[#00a3a8] mb-2">
+											{room.type}
+										</h3>
+										<div className="space-y-2">
+											<p className="text-gray-600 flex items-center text-sm">
+												<User className="w-4 h-4 mr-2" />{' '}
+												Вместимость: {room.capacity} чел.
+											</p>
+											<p className="text-gray-500 text-sm">
+												<span className="font-semibold text-gray-700">
+													Удобства:
+												</span>{' '}
+												{room.amenities}
+											</p>
+										</div>
 									</div>
-								)}
-							</div>
-							{/* ТЕКСТОВЫЙ БЛОК */}
-							<div className="flex-1 p-6 flex flex-col justify-between md:flex-row items-center">
-								<div className="md:w-3/5">
-									<h3 className="text-2xl font-semibold accent-text mb-1">
-										{room.type}
-									</h3>
-									<p className="text-gray-600 text-sm flex items-center mb-2">
-										<User className="w-4 h-4 mr-1 text-gray-500" />{' '}
-										Макс. гостей: {room.capacity}
-									</p>
-									<p className="text-gray-500 text-sm">
-										Удобства: {room.amenities}
-									</p>
-								</div>
-								<div className="md:w-2/5 mt-4 md:mt-0 md:text-right">
-									<p className="text-3xl font-bold text-gray-800">
-										{room.price} ₽
-									</p>
-									<p className="text-sm text-gray-500">за ночь</p>
-									<button
-										onClick={() =>
-											navigate(`/room/${room.hotelId}/${room.id}`)
-										}
-										className="mt-3 px-6 py-2 rounded-lg text-white font-semibold accent-color accent-hover shadow-md"
-									>
-										Забронировать
-									</button>
+									<div className="mt-6 flex items-center justify-between border-t pt-4">
+										<div>
+											<span className="text-3xl font-black text-gray-800">
+												{room.price} ₽
+											</span>
+											<span className="text-gray-500 text-sm ml-1">
+												/ ночь
+											</span>
+										</div>
+										<button
+											onClick={() =>
+												navigate(
+													`/room/${room.hotelId}/${room.id}`,
+												)
+											}
+											className="px-8 py-3 bg-[#00a3a8] text-white rounded-xl font-bold hover:bg-[#008c91] transition-colors shadow-lg shadow-teal-100"
+										>
+											Забронировать
+										</button>
+									</div>
 								</div>
 							</div>
+						))
+					) : (
+						<div className="p-10 text-center bg-gray-50 rounded-2xl border-2 border-dashed">
+							<p className="text-gray-500">
+								В этом отеле пока нет свободных номеров.
+							</p>
 						</div>
-					))
-				) : (
-					<p className="text-gray-500">
-						В этом отеле пока нет доступных номеров.
-					</p>
-				)}
-			</div>
+					)}
+				</div>
+			</section>
 
-			<div className="mt-10">
-				<button
-					onClick={() => navigate(-1)}
-					className="text-gray-500 hover:text-gray-700 flex items-center"
-				>
-					<ChevronRight className="w-4 h-4 transform rotate-180 mr-1" />
-					Назад
-				</button>
-			</div>
-
-			{/* СЕКЦИЯ КОММЕНТАРИЕВ */}
-			<div id="comments" ref={commentsRef} className="mt-16 border-t pt-10">
+			{/* Комментарии */}
+			<section id="comments" ref={commentsRef} className="pt-10 border-t">
 				<h2 className="text-3xl font-bold text-gray-800 mb-8 flex items-center">
-					<MessageSquare className="mr-3 accent-text" />
-					Отзывы ({comments.length})
+					<MessageSquare className="mr-3 text-[#00a3a8]" />
+					Отзывы гостей ({comments.length})
 				</h2>
 
-				{/* Форма добавления (только для залогиненных) */}
 				{user ? (
 					<form
 						onSubmit={handleAddComment}
-						className="mb-10 bg-gray-50 p-6 rounded-xl border"
+						className="mb-12 bg-teal-50/30 p-8 rounded-2xl border border-teal-100"
 					>
-						<label className="block text-gray-700 font-semibold mb-2">
-							Оставить отзыв
+						<label className="block text-gray-800 font-bold mb-3">
+							Ваш отзыв
 						</label>
-						<div className="flex gap-4">
+						<div className="flex flex-col sm:flex-row gap-4">
 							<textarea
 								name="comment"
-								className="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
-								placeholder="Ваше впечатление об отеле..."
-								rows="3"
+								required
+								className="flex-1 p-4 border rounded-xl focus:ring-2 focus:ring-[#00a3a8] outline-none min-h-[100px] resize-none"
+								placeholder="Расскажите о вашем отдыхе..."
 							/>
 							<button
 								type="submit"
-								className="self-end p-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
+								className="sm:self-end p-5 bg-[#00a3a8] text-white rounded-xl hover:bg-[#008c91] transition shadow-md"
 							>
-								<Send className="w-5 h-5" />
+								<Send className="w-6 h-6" />
 							</button>
 						</div>
 					</form>
 				) : (
-					<div className="bg-blue-50 p-4 rounded-lg mb-8 text-blue-700">
-						Только зарегистрированные пользователи могут оставлять
-						комментарии.
+					<div className="bg-amber-50 p-5 rounded-xl mb-10 text-amber-800 border border-amber-100 flex items-center">
+						<Star className="w-5 h-5 mr-3" />
+						Войдите в систему, чтобы оставить свой отзыв.
 					</div>
 				)}
 
-				{/* Список комментариев */}
 				<div className="space-y-6">
 					{comments.length > 0 ? (
-						comments.map((c) => (
+						[...comments].reverse().map((c) => (
 							<div
 								key={c.id}
-								className="bg-white p-5 rounded-lg shadow-sm border flex justify-between"
+								className="bg-white p-6 rounded-2xl shadow-sm border hover:border-[#00a3a8]/30 transition-colors flex justify-between gap-4"
 							>
-								<div>
-									<div className="flex items-center gap-3 mb-2">
-										<span className="font-bold text-gray-800">
-											{c.userName}
-										</span>
-										<span className="text-sm text-gray-400">
-											{c.date}
-										</span>
+								<div className="flex-1">
+									<div className="flex items-center gap-3 mb-3">
+										<div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center text-[#00a3a8] font-bold">
+											{c.userName[0].toUpperCase()}
+										</div>
+										<div>
+											<p className="font-bold text-gray-800 leading-none mb-1">
+												{c.userName}
+											</p>
+											<p className="text-xs text-gray-400">
+												{c.date}
+											</p>
+										</div>
 									</div>
-									<p className="text-gray-600">{c.text}</p>
+									<p className="text-gray-600 leading-relaxed">
+										{c.text}
+									</p>
 								</div>
-								{/* удаление комментов */}
 								{canDeleteComment(c) && (
 									<button
 										onClick={() => handleDeleteComment(c.id)}
-										className="text-red-400 hover:text-red-600 transition self-start p-1"
+										className="text-gray-300 hover:text-red-500 transition-colors self-start p-2"
+										title="Удалить отзыв"
 									>
 										<Trash2 className="w-5 h-5" />
 									</button>
@@ -244,12 +258,20 @@ export const HotelDetailsPage = () => {
 							</div>
 						))
 					) : (
-						<p className="text-gray-400 italic">
-							Пока никто не оставил отзыв. Будьте первыми!
+						<p className="text-center text-gray-400 py-10 italic">
+							Здесь пока пусто. Станьте первым, кто напишет отзыв!
 						</p>
 					)}
 				</div>
-			</div>
+			</section>
+
+			<button
+				onClick={() => navigate(-1)}
+				className="mt-12 group text-gray-400 hover:text-gray-700 flex items-center font-medium transition-colors"
+			>
+				<ChevronRight className="w-5 h-5 transform rotate-180 mr-2 group-hover:-translate-x-1 transition-transform" />
+				Вернуться назад
+			</button>
 		</div>
 	);
 };
