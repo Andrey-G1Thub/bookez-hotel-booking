@@ -17,11 +17,16 @@ import { ItemInCardManager } from './componentsManagerPage/componentsHotelCardIn
 import { BookingList } from './componentsManagerPage/BookingList';
 import { HotelModal } from './componentsManagerPage/componentModalForm/HotelModal';
 import { RoomModal } from './componentsManagerPage/componentModalForm/RoomModal';
+import { selectCurrentUser, selectUsersList } from '../../selectors';
+import { useAppSelector } from '../../store/hooks';
+import type { AppDispatch } from '../../store';
 
 export const ManagerPage = () => {
-	const { currentUser } = useSelector((state: any) => state.users);
+	// const { currentUser } = useSelector((state: any) => state.users);
+	const currentUser = useAppSelector(selectCurrentUser);
 	const allBookings = useSelector((state) => state.bookings.list);
-	const dispatch = useDispatch();
+	// const dispatch = useDispatch();
+	const dispatch = useDispatch<AppDispatch>();
 
 	const isAdmin = currentUser?.role === ROLES.ADMIN;
 

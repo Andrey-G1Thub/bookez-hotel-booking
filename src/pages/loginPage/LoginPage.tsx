@@ -1,16 +1,18 @@
 import { useDispatch } from 'react-redux';
 import { loginThunk } from '../../store/actions/userActions';
 import { useNavigate } from 'react-router-dom';
+import type { AppDispatch } from '../../store';
 
-export const LoginPage = (e) => {
-	const dispatch = useDispatch();
+export const LoginPage = () => {
+	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const formData = new FormData(e.target);
-		const email = formData.get('email');
-		const password = formData.get('password');
+
+		const formData = new FormData(e.currentTarget);
+		const email = formData.get('email') as string;
+		const password = formData.get('password') as string;
 
 		const isSuccess = await dispatch(loginThunk({ email, password }));
 
@@ -50,7 +52,7 @@ export const LoginPage = (e) => {
 				Нет аккаунта?{' '}
 				<button
 					onClick={() => navigate('/register')}
-					className="accent-text hover:underline font-medium"
+					className="text-[#00a3a8] hover:underline font-medium"
 				>
 					Зарегистрироваться
 				</button>

@@ -7,7 +7,6 @@ import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinne
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectAllHotels, selectCities } from '../../selectors/hotelSelectors';
 import { selectBookingList } from '../../selectors/bookingSelectors';
-// import { selectBooking } from '../../selectors/bookingSelectors';
 
 interface SearchFilters {
 	cityId: number | null;

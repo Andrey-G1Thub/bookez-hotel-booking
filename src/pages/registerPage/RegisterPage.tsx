@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 import * as yup from 'yup';
 import { registerThunk } from '../../store/actions/userActions';
+import type { AppDispatch } from '../../store';
 
 export const registerSchema = yup.object().shape({
 	name: yup.string().required('Имя обязательно').min(2, 'Минимум 2 символа'),
@@ -16,7 +17,7 @@ export const registerSchema = yup.object().shape({
 	phone: yup
 		.string()
 		.required('Телефон обязателен')
-		// Валидация маски: проверяем, что все цифры заполнены (пример для РФ +7 (999) 999-99-99)
+		//маска
 		.test('len', 'Введите полный номер телефона', (val) => {
 			const digits = val?.replace(/\D/g, '');
 			return digits?.length === 10; // Проверка на 10 цифр
@@ -33,12 +34,15 @@ export const registerSchema = yup.object().shape({
 	confirmPassword: yup
 		.string()
 		.required('Заполните повтор пароля')
-		.oneOf([yup.ref('password'), null], 'Пароли не совпадают'),
+		.oneOf([yup.ref('password')], 'Пароли не совпадают'),
 });
+
+//  Извлекает тип из схемы автоматически!
+type RegisterFormData = yup.InferType<typeof registerSchema>;
 
 export const RegisterPage = () => {
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
+	const dispatch = useDispatch<AppDispatch>();
 
 	// Состояния для видимости паролей
 	const [showPassword, setShowPassword] = useState(false);
@@ -48,13 +52,14 @@ export const RegisterPage = () => {
 		register,
 		handleSubmit,
 		control, // Нужен для интеграции маски
-		watch, //  для отслеживания пароля
+		watch,
 		formState: { errors },
-	} = useForm({
+	} = useForm<RegisterFormData>({
 		resolver: yupResolver(registerSchema),
 		mode: 'onChange',
 	});
 	const passwordValue = watch('password', '');
+
 	const strength = useMemo(() => {
 		if (!passwordValue) return { score: 0, label: '', color: 'bg-gray-200' };
 
@@ -71,7 +76,7 @@ export const RegisterPage = () => {
 		return { score, label: 'Сложный', color: 'bg-green-500', width: '100%' };
 	}, [passwordValue]);
 
-	const onSubmit = async (data) => {
+	const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
 		const success = await dispatch(registerThunk(data));
 		if (success) {
 			alert('Регистрация успешна! Войдите в аккаунт.');

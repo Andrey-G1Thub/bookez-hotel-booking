@@ -1,7 +1,11 @@
 import { Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export const NotFoundPage = ({ message = 'Маршрут не найден.' }) => {
+interface NotFoundPageProps {
+	message?: string;
+}
+
+export const NotFoundPage = ({ message = 'Маршрут не найден.' }: NotFoundPageProps) => {
 	const navigate = useNavigate();
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
