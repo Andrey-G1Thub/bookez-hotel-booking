@@ -30,7 +30,7 @@ export type BookingActions =
 
 // GET - получение данных
 export const fetchBookingsThunk =
-	(userId: number | null) => async (dispatch: Dispatch<BookingActions>) => {
+	(userId?: number | null) => async (dispatch: Dispatch<BookingActions>) => {
 		try {
 			dispatch({ type: SET_BOOKINGS_LOADING, payload: true });
 			// Если userId не передан, мы можем либо не грузить ничего,

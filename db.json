@@ -75,18 +75,6 @@
   ],
   "bookings": [
     {
-      "id": 1771339215667,
-      "userId": 1771323138773,
-      "hotelId": 1771143745288,
-      "roomId": 1771143887792,
-      "hotelName": "HOTEL manager 1",
-      "roomType": "Стандарт",
-      "checkIn": "2026-02-17",
-      "checkOut": "2026-02-24",
-      "price": 10500,
-      "status": "Подтверждено"
-    },
-    {
       "id": 1771349711589,
       "userId": 1771323138773,
       "hotelId": 1771143745288,
@@ -96,42 +84,6 @@
       "checkIn": "2026-02-24",
       "checkOut": "2026-02-26",
       "price": 3000,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1771576631095,
-      "userId": 1770884155361,
-      "hotelId": 1771143745288,
-      "roomId": 1771143887792,
-      "hotelName": "HOTEL manager 1",
-      "roomType": "Стандарт",
-      "checkIn": "2026-02-20",
-      "checkOut": "2026-02-21",
-      "price": 1500,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1771576667373,
-      "userId": 1770884155361,
-      "hotelId": 1771143745288,
-      "roomId": 1771143887792,
-      "hotelName": "HOTEL manager 1",
-      "roomType": "Стандарт",
-      "checkIn": "2026-02-21",
-      "checkOut": "2026-02-22",
-      "price": 1500,
-      "status": "Подтверждено"
-    },
-    {
-      "id": 1771582219435,
-      "userId": 1770884155361,
-      "hotelId": 1771143745288,
-      "roomId": 1771143887792,
-      "hotelName": "HOTEL manager 1",
-      "roomType": "Стандарт",
-      "checkIn": "2026-02-23",
-      "checkOut": "2026-02-24",
-      "price": 1500,
       "status": "Подтверждено"
     }
   ],
@@ -169,19 +121,9 @@
       "rating": 5,
       "reviewCount": 0,
       "comments": [],
-      "rooms": [
-        {
-          "type": "Стандарт",
-          "capacity": 2,
-          "price": 1500,
-          "amenities": "коты",
-          "images": [
-            "https://fastly.picsum.photos/id/259/400/250.jpg?hmac=5UUqYeg2NY3hvrzdFrun6bxjSmiUXZKvoKkHaDQibmw"
-          ],
-          "id": 1771163093326,
-          "hotelId": 1771070135324
-        }
-      ]
+      "rooms": {
+        "rooms": []
+      }
     },
     {
       "name": "HOTEL manager 1",
@@ -213,14 +155,25 @@
       "reviewCount": 0,
       "rooms": [
         {
-          "type": "Стандарт",
+          "type": "отель meneger",
           "capacity": 2,
-          "price": 1500,
-          "amenities": "Туалет",
+          "price": 1000,
+          "amenities": "винигрет",
           "images": [
-            "https://fastly.picsum.photos/id/259/400/250.jpg?hmac=5UUqYeg2NY3hvrzdFrun6bxjSmiUXZKvoKkHaDQibmw"
+            "https://fastly.picsum.photos/id/94/400/250.jpg?hmac=-r0BB5946Fi-Os3LS6Vy6uX2DlDtaVNDrHsDUeCiGAM"
           ],
-          "id": 1771143887792,
+          "id": 1771665077104,
+          "hotelId": 1771143745288
+        },
+        {
+          "type": "номер admin",
+          "capacity": 2,
+          "price": 1400,
+          "amenities": "руль",
+          "images": [
+            "https://fastly.picsum.photos/id/94/400/250.jpg?hmac=-r0BB5946Fi-Os3LS6Vy6uX2DlDtaVNDrHsDUeCiGAM"
+          ],
+          "id": 1771671174786,
           "hotelId": 1771143745288
         }
       ]

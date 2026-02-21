@@ -14,7 +14,7 @@ export interface Room {
 	capacity: number;
 	price: number;
 	amenities: string;
-	images: any[];
+	images: string[];
 	id: number;
 	hotelId: number;
 }
@@ -33,7 +33,7 @@ export interface Hotel {
 	cityId: number;
 	description: string;
 	image?: string;
-	priceFrom: string;
+	priceFrom: number;
 	images?: string[];
 	ownerId: number;
 	rating: number;

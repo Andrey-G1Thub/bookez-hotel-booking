@@ -1,5 +1,5 @@
 import type { Dispatch } from 'redux';
-import type { City, Comments, Hotel } from '../reducers/hotelReducer';
+import type { City, Comments, Hotel, Room } from '../reducers/hotelReducer';
 import type { RootState } from '..';
 
 export const SET_HOTELS = 'SET_HOTELS';
@@ -72,13 +72,13 @@ export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 // Работа с отелем и комнатами
 export const updateHotelThunk =
-	(hotelId: number, updatedData: Partial<Hotel>) =>
+	(hotelId: number, updatedRooms: Partial<Hotel>) =>
 	async (dispatch: Dispatch<HotelActions>) => {
 		try {
 			const response = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(updatedData),
+				body: JSON.stringify(updatedRooms),
 			});
 			if (response.ok) {
 				const updatedHotel: Hotel = await response.json();
@@ -93,13 +93,12 @@ export const updateHotelThunk =
 
 // Thunk для обновления комнат (или любых данных отеля)
 export const updateHotelRoomsThunk =
-	(hotelId: number, updatedRooms: Partial<Hotel>) =>
-	async (dispatch: Dispatch<HotelActions>) => {
+	(hotelId: number, roomsArray: Room[]) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
 			const response = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ rooms: updatedRooms }),
+				body: JSON.stringify({ rooms: roomsArray }),
 			});
 
 			if (response.ok) {

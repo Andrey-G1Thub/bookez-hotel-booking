@@ -9,9 +9,9 @@ export const RoomModal = ({
 	setNewRoom,
 	photoUrl,
 	setPhotoUrl,
-	handleRemovePhotoFromNewRoom,
 	isEditMode,
 	handleOpenCreateModal,
+	handleRemovePhoto,
 }) => {
 	if (!isRoomModalOpen) return null;
 
@@ -73,9 +73,7 @@ export const RoomModal = ({
 										/>
 										<button
 											type="button"
-											onClick={() =>
-												handleRemovePhotoFromNewRoom(img)
-											}
+											onClick={() => handleRemovePhoto(img)}
 											className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600"
 										>
 											<X size={12} />

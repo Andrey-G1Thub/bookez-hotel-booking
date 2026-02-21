@@ -8,9 +8,9 @@ export const HotelModal = ({
 	setIsModalOpen,
 	handleSaveHotel,
 	isEditMode,
-	handleRemovePhotoFromNewHotel,
 	setHotelPhotoUrl,
 	hotelPhotoUrl,
+	handleRemovePhoto,
 }) => {
 	if (!isModalOpen) return null;
 
@@ -68,7 +68,7 @@ export const HotelModal = ({
 								/>
 								<button
 									type="button"
-									onClick={() => handleRemovePhotoFromNewHotel(img)}
+									onClick={() => handleRemovePhoto(img)}
 									className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition"
 								>
 									<X size={12} />

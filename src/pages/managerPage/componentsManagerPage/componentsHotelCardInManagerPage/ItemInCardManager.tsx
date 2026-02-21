@@ -30,7 +30,7 @@ export const ItemInCardManager = ({
 	const [isOpen, setIsOpen] = useState(false);
 	// Фильтруем бронирования только для этого отеля
 	const hotelBookings = allBookings.filter((b) => b.hotelId === hotel.id);
-	const roomsCount = hotel.rooms?.length || 0;
+	const roomsCount = Array.isArray(hotel.rooms) ? hotel.rooms.length : 0;
 	const bookingsCount = hotelBookings.length;
 	const totalBookingsCount = hotelBookings.length;
 
@@ -66,7 +66,7 @@ export const ItemInCardManager = ({
 
 			{isOpen && (
 				<div className="mt-4 space-y-4 animate-in fade-in duration-300">
-					{hotel.rooms?.map((room: any) => {
+					{(Array.isArray(hotel.rooms) ? hotel.rooms : []).map((room: any) => {
 						// ФИЛЬТРАЦИЯ: Находим бронирования именно для этого номера
 						const roomBookings = hotelBookings.filter(
 							(b) => b.roomId === room.id,
