@@ -24,7 +24,6 @@ export const BookingsPage = () => {
 	const currentUser = useAppSelector(selectCurrentUser);
 	const isLoading = useAppSelector(selectBookingIsLoading);
 
-	//  Загружаем бронирования при заходе на страницу
 	useEffect(() => {
 		if (currentUser?.id) {
 			dispatch(fetchBookingsThunk(currentUser.id));

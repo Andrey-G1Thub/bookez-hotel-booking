@@ -85,6 +85,66 @@
       "checkOut": "2026-02-26",
       "price": 3000,
       "status": "Подтверждено"
+    },
+    {
+      "id": 1771680144856,
+      "userId": 1771241549492,
+      "hotelId": 1771143745288,
+      "roomId": 1771665077104,
+      "hotelName": "HOTEL manager 1",
+      "roomType": "отель meneger",
+      "checkIn": "2026-02-21",
+      "checkOut": "2026-02-23",
+      "price": 2000,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771680185126,
+      "userId": 1770884566098,
+      "hotelId": 1771143745288,
+      "roomId": 1771671174786,
+      "hotelName": "HOTEL manager 1",
+      "roomType": "номер admin",
+      "checkIn": "2026-02-21",
+      "checkOut": "2026-02-23",
+      "price": 2800,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771680302236,
+      "userId": 1770884155361,
+      "hotelId": 1771143745288,
+      "roomId": 1771665077104,
+      "hotelName": "HOTEL manager 1",
+      "roomType": "отель meneger",
+      "checkIn": "2026-02-23",
+      "checkOut": "2026-02-25",
+      "price": 2000,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771690856995,
+      "userId": 1770832348065,
+      "hotelId": 1771685830971,
+      "roomId": 1771690825952,
+      "hotelName": "Hotel  manager 2",
+      "roomType": "Люкс",
+      "checkIn": "2026-02-21",
+      "checkOut": "2026-02-23",
+      "price": 1998,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771691645740,
+      "userId": 1770832348065,
+      "hotelId": 1771685830971,
+      "roomId": 1771691589148,
+      "hotelName": "Hotel  manager 2",
+      "roomType": "Станд",
+      "checkIn": "2026-02-21",
+      "checkOut": "2026-02-23",
+      "price": 4646,
+      "status": "Подтверждено"
     }
   ],
   "cities": [
@@ -129,7 +189,7 @@
       "name": "HOTEL manager 1",
       "cityId": 1,
       "description": "Светлый, чистый",
-      "priceFrom": 1500,
+      "priceFrom": 1600,
       "images": [
         "https://fastly.picsum.photos/id/142/400/250.jpg?hmac=K22DCZAPDegx54LF0OoWVe70a4jzsbcp5rz6BZDlqbs"
       ],
@@ -157,7 +217,7 @@
         {
           "type": "отель meneger",
           "capacity": 2,
-          "price": 1000,
+          "price": 1100,
           "amenities": "винигрет",
           "images": [
             "https://fastly.picsum.photos/id/94/400/250.jpg?hmac=-r0BB5946Fi-Os3LS6Vy6uX2DlDtaVNDrHsDUeCiGAM"
@@ -175,6 +235,44 @@
           ],
           "id": 1771671174786,
           "hotelId": 1771143745288
+        }
+      ]
+    },
+    {
+      "name": "Hotel  manager 2",
+      "cityId": 2,
+      "description": "Good",
+      "priceFrom": 3000,
+      "images": [
+        "https://fastly.picsum.photos/id/142/400/250.jpg?hmac=K22DCZAPDegx54LF0OoWVe70a4jzsbcp5rz6BZDlqbs"
+      ],
+      "comments": [],
+      "id": 1771685830971,
+      "ownerId": 1770832348065,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": [
+        {
+          "type": "Люкс",
+          "capacity": 2,
+          "price": 1001,
+          "amenities": "вода",
+          "images": [
+            "https://fastly.picsum.photos/id/409/400/250.jpg?hmac=EOCapY_Ek48Mech0Iw2b3lOWCtI-UhJtMKmpywPfnYs"
+          ],
+          "id": 1771690825952,
+          "hotelId": 1771685830971
+        },
+        {
+          "type": "Стандарт 2",
+          "capacity": 2,
+          "price": 3000,
+          "amenities": "огони",
+          "images": [
+            "https://fastly.picsum.photos/id/259/400/250.jpg?hmac=5UUqYeg2NY3hvrzdFrun6bxjSmiUXZKvoKkHaDQibmw"
+          ],
+          "id": 1771691589148,
+          "hotelId": 1771685830971
         }
       ]
     }

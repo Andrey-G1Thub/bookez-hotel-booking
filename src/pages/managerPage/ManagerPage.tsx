@@ -1,37 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ROLES } from '../../utils/permissions';
-import { Hotel as HotelIcon, PlusCircle, ClipboardList, X, Trash2 } from 'lucide-react';
-import {
-	addHotelThunk,
-	deleteHotelThunk,
-	fetchCitiesThunk,
-	fetchHotelsThunk,
-	updateHotelRoomsThunk,
-	updateHotelThunk,
-} from '../../store/actions/hotelActions';
-import { deleteBookingThunk } from '../../store/actions/bookingActions';
+import { Hotel as HotelIcon } from 'lucide-react';
 import { DashboardHeader } from './componentsManagerPage/Header';
 import { HotelCardInManagerPage } from './componentsManagerPage/HotelCardInManagerPage';
 import { ItemInCardManager } from './componentsManagerPage/componentsHotelCardInManagerPage/ItemInCardManager';
-import { BookingList } from './componentsManagerPage/BookingList';
 import { HotelModal } from './componentsManagerPage/componentModalForm/HotelModal';
 import { RoomModal } from './componentsManagerPage/componentModalForm/RoomModal';
-import { selectCurrentUser, selectUsersList } from '../../selectors';
-import { useAppSelector } from '../../store/hooks';
-import type { AppDispatch } from '../../store';
 import type { Hotel, Room } from '../../store/reducers/hotelReducer';
-import { selectAllHotels, selectCities } from '../../selectors/hotelSelectors';
-import type { Booking } from '../../store/reducers/bookingReducer';
-import type { User } from '../../store/reducers/userReducer';
-import { useManagerLogic } from './hooks/useManagerLogic';
 
-type HotelFormState = Omit<Hotel, 'id' | 'ownerId' | 'rating' | 'reviewCount' | 'rooms'>;
-type RoomFormState = Omit<Room, 'id' | 'hotelId'>;
+import { useManagerLogic } from './hooks/useManagerLogic';
 
 export const ManagerPage = () => {
 	const { state, actions } = useManagerLogic();
-	// const { currentUser } = useSelector((state: any) => state.users);
+
 	// const currentUser = useAppSelector(selectCurrentUser);
 	// const allBookings = useSelector((state) => state.bookings.list);
 	// // const dispatch = useDispatch();
@@ -382,7 +361,7 @@ export const ManagerPage = () => {
 						<HotelIcon className="text-teal-600" /> Мои объекты
 					</h2>
 
-					{state.myHotels.map((hotel: any) => (
+					{state.myHotels.map((hotel: Hotel) => (
 						<div
 							key={hotel.id}
 							className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4"
@@ -407,14 +386,6 @@ export const ManagerPage = () => {
 						</div>
 					))}
 				</div>
-
-				{/* ПРАВАЯ КОЛОНКА: БРОНИРОВАНИЯ */}
-
-				{/* <BookingList
-					myBookings={myBookings}
-					isAdmin={isAdmin}
-					handleDeleteBooking={handleDeleteBooking}
-				/> */}
 			</div>
 
 			{/* MODAL FORM добавления отеля*/}
@@ -427,9 +398,9 @@ export const ManagerPage = () => {
 				setIsModalOpen={actions.setIsModalOpen}
 				handleSaveHotel={actions.handleSaveHotel}
 				isEditMode={state.isEditMode}
-				handleRemovePhoto={actions.handleRemovePhoto}
-				setHotelPhotoUrl={state.setHotelPhotoUrl}
-				hotelPhotoUrl={state.hotelPhotoUrl}
+				handleRemovePhoto={(url) => actions.handleRemovePhoto('hotel', url)}
+				// setHotelPhotoUrl={state.setHotelPhotoUrl}
+				// hotelPhotoUrl={state.hotelPhotoUrl}
 			/>
 			{/* Модалка добавления номера */}
 
@@ -444,7 +415,7 @@ export const ManagerPage = () => {
 				setPhotoUrl={state.setPhotoUrl}
 				handleRemovePhoto={actions.handleRemovePhoto}
 				isEditMode={state.isEditMode}
-				handleOpenCreateModal={actions.handleOpenCreateModal}
+				// handleOpenCreateModal={actions.handleOpenCreateModal}
 			/>
 		</div>
 	);

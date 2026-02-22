@@ -16,7 +16,7 @@ import { checkDateOverlap } from '../../utils/dataHelpers';
 import type { Hotel, Room } from '../../store/reducers/hotelReducer';
 import type { Booking } from '../../store/reducers/bookingReducer';
 
-//_ Страница бронирования конкретного номера _/;
+// Страница бронирования конкретного номера _/;
 export const RoomBookingPage = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
@@ -51,7 +51,7 @@ export const RoomBookingPage = () => {
 	}, [bookings, room]);
 
 	useEffect(() => {
-		//  загрузку 800мс скелетрона
+		//  загрузку 800мс для скелетрона
 		const timer = setTimeout(() => {
 			setIsLoading(false);
 		}, 800);

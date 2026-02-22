@@ -20,7 +20,7 @@ export const CityDetailsPage = () => {
 	const cities = useAppSelector(selectCities);
 
 	const isLoading = useAppSelector(selectIsLoading);
-	// 1. Сначала проверяем, загрузились ли данные вообще
+	// Сначала проверяем, загрузились ли данные вообще
 	if (isLoading) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">

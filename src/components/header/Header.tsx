@@ -15,12 +15,7 @@ export const Header = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	// const currentUser = useSelector(selectCurrentUser);
 	const currentUser = useAppSelector(selectCurrentUser);
-
-	// const bookings = useAppSelector((state) => state.bookings.list);
-
-	// bookings[0].ho
 
 	const filteredLinks = useMemo(() => {
 		return NAVIGATION_CONFIG.filter((link) => {

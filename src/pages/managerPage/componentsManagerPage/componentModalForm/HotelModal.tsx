@@ -1,4 +1,18 @@
 import { Plus, X } from 'lucide-react';
+import { useState } from 'react';
+import type { City } from '../../../../store/reducers/hotelReducer';
+import type { HotelFormFields } from '../../../../types/forms';
+
+interface HotelModalProps {
+	newHotel: HotelFormFields;
+	setNewHotel: (value: React.SetStateAction<HotelFormFields>) => void;
+	cities: City[];
+	isModalOpen: boolean;
+	setIsModalOpen: (open: boolean) => void;
+	handleSaveHotel: (e: React.FormEvent) => void;
+	isEditMode: boolean;
+	handleRemovePhoto: (url: string) => void;
+}
 
 export const HotelModal = ({
 	newHotel,
@@ -8,18 +22,18 @@ export const HotelModal = ({
 	setIsModalOpen,
 	handleSaveHotel,
 	isEditMode,
-	setHotelPhotoUrl,
-	hotelPhotoUrl,
 	handleRemovePhoto,
-}) => {
+}: HotelModalProps) => {
+	const [hotelPhotoUrl, setHotelPhotoUrl] = useState<string>('');
+
 	if (!isModalOpen) return null;
 
 	const addPhoto = () => {
 		if (!hotelPhotoUrl.trim()) return;
-		setNewHotel({
-			...newHotel,
-			images: [...(newHotel.images || []), hotelPhotoUrl],
-		});
+		setNewHotel((prev) => ({
+			...prev,
+			images: [...(prev.images || []), hotelPhotoUrl],
+		}));
 		setHotelPhotoUrl('');
 	};
 

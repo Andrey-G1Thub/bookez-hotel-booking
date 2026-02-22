@@ -1,27 +1,34 @@
 import { Edit3, Trash2 } from 'lucide-react';
+import type { City, Hotel } from '../../../store/reducers/hotelReducer';
+
+interface HotelCardInManagerPageProps {
+	hotel: Hotel;
+	cities: City[];
+	setSelectedHotel: (hotel: Hotel | null) => void;
+	handleDeleteHotel: (id: number) => void;
+	handleEditHotelClick: (hotel: Hotel) => void;
+	handleOpenAddRoomModal: (hotel: Hotel) => void;
+}
 
 export const HotelCardInManagerPage = ({
 	hotel,
 	cities,
 	setSelectedHotel,
-	// setIsRoomModalOpen,
 	handleDeleteHotel,
 	handleEditHotelClick,
 	handleOpenAddRoomModal,
-}) => (
+}: HotelCardInManagerPageProps) => (
 	<div className="flex justify-between items-start">
 		<div>
 			<h3 className="font-bold text-xl text-gray-800">{hotel.name}</h3>
 			<p className="text-sm text-gray-500">
-				{cities.find((c: any) => c.id === hotel.cityId)?.name ||
-					'Город не указан'}
+				{cities.find((c) => c.id === hotel.cityId)?.name || 'Город не указан'}
 			</p>
 		</div>
 		<div className="flex gap-2">
 			<button
 				onClick={() => {
 					setSelectedHotel(hotel);
-					// setIsRoomModalOpen(true);
 					handleOpenAddRoomModal(hotel);
 				}}
 				className="text-sm bg-teal-50 text-teal-700 px-3 py-1 rounded-lg hover:bg-teal-100 transition"
@@ -30,7 +37,7 @@ export const HotelCardInManagerPage = ({
 			</button>
 			<button
 				onClick={() => handleEditHotelClick(hotel)}
-				className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+				className="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
 			>
 				<Edit3 size={18} />
 			</button>

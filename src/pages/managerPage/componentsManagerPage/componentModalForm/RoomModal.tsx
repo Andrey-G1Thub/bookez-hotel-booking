@@ -1,4 +1,18 @@
 import { Plus, X } from 'lucide-react';
+import type { Hotel, Room } from '../../../../store/reducers/hotelReducer';
+
+interface RoomModalProps {
+	isRoomModalOpen: boolean;
+	setIsRoomModalOpen: (open: boolean) => void;
+	selectedHotel: Hotel | null;
+	handleAddRoom: (e: React.FormEvent) => Promise<void>;
+	newRoom: Omit<Room, 'id' | 'hotelId'>; // Ваша RoomFormState
+	setNewRoom: React.Dispatch<React.SetStateAction<any>>;
+	photoUrl: string;
+	setPhotoUrl: (url: string) => void;
+	isEditMode: boolean;
+	handleRemovePhoto: (type: 'hotel' | 'room', url: string) => void;
+}
 
 export const RoomModal = ({
 	isRoomModalOpen,
@@ -10,9 +24,8 @@ export const RoomModal = ({
 	photoUrl,
 	setPhotoUrl,
 	isEditMode,
-	handleOpenCreateModal,
 	handleRemovePhoto,
-}) => {
+}: RoomModalProps) => {
 	if (!isRoomModalOpen) return null;
 
 	const addPhotoToState = () => {
@@ -21,7 +34,7 @@ export const RoomModal = ({
 			...newRoom,
 			images: [...newRoom.images, photoUrl],
 		});
-		setPhotoUrl(''); // Очищаем инпут после добавления
+		setPhotoUrl('');
 	};
 
 	return (
@@ -73,7 +86,7 @@ export const RoomModal = ({
 										/>
 										<button
 											type="button"
-											onClick={() => handleRemovePhoto(img)}
+											onClick={() => handleRemovePhoto('room', img)}
 											className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600"
 										>
 											<X size={12} />

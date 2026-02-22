@@ -1,7 +1,32 @@
 import React from 'react';
 import { ClipboardList, Trash2 } from 'lucide-react';
 
-export const BookingList = ({ myBookings, isAdmin, handleDeleteBooking }) => {
+interface EnrichedBooking {
+	id: number;
+	hotelId: number;
+	hotelName: string;
+	roomId: number;
+	price: number;
+	checkIn: string;
+	checkOut: string;
+	status: string;
+	client?: {
+		name: string;
+		phone: string;
+	} | null;
+}
+
+interface BookingListProps {
+	myBookings: EnrichedBooking[];
+	isAdmin: boolean;
+	handleDeleteBooking: (id: number) => void;
+}
+
+export const BookingList = ({
+	myBookings,
+	isAdmin,
+	handleDeleteBooking,
+}: BookingListProps) => {
 	return (
 		<div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 h-fit">
 			<h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-700">

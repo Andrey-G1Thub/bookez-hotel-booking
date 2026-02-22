@@ -1,3 +1,6 @@
+import type { Hotel } from '../store/reducers/hotelReducer';
+import type { User } from '../store/reducers/userReducer';
+
 export const ROLES = {
 	ADMIN: 'admin',
 	MANAGER: 'manager',
@@ -5,19 +8,46 @@ export const ROLES = {
 	GUEST: 'guest', // Неавторизованный
 };
 
-export const checkPermission = (user, action) => {
+export type AppAction =
+	| 'VIEW'
+	| 'CREATE_HOTEL'
+	| 'REPLY_COMMENT'
+	| 'MANAGE_OWN_HOTEL'
+	| 'BOOK_ROOM'
+	| 'ADD_COMMENT'
+	| 'DELETE_HOTEL';
+
+export const checkPermission = (
+	user: User,
+	action: AppAction,
+	targetData: Hotel | null = null,
+) => {
 	if (!user) return action === 'VIEW'; // Гость может только смотреть
 
 	if (user.role === ROLES.ADMIN) return true;
 
 	if (user.role === ROLES.MANAGER) {
 		const managerActions = ['VIEW', 'CREATE_HOTEL', 'REPLY_COMMENT'];
+
 		if (managerActions.includes(action)) return true;
 
-		// Специальная проверка для управления СВОИМ отелем
-		if (action === 'MANAGE_OWN_HOTEL') {
-			return data?.ownerId === user.id;
+		// 3. Логика для менеджера
+		if (user.role === ROLES.MANAGER) {
+			const managerActions: AppAction[] = ['VIEW', 'CREATE_HOTEL', 'REPLY_COMMENT'];
+
+			if (managerActions.includes(action)) return true;
+
+			if (action === 'MANAGE_OWN_HOTEL') {
+				// Здесь проверяем, совпадает ли ID менеджера с ownerId отеля
+				return targetData?.ownerId === user.id;
+			}
 		}
+
+		if (user.role === ROLES.USER) {
+			const userActions = ['VIEW', 'BOOK_ROOM', 'ADD_COMMENT'];
+			return userActions.includes(action);
+		}
+		return action === 'VIEW';
 	}
 
 	switch (user.role) {

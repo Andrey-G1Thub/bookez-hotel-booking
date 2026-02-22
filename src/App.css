@@ -4,7 +4,6 @@
 	--secondary-bg: #f7f9fc;
 }
 
-/* Акцентные стили */
 .accent-text {
 	color: var(--primary-accent) !important;
 }
