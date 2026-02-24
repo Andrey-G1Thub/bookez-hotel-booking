@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020" /* Современный стандарт JS */,
+    "module": "CommonJS" /* Стандарт модулей для Node.js */,
+    "rootDir": "./src" /* Где лежит твой исходный код */,
+    "outDir": "./dist" /* Куда будет собираться готовый проект */,
+    "esModuleInterop": true /* Позволяет импортировать CommonJS пакеты как ES-модули */,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true /* Включаем строгую проверку типов (ты же любишь TS!) */,
+    "skipLibCheck": true /* Ускоряет сборку, пропуская проверку типов в node_modules */
+  },
+  "include": ["src/**/*"] /* Указываем TS смотреть только в папку src */,
+  "exclude": ["node_modules"]
+}
