@@ -53,7 +53,7 @@ export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) =
 		// ШАГ 1: Включаем спиннер
 		dispatch({ type: FETCH_HOTELS_START });
 
-		const response = await fetch('http://localhost:3001/hotels');
+		const response = await fetch('http://localhost:5000/api/hotels');
 		if (!response.ok) throw new Error('Ошибка при загрузке отелей');
 
 		const data: Hotel[] = await response.json();
@@ -75,7 +75,7 @@ export const updateHotelThunk =
 	(hotelId: number, updatedRooms: Partial<Hotel>) =>
 	async (dispatch: Dispatch<HotelActions>) => {
 		try {
-			const response = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
+			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(updatedRooms),
@@ -95,7 +95,7 @@ export const updateHotelThunk =
 export const updateHotelRoomsThunk =
 	(hotelId: number, roomsArray: Room[]) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
-			const response = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
+			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ rooms: roomsArray }),
@@ -121,7 +121,7 @@ export const updateHotelRoomsThunk =
 export const addHotelThunk =
 	(hotelData: Partial<Hotel>) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
-			const response = await fetch('http://localhost:3001/hotels', {
+			const response = await fetch('http://localhost:5000/api/hotels', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(hotelData),
@@ -145,7 +145,7 @@ export const addHotelThunk =
 export const deleteHotelThunk =
 	(hotelId: number) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
-			const response = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
+			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'DELETE',
 			});
 
@@ -173,7 +173,7 @@ export const addCommentThunk =
 
 			const updatedComments = [...(hotel.comments || []), newComment];
 
-			const res = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
+			const res = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ comments: updatedComments }),
@@ -197,7 +197,7 @@ export const deleteCommentThunk =
 			if (!hotel) return;
 			const filteredComments = hotel.comments.filter((c) => c.id !== commentId);
 
-			const res = await fetch(`http://localhost:3001/hotels/${hotelId}`, {
+			const res = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ comments: filteredComments }),

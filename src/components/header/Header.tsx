@@ -2,30 +2,40 @@
 
 import { LogOut, User } from 'lucide-react';
 import { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { logoutThunk } from '../../store/actions/userActions';
 import { useNavigate, Link } from 'react-router-dom';
 import { WeatherWidget } from './components/WeatherWidget';
 import { selectCurrentUser } from '../../selectors';
 import { NAVIGATION_CONFIG } from '../constants/navigation';
 import { ROLES } from '../../utils/permissions';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 export const Header = () => {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
-
 	const currentUser = useAppSelector(selectCurrentUser);
 
-	const filteredLinks = useMemo(() => {
-		return NAVIGATION_CONFIG.filter((link) => {
-			// Если ссылка только для авторизованных
+	const navLinks = useMemo(() => {
+		// 1. Сначала фильтруем по правам доступа
+		const filtered = NAVIGATION_CONFIG.filter((link) => {
 			if (link.onlyAuth && !currentUser) return false;
-			// Если у ссылки прописаны роли
 			if (link.roles) {
 				return link.roles.includes(currentUser?.role || '');
 			}
 			return true;
+		});
+
+		// 2. Добавляем мета-данные (например, нужен ли разделитель)
+		return filtered.map((link, index) => {
+			const isStaff = link.roles?.some((r) =>
+				[ROLES.ADMIN, ROLES.MANAGER].includes(r),
+			);
+			const prevLink = index > 0 ? filtered[index - 1] : null;
+
+			return {
+				...link,
+				hasSeparator: isStaff && prevLink && !prevLink.roles,
+			};
 		});
 	}, [currentUser]);
 
@@ -59,34 +69,25 @@ export const Header = () => {
 
 					{/* ЦЕНТР: Теперь тут один цикл по отфильтрованным ссылкам */}
 					<nav className="hidden md:flex items-center space-x-1">
-						{filteredLinks.map((link, index) => {
-							// Определяем, стафф ли это, чтобы понять, нужен ли разделитель
-							const isStaff =
-								link.roles?.includes(ROLES.ADMIN) ||
-								link.roles?.includes(ROLES.MANAGER);
+						{navLinks.map((link) => (
+							<div key={link.path} className="flex items-center">
+								{/* Если это первая ссылка стаффа, рисуем перед ней полоску */}
+								{link.hasSeparator && (
+									<div className="h-6 w-[1px] bg-gray-200 mx-2"></div>
+								)}
 
-							return (
-								<div key={link.path} className="flex items-center">
-									{/* Если это первая ссылка стаффа, рисуем перед ней полоску */}
-									{isStaff &&
-										index > 0 &&
-										!filteredLinks[index - 1].roles && (
-											<div className="h-6 w-[1px] bg-gray-200 mx-2"></div>
-										)}
-
-									<Link
-										to={link.path}
-										className={`flex items-center gap-2 px-4 py-2 transition text-sm rounded-lg ${
-											link.className ||
-											'text-gray-600 hover:text-teal-600 font-semibold hover:bg-gray-50'
-										}`}
-									>
-										{link.icon}
-										{link.title}
-									</Link>
-								</div>
-							);
-						})}
+								<Link
+									to={link.path}
+									className={`flex items-center gap-2 px-4 py-2 transition text-sm rounded-lg ${
+										link.className ||
+										'text-gray-600 hover:text-teal-600 font-semibold hover:bg-gray-50'
+									}`}
+								>
+									{link.icon}
+									{link.title}
+								</Link>
+							</div>
+						))}
 					</nav>
 
 					{/* ПРАВАЯ ЧАСТЬ */}

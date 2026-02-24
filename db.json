@@ -29,10 +29,10 @@
       "email": "user2@user",
       "phone": "+9901",
       "password": "111111",
-      "role": "user",
+      "role": "manager",
       "limits": {
-        "maxHotels": 0,
-        "maxRooms": 0
+        "maxHotels": 1,
+        "maxRooms": 5
       },
       "id": 1770884566098
     },
@@ -145,6 +145,54 @@
       "checkOut": "2026-02-23",
       "price": 4646,
       "status": "Подтверждено"
+    },
+    {
+      "id": 1771765946624,
+      "userId": 1770832348065,
+      "hotelId": 1771143745288,
+      "roomId": 1771671174786,
+      "hotelName": "HOTEL manager 1",
+      "roomType": "номер admin",
+      "checkIn": "2026-02-22",
+      "checkOut": "2026-02-23",
+      "price": 1400,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771766084203,
+      "userId": 1770884566098,
+      "hotelId": 1771685830971,
+      "roomId": 1771690825952,
+      "hotelName": "Hotel  manager 2",
+      "roomType": "Люкс",
+      "checkIn": "2026-02-23",
+      "checkOut": "2026-02-25",
+      "price": 2002,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771766652024,
+      "userId": 1770884155361,
+      "hotelId": 1771766546823,
+      "roomId": 1771766610675,
+      "hotelName": "Hotel user2",
+      "roomType": "Обычный",
+      "checkIn": "2026-02-22",
+      "checkOut": "2026-02-24",
+      "price": 2500,
+      "status": "Подтверждено"
+    },
+    {
+      "id": 1771766779731,
+      "userId": 1771240239475,
+      "hotelId": 1771766546823,
+      "roomId": 1771766610675,
+      "hotelName": "Hotel user2",
+      "roomType": "Обычный",
+      "checkIn": "2026-02-25",
+      "checkOut": "2026-02-27",
+      "price": 2500,
+      "status": "Подтверждено"
     }
   ],
   "cities": [
@@ -246,7 +294,15 @@
       "images": [
         "https://fastly.picsum.photos/id/142/400/250.jpg?hmac=K22DCZAPDegx54LF0OoWVe70a4jzsbcp5rz6BZDlqbs"
       ],
-      "comments": [],
+      "comments": [
+        {
+          "id": 1771766102311,
+          "userId": 1770884566098,
+          "userName": "user2",
+          "text": "давно не,,,",
+          "date": "22.02.2026"
+        }
+      ],
       "id": 1771685830971,
       "ownerId": 1770832348065,
       "rating": 5,
@@ -273,6 +329,48 @@
           ],
           "id": 1771691589148,
           "hotelId": 1771685830971
+        }
+      ]
+    },
+    {
+      "name": "Hotel user2",
+      "cityId": 3,
+      "description": "imba",
+      "priceFrom": 3000,
+      "images": [
+        "https://fastly.picsum.photos/id/623/400/250.jpg?hmac=5LDRXOCwzb1ZF1GtuATZhmbYPenIsqTNyxfkOhb5tww"
+      ],
+      "comments": [
+        {
+          "id": 1771766812855,
+          "userId": 1771240239475,
+          "userName": "user3",
+          "text": "и что ...",
+          "date": "22.02.2026"
+        },
+        {
+          "id": 1771766845131,
+          "userId": 1770884155361,
+          "userName": "user1",
+          "text": "вот что...",
+          "date": "22.02.2026"
+        }
+      ],
+      "id": 1771766546823,
+      "ownerId": 1770884566098,
+      "rating": 5,
+      "reviewCount": 0,
+      "rooms": [
+        {
+          "type": "Обычный",
+          "capacity": 2,
+          "price": 1250,
+          "amenities": "круглогубци",
+          "images": [
+            "https://fastly.picsum.photos/id/409/400/250.jpg?hmac=EOCapY_Ek48Mech0Iw2b3lOWCtI-UhJtMKmpywPfnYs"
+          ],
+          "id": 1771766610675,
+          "hotelId": 1771766546823
         }
       ]
     }

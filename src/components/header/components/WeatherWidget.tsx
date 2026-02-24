@@ -42,20 +42,22 @@ export const WeatherWidget = () => {
 
 	if (!weatherData || !weatherData.main) return null;
 
+	const temp = Math.round(weatherData.main.temp);
+	const description = weatherData.weather?.[0]?.description || 'Нет данных';
+	const cityName = weatherData.name;
+
 	return (
 		<div className="hidden lg:flex items-center gap-3 px-4 py-1.5 bg-blue-50/50 rounded-2xl border border-blue-100/50">
 			<div className="flex flex-col items-end">
 				<span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1">
-					<MapPin size={10} /> {weatherData.name}
+					<MapPin size={10} /> {cityName}
 				</span>
-				<span className="text-sm font-extrabold text-blue-600">
-					{Math.round(weatherData.main.temp)}°C
-				</span>
+				<span className="text-sm font-extrabold text-blue-600">{temp}°C</span>
 			</div>
 			<div className="h-8 w-[1px] bg-blue-200/50"></div>
 			<div className="flex flex-col">
 				<span className="text-[10px] font-medium text-blue-500 capitalize">
-					{weatherData.weather[0].description}
+					{description}
 				</span>
 				<span className="text-[10px] text-blue-400 font-medium">
 					{new Date().toLocaleString('ru', { day: 'numeric', month: 'short' })}

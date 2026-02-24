@@ -10,6 +10,7 @@ export interface NavItem {
 	roles?: string[];
 	className?: string;
 	onlyAuth?: boolean; // Флаг: показывать только залогиненным
+	hasSeparator?: boolean;
 }
 
 export const NAVIGATION_CONFIG: NavItem[] = [
