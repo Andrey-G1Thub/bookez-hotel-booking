@@ -15,7 +15,7 @@ interface AddBookingAction {
 }
 interface DeleteBookingAction {
 	type: typeof DELETE_BOOKING;
-	payload: number | string;
+	payload: string;
 }
 interface SetLoadingAction {
 	type: typeof SET_BOOKINGS_LOADING;
@@ -30,14 +30,13 @@ export type BookingActions =
 
 // GET - получение данных
 export const fetchBookingsThunk =
-	(userId?: number | null) => async (dispatch: Dispatch<BookingActions>) => {
+	(userId?: string | null) => async (dispatch: Dispatch<BookingActions>) => {
 		try {
 			dispatch({ type: SET_BOOKINGS_LOADING, payload: true });
-			// Если userId не передан, мы можем либо не грузить ничего,
-			// либо грузить всё (если это админ). Для обычного юзера фильтруем:
+
 			const url = userId
-				? `http://localhost:3001/bookings?userId=${userId}`
-				: `http://localhost:3001/bookings`;
+				? `http://localhost:5000/api/bookings?userId=${userId}`
+				: `http://localhost:5000/api/bookings`;
 			const res = await fetch(url);
 			if (!res.ok) throw new Error('Ошибка сети');
 			const data: Booking[] = await res.json();
@@ -54,7 +53,7 @@ export const fetchBookingsThunk =
 export const addBookingThunk =
 	(newBooking: Booking) => async (dispatch: Dispatch<BookingActions>) => {
 		try {
-			const response = await fetch('http://localhost:3001/bookings', {
+			const response = await fetch('http://localhost:5000/api/bookings', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -73,15 +72,15 @@ export const addBookingThunk =
 	};
 
 export const deleteBookingThunk =
-	(id: number | string) => async (dispatch: Dispatch<BookingActions>) => {
+	(_id: string) => async (dispatch: Dispatch<BookingActions>) => {
 		try {
 			// Отправляем запрос на удаление конкретного ID
-			const response = await fetch(`http://localhost:3001/bookings/${id}`, {
+			const response = await fetch(`http://localhost:5000/api/bookings/${_id}`, {
 				method: 'DELETE',
 			});
 
 			if (response.ok) {
-				dispatch({ type: DELETE_BOOKING, payload: id });
+				dispatch({ type: DELETE_BOOKING, payload: _id });
 			}
 		} catch (error) {
 			console.error('Ошибка при удалении из db.json:', error);

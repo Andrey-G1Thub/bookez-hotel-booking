@@ -7,10 +7,10 @@ import {
 } from '../actions/bookingActions';
 
 export interface Booking {
-	id: number;
-	userId: number;
-	hotelId: number;
-	roomId: number;
+	_id: string;
+	userId: string;
+	hotelId: string;
+	roomId: string;
 	hotelName: string;
 	roomType: string;
 	checkIn: string;
@@ -49,7 +49,7 @@ export const bookingReducer = (
 		case DELETE_BOOKING:
 			return {
 				...state,
-				list: state.list.filter((b) => String(b.id) !== String(action.payload)),
+				list: state.list.filter((b) => String(b._id) !== String(action.payload)),
 			};
 		default:
 			return state;

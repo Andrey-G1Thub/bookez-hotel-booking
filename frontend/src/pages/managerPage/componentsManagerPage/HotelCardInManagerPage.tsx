@@ -5,7 +5,7 @@ interface HotelCardInManagerPageProps {
 	hotel: Hotel;
 	cities: City[];
 	setSelectedHotel: (hotel: Hotel | null) => void;
-	handleDeleteHotel: (id: number) => void;
+	handleDeleteHotel: (_id: string) => void;
 	handleEditHotelClick: (hotel: Hotel) => void;
 	handleOpenAddRoomModal: (hotel: Hotel) => void;
 }
@@ -22,7 +22,7 @@ export const HotelCardInManagerPage = ({
 		<div>
 			<h3 className="font-bold text-xl text-gray-800">{hotel.name}</h3>
 			<p className="text-sm text-gray-500">
-				{cities.find((c) => c.id === hotel.cityId)?.name || 'Город не указан'}
+				{cities.find((c) => c._id === hotel.cityId)?.name || 'Город не указан'}
 			</p>
 		</div>
 		<div className="flex gap-2">
@@ -42,7 +42,7 @@ export const HotelCardInManagerPage = ({
 				<Edit3 size={18} />
 			</button>
 			<button
-				onClick={() => handleDeleteHotel(hotel.id)}
+				onClick={() => handleDeleteHotel(hotel._id)}
 				className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
 			>
 				<Trash2 size={18} />

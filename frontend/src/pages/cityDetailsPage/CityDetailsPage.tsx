@@ -32,7 +32,7 @@ export const CityDetailsPage = () => {
 		);
 	}
 
-	const city = cities.find((c) => Number(c.id) === Number(cityId));
+	const city = cities.find((c) => Number(c._id) === Number(cityId));
 
 	const filteredHotels = allHotels.filter(
 		(hotel) => Number(hotel.cityId) === Number(cityId),
@@ -54,7 +54,7 @@ export const CityDetailsPage = () => {
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 				{filteredHotels.length > 0 ? (
 					filteredHotels.map((hotel) => (
-						<HotelCard key={hotel.id} hotel={hotel} />
+						<HotelCard key={hotel._id} hotel={hotel} />
 					))
 				) : (
 					<p className="text-gray-500 col-span-full">

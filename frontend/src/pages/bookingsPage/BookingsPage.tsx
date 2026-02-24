@@ -25,28 +25,28 @@ export const BookingsPage = () => {
 	const isLoading = useAppSelector(selectBookingIsLoading);
 
 	useEffect(() => {
-		if (currentUser?.id) {
-			dispatch(fetchBookingsThunk(currentUser.id));
+		if (currentUser?._id) {
+			dispatch(fetchBookingsThunk(currentUser._id));
 		}
-	}, [dispatch, currentUser?.id]);
+	}, [dispatch, currentUser?._id]);
 
 	const activeBookings = useMemo<Booking[]>(() => {
 		if (!currentUser) return [];
 		return allBookings.filter(
-			(b) => b.userId === currentUser?.id && b.status === 'Подтверждено',
+			(b) => b.userId === currentUser?._id && b.status === 'Подтверждено',
 		);
 	}, [allBookings, currentUser]);
 
 	const canceledBookings = useMemo<Booking[]>(() => {
 		if (!currentUser) return [];
 		return allBookings.filter(
-			(b) => b.userId === currentUser.id && b.status === 'Отменено',
+			(b) => b.userId === currentUser._id && b.status === 'Отменено',
 		);
 	}, [allBookings, currentUser]);
 
-	const handleDelete = (id: number | string) => {
+	const handleDelete = (_id: string) => {
 		if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
-			dispatch(deleteBookingThunk(id));
+			dispatch(deleteBookingThunk(_id));
 		}
 	};
 	if (!currentUser) return <div className="p-10 text-center">Загрузка...</div>;
@@ -71,7 +71,7 @@ export const BookingsPage = () => {
 				</h3>
 				{activeBookings.map((booking) => (
 					<div
-						key={booking.id}
+						key={booking._id}
 						className="p-4 border rounded-xl bg-green-50 flex justify-between items-center"
 					>
 						<div>
@@ -84,7 +84,7 @@ export const BookingsPage = () => {
 							</p>
 						</div>
 						<button
-							onClick={() => handleDelete(booking.id)}
+							onClick={() => handleDelete(booking._id)}
 							className="text-red-600 border border-red-300 bg-white hover:bg-red-50 px-4 py-2 rounded-lg text-sm"
 						>
 							Отменить
@@ -101,7 +101,7 @@ export const BookingsPage = () => {
 				{canceledBookings.length > 0 ? (
 					canceledBookings.map((booking) => (
 						<div
-							key={booking.id}
+							key={booking._id}
 							className="p-4 border rounded-xl bg-gray-100 border-gray-300 text-gray-500"
 						>
 							<p className="font-semibold flex items-center">

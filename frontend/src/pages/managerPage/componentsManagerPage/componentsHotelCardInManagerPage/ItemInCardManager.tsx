@@ -20,9 +20,9 @@ interface EnrichedBooking extends Booking {
 interface ItemInCardManagerProps {
 	hotel: Hotel;
 	allBookings: EnrichedBooking[];
-	handleDeleteRoom: (hotelId: number, roomId: number) => void;
+	handleDeleteRoom: (hotelId: string, roomId: string) => void;
 	handleEditRoomClick: (hotel: Hotel, room: Room) => void;
-	handleDeleteBooking: (bookingId: number) => void;
+	handleDeleteBooking: (bookingId: string) => void;
 }
 
 export const ItemInCardManager = ({
@@ -34,7 +34,7 @@ export const ItemInCardManager = ({
 }: ItemInCardManagerProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 	// Фильтруем бронирования только для этого отеля
-	const hotelBookings = allBookings.filter((b) => b.hotelId === hotel.id);
+	const hotelBookings = allBookings.filter((b) => b.hotelId === hotel._id);
 
 	const rooms = Array.isArray(hotel.rooms) ? hotel.rooms : [];
 	const roomsCount = rooms.length;
@@ -73,12 +73,12 @@ export const ItemInCardManager = ({
 					{rooms.map((room) => {
 						// Находим бронирования именно для этого номера
 						const roomBookings = hotelBookings.filter(
-							(b) => b.roomId === room.id,
+							(b) => b.roomId === room._id,
 						);
 
 						return (
 							<div
-								key={room.id}
+								key={room._id}
 								className="border rounded-xl overflow-hidden bg-white"
 							>
 								{/* КАРТОЧКА НОМЕРА */}
@@ -124,7 +124,7 @@ export const ItemInCardManager = ({
 										</button>
 										<button
 											onClick={() =>
-												handleDeleteRoom(hotel.id, room.id)
+												handleDeleteRoom(hotel._id, room._id)
 											}
 											className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
 										>
@@ -138,7 +138,7 @@ export const ItemInCardManager = ({
 									<div className="p-2 bg-white space-y-2">
 										{roomBookings.map((book) => (
 											<div
-												key={book.id}
+												key={book._id}
 												className="bg-amber-50/30 p-3 rounded-lg border border-amber-100/50 flex justify-between items-center"
 											>
 												<div className="space-y-1">
@@ -172,7 +172,7 @@ export const ItemInCardManager = ({
 												</div>
 												<button
 													onClick={() =>
-														handleDeleteBooking(book.id)
+														handleDeleteBooking(book._id)
 													}
 													className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
 													title="Отменить бронь"

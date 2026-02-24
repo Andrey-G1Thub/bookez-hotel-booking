@@ -2,10 +2,10 @@ import React from 'react';
 import { ClipboardList, Trash2 } from 'lucide-react';
 
 interface EnrichedBooking {
-	id: number;
-	hotelId: number;
+	_id: string;
+	hotelId: string;
 	hotelName: string;
-	roomId: number;
+	roomId: string;
 	price: number;
 	checkIn: string;
 	checkOut: string;
@@ -19,7 +19,7 @@ interface EnrichedBooking {
 interface BookingListProps {
 	myBookings: EnrichedBooking[];
 	isAdmin: boolean;
-	handleDeleteBooking: (id: number) => void;
+	handleDeleteBooking: (_id: string) => void;
 }
 
 export const BookingList = ({
@@ -35,14 +35,14 @@ export const BookingList = ({
 			</h2>
 
 			<div className="space-y-4">
-				{myBookings.map((book: any) => (
+				{myBookings.map((book) => (
 					<div
-						key={book.id}
+						key={book._id}
 						className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-sm relative group"
 					>
 						{/* КНОПКА УДАЛЕНИЯ БРОНИ (Видна всем менеджерам/админам в этой панели) */}
 						<button
-							onClick={() => handleDeleteBooking(book.id)}
+							onClick={() => handleDeleteBooking(book._id)}
 							className="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 transition-colors"
 							title="Удалить бронирование"
 						>
@@ -72,7 +72,7 @@ export const BookingList = ({
 								{book.status}
 							</div>
 							<span className="text-[10px] text-gray-400">
-								ID: {book.id}
+								ID: {book._id}
 							</span>
 						</div>
 					</div>

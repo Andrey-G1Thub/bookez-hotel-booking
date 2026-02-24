@@ -6,7 +6,7 @@ interface RoomModalProps {
 	setIsRoomModalOpen: (open: boolean) => void;
 	selectedHotel: Hotel | null;
 	handleAddRoom: (e: React.FormEvent) => Promise<void>;
-	newRoom: Omit<Room, 'id' | 'hotelId'>; // Ваша RoomFormState
+	newRoom: Omit<Room, '_id' | 'hotelId'>;
 	setNewRoom: React.Dispatch<React.SetStateAction<any>>;
 	photoUrl: string;
 	setPhotoUrl: (url: string) => void;

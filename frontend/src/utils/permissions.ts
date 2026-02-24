@@ -39,7 +39,7 @@ export const checkPermission = (
 
 			if (action === 'MANAGE_OWN_HOTEL') {
 				// Здесь проверяем, совпадает ли ID менеджера с ownerId отеля
-				return targetData?.ownerId === user.id;
+				return targetData?.ownerId === user._id;
 			}
 		}
 

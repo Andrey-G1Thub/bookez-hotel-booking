@@ -9,7 +9,7 @@ import { selectAllHotels, selectCities } from '../../selectors/hotelSelectors';
 import { selectBookingList } from '../../selectors/bookingSelectors';
 
 interface SearchFilters {
-	cityId: number | null;
+	cityId: string | null;
 	checkIn: string;
 	checkOut: string;
 }
@@ -42,7 +42,7 @@ export const HomePage = () => {
 
 	const handleCityChange = (e: ChangeEvent<HTMLSelectElement>) => {
 		const selectedCity = cities.find((c) => c.name === e.target.value);
-		setSearchFilters((prev) => ({ ...prev, cityId: selectedCity?.id || null }));
+		setSearchFilters((prev) => ({ ...prev, cityId: selectedCity?._id || null }));
 	};
 
 	// 2. Логика кнопки "Найти" (с учетом дат)
@@ -51,7 +51,7 @@ export const HomePage = () => {
 		const formData = new FormData(e.currentTarget);
 
 		setSearchFilters({
-			cityId: cities.find((c) => c.name === formData.get('city'))?.id || null,
+			cityId: cities.find((c) => c.name === formData.get('city'))?._id || null,
 			checkIn: formData.get('checkIn') as string,
 			checkOut: formData.get('checkOut') as string,
 		});
@@ -84,7 +84,7 @@ export const HomePage = () => {
 				if (!hotel.rooms) return false;
 				return hotel.rooms.some((room) => {
 					const roomBookings = (bookingsList || []).filter(
-						(b) => Number(b.roomId) === Number(room.id),
+						(b) => Number(b.roomId) === Number(room._id),
 					);
 					return !roomBookings.some((b) => {
 						const bStart = new Date(b.checkIn);
@@ -138,7 +138,7 @@ export const HomePage = () => {
 							</option>
 							{cities.map((city) => (
 								// Используем имя города в качестве значения
-								<option key={city.id} value={city.name}>
+								<option key={city._id} value={city.name}>
 									{city.name}
 								</option>
 							))}
@@ -202,7 +202,7 @@ export const HomePage = () => {
 				{/* СЕТКА ОТЕЛЕЙ */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 					{currentHotels.map((hotel) => (
-						<HotelCard key={hotel.id} hotel={hotel} />
+						<HotelCard key={hotel._id} hotel={hotel} />
 					))}
 				</div>
 

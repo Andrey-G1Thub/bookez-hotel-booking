@@ -36,17 +36,17 @@ export const RoomBookingPage = () => {
 	const [agreement, setAgreement] = useState(false);
 
 	const hotel = useMemo<Hotel | undefined>(
-		() => allHotels.find((h) => String(h.id) === String(hotelId)),
+		() => allHotels.find((h) => h._id === hotelId),
 		[allHotels, hotelId],
 	);
 	const room = useMemo<Room | undefined>(
-		() => hotel?.rooms?.find((r) => String(r.id) === String(roomId)),
+		() => hotel?.rooms?.find((r) => r._id === roomId),
 		[hotel, roomId],
 	);
 	const roomBookings = useMemo<Booking[]>(() => {
 		if (!room) return [];
 		return bookings.filter(
-			(b: Booking) => Number(b.roomId) === room.id && b.status === 'Подтверждено',
+			(b: Booking) => b.roomId === room._id && b.status === 'Подтверждено',
 		);
 	}, [bookings, room]);
 
@@ -111,10 +111,10 @@ export const RoomBookingPage = () => {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			// Создание новой брони с привязкой по ID
 			const newBooking = {
-				id: Date.now(),
-				userId: currentUser.id,
-				hotelId: hotel.id,
-				roomId: room.id,
+				_id: String(Date.now()),
+				userId: currentUser._id,
+				hotelId: hotel._id,
+				roomId: room._id,
 				hotelName: hotel.name,
 				roomType: room.type,
 				checkIn,

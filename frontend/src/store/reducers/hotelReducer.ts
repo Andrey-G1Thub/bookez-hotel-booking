@@ -15,27 +15,27 @@ export interface Room {
 	price: number;
 	amenities: string;
 	images: string[];
-	id: number;
-	hotelId: number;
+	_id: string;
+	hotelId: string;
 }
 
 export interface Comments {
-	id: number;
-	userId: number;
+	_id: string;
+	userId: string;
 	userName: string;
 	text: string;
 	date: string;
 }
 
 export interface Hotel {
-	id: number;
+	_id: string;
 	name: string;
-	cityId: number;
+	cityId: string;
 	description: string;
 	image?: string;
 	priceFrom: number;
 	images?: string[];
-	ownerId: number;
+	ownerId: string;
 	rating: number;
 	reviewCount: number;
 	comments: Comments[];
@@ -43,7 +43,7 @@ export interface Hotel {
 }
 
 export interface City {
-	id: number;
+	_id: string;
 	name: string;
 	description: string;
 }
@@ -81,7 +81,7 @@ export const hotelReducer = (state = initialState, action: HotelActions): HotelS
 			return {
 				...state,
 				allHotels: state.allHotels.map((hotel) =>
-					hotel.id === action.payload.id ? action.payload : hotel,
+					hotel._id === action.payload._id ? action.payload : hotel,
 				),
 			};
 
@@ -94,7 +94,9 @@ export const hotelReducer = (state = initialState, action: HotelActions): HotelS
 		case DELETE_HOTEL_SUCCESS:
 			return {
 				...state,
-				allHotels: state.allHotels.filter((hotel) => hotel.id !== action.payload),
+				allHotels: state.allHotels.filter(
+					(hotel) => hotel._id !== action.payload,
+				),
 			};
 		default:
 			return state;

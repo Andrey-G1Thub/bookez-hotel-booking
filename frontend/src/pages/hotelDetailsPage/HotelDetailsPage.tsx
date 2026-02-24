@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage';
 import { Rating } from '../../components/index';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRef } from 'react';
 import { addCommentThunk, deleteCommentThunk } from '../../store/actions/hotelActions';
@@ -31,8 +31,8 @@ export const HotelDetailsPage = () => {
 	const cities = useAppSelector(selectCities);
 	const user = useAppSelector(selectCurrentUser);
 
-	const hotel = allHotels.find((h) => Number(h.id) === Number(hotelId));
-	const city = cities.find((c) => Number(c.id) === Number(hotel?.cityId));
+	const hotel = allHotels.find((h) => h._id === hotelId);
+	const city = cities.find((c) => c._id === hotel?.cityId);
 
 	if (!hotel) return <NotFoundPage message="Отель не найден." />;
 
@@ -42,11 +42,10 @@ export const HotelDetailsPage = () => {
 	const canDeleteComment = (comment: Comments): boolean => {
 		if (!user) return false;
 		if (user.role === 'admin') return true;
-		if (user.role === 'manager' && Number(hotel.ownerId) === Number(user.id))
-			return true;
+		if (user.role === 'manager' && hotel.ownerId === user._id) return true;
 
 		// 3. Обычный пользователь удаляет только свои
-		return Number(user.id) === Number(comment.userId);
+		return user._id === comment.userId;
 	};
 
 	const handleAddComment = (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,19 +56,19 @@ export const HotelDetailsPage = () => {
 		if (!text.trim() || !user) return;
 
 		const newComment: Comments = {
-			id: Date.now(),
-			userId: user.id,
+			_id: String(Date.now()),
+			userId: user._id,
 			userName: user.name,
 			text: text,
 			date: new Date().toLocaleDateString('ru-RU'),
 		};
-		dispatch(addCommentThunk(hotel.id, newComment));
+		dispatch(addCommentThunk(hotel._id, newComment));
 		e.currentTarget.reset();
 	};
 
-	const handleDeleteComment = (commentId: number) => {
+	const handleDeleteComment = (commentId: string) => {
 		if (window.confirm('Удалить этот отзыв?')) {
-			dispatch(deleteCommentThunk(hotel.id, commentId));
+			dispatch(deleteCommentThunk(hotel._id, commentId));
 		}
 	};
 
@@ -120,7 +119,7 @@ export const HotelDetailsPage = () => {
 					{rooms.length > 0 ? (
 						rooms.map((room) => (
 							<div
-								key={room.id}
+								key={room._id}
 								className="bg-white rounded-xl shadow-md border overflow-hidden flex flex-col md:flex-row hover:shadow-xl transition-shadow"
 							>
 								<div className="md:w-1/3 h-52 md:h-auto bg-gray-200">
@@ -163,7 +162,7 @@ export const HotelDetailsPage = () => {
 										<button
 											onClick={() =>
 												navigate(
-													`/room/${room.hotelId}/${room.id}`,
+													`/room/${room.hotelId}/${room._id}`,
 												)
 											}
 											className="px-8 py-3 bg-[#00a3a8] text-white rounded-xl font-bold hover:bg-[#008c91] transition-colors shadow-lg shadow-teal-100"
@@ -225,13 +224,13 @@ export const HotelDetailsPage = () => {
 					{comments.length > 0 ? (
 						[...comments].reverse().map((c) => (
 							<div
-								key={c.id}
+								key={c._id}
 								className="bg-white p-6 rounded-2xl shadow-sm border hover:border-[#00a3a8]/30 transition-colors flex justify-between gap-4"
 							>
 								<div className="flex-1">
 									<div className="flex items-center gap-3 mb-3">
 										<div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center text-[#00a3a8] font-bold">
-											{c.userName[0].toUpperCase()}
+											{c.userName?.[0]?.toUpperCase() || '?'}
 										</div>
 										<div>
 											<p className="font-bold text-gray-800 leading-none mb-1">
@@ -248,7 +247,7 @@ export const HotelDetailsPage = () => {
 								</div>
 								{canDeleteComment(c) && (
 									<button
-										onClick={() => handleDeleteComment(c.id)}
+										onClick={() => handleDeleteComment(c._id)}
 										className="text-gray-300 hover:text-red-500 transition-colors self-start p-2"
 										title="Удалить отзыв"
 									>

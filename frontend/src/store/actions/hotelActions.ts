@@ -24,7 +24,7 @@ interface AddHotelAction {
 }
 interface DeleteHotelAction {
 	type: typeof DELETE_HOTEL_SUCCESS;
-	payload: number;
+	payload: string;
 }
 interface UpdateHotelAction {
 	type: typeof UPDATE_HOTEL_SUCCESS;
@@ -72,7 +72,7 @@ export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 // Работа с отелем и комнатами
 export const updateHotelThunk =
-	(hotelId: number, updatedRooms: Partial<Hotel>) =>
+	(hotelId: string, updatedRooms: Partial<Hotel>) =>
 	async (dispatch: Dispatch<HotelActions>) => {
 		try {
 			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
@@ -93,7 +93,7 @@ export const updateHotelThunk =
 
 // Thunk для обновления комнат (или любых данных отеля)
 export const updateHotelRoomsThunk =
-	(hotelId: number, roomsArray: Room[]) => async (dispatch: Dispatch<HotelActions>) => {
+	(hotelId: string, roomsArray: Room[]) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
 			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'PATCH',
@@ -143,7 +143,7 @@ export const addHotelThunk =
 
 // Thunk для удаления отеля
 export const deleteHotelThunk =
-	(hotelId: number) => async (dispatch: Dispatch<HotelActions>) => {
+	(hotelId: string) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
 			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'DELETE',
@@ -164,11 +164,11 @@ export const deleteHotelThunk =
 
 // КОММЕНТАРИИ
 export const addCommentThunk =
-	(hotelId: number, newComment: Comments) =>
+	(hotelId: string, newComment: Comments) =>
 	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
 		try {
 			const state = getState();
-			const hotel = state.hotels.allHotels.find((h) => h.id === hotelId);
+			const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
 			if (!hotel) return;
 
 			const updatedComments = [...(hotel.comments || []), newComment];
@@ -190,12 +190,12 @@ export const addCommentThunk =
 
 // Удаление комментария
 export const deleteCommentThunk =
-	(hotelId: number, commentId: number) =>
+	(hotelId: string, commentId: string) =>
 	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
 		try {
-			const hotel = getState().hotels.allHotels.find((h) => h.id === hotelId);
+			const hotel = getState().hotels.allHotels.find((h) => h._id === hotelId);
 			if (!hotel) return;
-			const filteredComments = hotel.comments.filter((c) => c.id !== commentId);
+			const filteredComments = hotel.comments.filter((c) => c._id !== commentId);
 
 			const res = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'PATCH',

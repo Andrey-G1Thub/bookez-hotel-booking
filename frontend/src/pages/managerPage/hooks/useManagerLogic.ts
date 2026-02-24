@@ -23,7 +23,7 @@ import {
 } from '../../../store/actions/hotelActions';
 import type { HotelFormFields } from '../../../types/forms';
 
-type RoomFormState = Omit<Room, 'id' | 'hotelId'>;
+type RoomFormState = Omit<Room, '_id' | 'hotelId'>;
 
 const initialHotelState: HotelFormFields = {
 	name: '',
@@ -53,8 +53,8 @@ export const useManagerLogic = () => {
 	const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
 	const [isEditMode, setIsEditMode] = useState(false);
 	const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
-	const [editingHotelId, setEditingHotelId] = useState<number | null>(null);
-	const [editingRoomId, setEditingRoomId] = useState<number | null>(null);
+	const [editingHotelId, setEditingHotelId] = useState<string | null>(null);
+	const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
 	const [photoUrl, setPhotoUrl] = useState('');
 
 	const [newHotel, setNewHotel] = useState<HotelFormFields>(initialHotelState);
@@ -66,7 +66,7 @@ export const useManagerLogic = () => {
 		if (!currentUser) return [];
 		return isAdmin
 			? allHotels
-			: allHotels.filter((h) => h.ownerId === currentUser?.id);
+			: allHotels.filter((h) => h.ownerId === currentUser?._id);
 	}, [allHotels, currentUser, isAdmin]);
 
 	// Вместо локального стейта myBookings — вычисляемое значение
@@ -76,12 +76,12 @@ export const useManagerLogic = () => {
 			if (isAdmin) return true;
 
 			// Менеджер видит только брони своих отелей
-			const hotel = allHotels.find((h) => h.id === b.hotelId);
-			return hotel?.ownerId === currentUser?.id;
+			const hotel = allHotels.find((h) => h._id === b.hotelId);
+			return hotel?.ownerId === currentUser?._id;
 		});
 		return filtered.map((b) => ({
 			...b,
-			client: allUsers.find((u) => u.id === b.userId) || null,
+			client: allUsers.find((u) => u._id === b.userId) || null,
 		}));
 	}, [allBookings, allHotels, allUsers, isAdmin, currentUser]);
 
@@ -92,7 +92,7 @@ export const useManagerLogic = () => {
 
 	const handleEditHotelClick = (hotel: Hotel) => {
 		setIsEditMode(true);
-		setEditingHotelId(hotel.id);
+		setEditingHotelId(hotel._id);
 		setNewHotel({
 			name: hotel.name,
 			cityId: hotel.cityId,
@@ -107,7 +107,7 @@ export const useManagerLogic = () => {
 	const handleEditRoomClick = (hotel: Hotel, room: Room) => {
 		setSelectedHotel(hotel); // Запоминаем, в каком отеле номер
 		setIsEditMode(true);
-		setEditingRoomId(room.id);
+		setEditingRoomId(room._id);
 
 		setNewRoom({
 			type: room.type,
@@ -152,15 +152,15 @@ export const useManagerLogic = () => {
 		//  Redux загружает данные
 		dispatch(fetchHotelsThunk());
 		dispatch(fetchCitiesThunk());
-		if (currentUser?.id) {
+		if (currentUser?._id) {
 			dispatch(fetchBookingsThunk());
 			dispatch(fetchAllUsersThunk());
 		}
-	}, [dispatch, currentUser?.id]);
+	}, [dispatch, currentUser?._id]);
 
-	const handleAddHotelPhoto = async (hotelId: number) => {
+	const handleAddHotelPhoto = async (hotelId: string) => {
 		if (!photoUrl) return;
-		const hotel = myHotels.find((h: Hotel) => h.id === hotelId);
+		const hotel = myHotels.find((h: Hotel) => h._id === hotelId);
 		if (!hotel) return;
 
 		const updatedImages = [...(hotel.images || []), photoUrl];
@@ -170,22 +170,22 @@ export const useManagerLogic = () => {
 		);
 		if (success) {
 			// Если фото добавлялось в модалке, обновляем и выделенный отель
-			if (selectedHotel?.id === hotelId) {
+			if (selectedHotel?._id === hotelId) {
 				setSelectedHotel({ ...selectedHotel, images: updatedImages });
 			}
 			setPhotoUrl('');
 		}
 	};
 
-	const handleDeleteHotel = async (id: number) => {
-		const hasBookings = enrichedBookings.some((b) => b.hotelId === id);
+	const handleDeleteHotel = async (_id: string) => {
+		const hasBookings = enrichedBookings.some((b) => b.hotelId === _id);
 		if (hasBookings) return alert('Есть активные бронирования!');
 		if (window.confirm('Удалить отель?')) {
-			await dispatch(deleteHotelThunk(id));
+			await dispatch(deleteHotelThunk(_id));
 		}
 	};
 
-	const handleDeleteRoom = async (hotelId: number, roomId: number) => {
+	const handleDeleteRoom = async (hotelId: string, roomId: string) => {
 		// Проверка: забронирован ли именно этот номер?
 		const isRoomBooked = enrichedBookings.some((b) => b.roomId === roomId);
 
@@ -195,10 +195,10 @@ export const useManagerLogic = () => {
 		}
 		if (!window.confirm('Удалить этот номер?')) return;
 
-		const hotel = allHotels.find((h) => h.id === hotelId);
+		const hotel = allHotels.find((h) => h._id === hotelId);
 		if (!hotel) return;
 
-		const updatedRooms = hotel.rooms.filter((r) => r.id !== roomId);
+		const updatedRooms = hotel.rooms.filter((r) => r._id !== roomId);
 
 		await dispatch(updateHotelRoomsThunk(hotelId, updatedRooms));
 		setIsRoomModalOpen(false);
@@ -207,8 +207,8 @@ export const useManagerLogic = () => {
 	const handleAddRoom = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!selectedHotel?.id) return;
-		const hotelToUpdate = allHotels.find((h) => h.id === selectedHotel.id);
+		if (!selectedHotel?._id) return;
+		const hotelToUpdate = allHotels.find((h) => h._id === selectedHotel._id);
 		if (!hotelToUpdate) return;
 
 		const currentRooms = Array.isArray(hotelToUpdate.rooms)
@@ -220,10 +220,11 @@ export const useManagerLogic = () => {
 		if (isEditMode && editingRoomId) {
 			// РЕЖИМ РЕДАКТИРОВАНИЯ
 			updatedRooms = currentRooms.map((room) =>
-				room.id === editingRoomId
+				room._id === editingRoomId
 					? {
 							...room,
 							...newRoom,
+
 							type: newRoom.type || room.type,
 							price: Number(newRoom.price),
 							capacity: Number(newRoom.capacity),
@@ -246,14 +247,14 @@ export const useManagerLogic = () => {
 				price: Number(newRoom.price),
 				amenities: newRoom.amenities || '',
 				images: newRoom.images || [],
-				id: Date.now(),
-				hotelId: hotelToUpdate.id,
+				_id: String(Date.now()),
+				hotelId: hotelToUpdate._id,
 			};
 			updatedRooms = [...currentRooms, roomData];
 		}
 
 		const success = await dispatch(
-			updateHotelRoomsThunk(hotelToUpdate.id, updatedRooms),
+			updateHotelRoomsThunk(hotelToUpdate._id, updatedRooms),
 		);
 
 		if (success) {
@@ -270,19 +271,19 @@ export const useManagerLogic = () => {
 		// Создаем объект, который СТРОГО соответствует интерфейсу Hotel из редюсера
 		const hotelToSave: Hotel = {
 			...newHotel,
-			id: isEditMode && editingHotelId ? editingHotelId : Date.now(),
-			ownerId: currentUser?.id || 0,
+			_id: isEditMode && editingHotelId ? editingHotelId : String(Date.now()),
+			ownerId: currentUser?._id || 0,
 			// Явное преобразование к числу для Reducer/API
-			cityId: Number(newHotel.cityId),
+			cityId: newHotel.cityId,
 			priceFrom: Number(newHotel.priceFrom),
 			name: newHotel.name || '',
 			description: newHotel.description || '',
-			rating: (newHotel as any).rating ?? 5,
-			reviewCount: (newHotel as any).reviewCount ?? 0,
+			rating: newHotel.rating ?? 5,
+			reviewCount: newHotel.reviewCount ?? 0,
 			comments: newHotel.comments || [],
 			rooms:
 				isEditMode && editingHotelId
-					? allHotels.find((h) => h.id === editingHotelId)?.rooms || []
+					? allHotels.find((h) => h._id === editingHotelId)?.rooms || []
 					: [],
 			images: newHotel.images || [],
 		} as Hotel;
@@ -295,48 +296,8 @@ export const useManagerLogic = () => {
 
 		setIsModalOpen(false);
 	};
-	// const handleSaveHotel = async (e: React.FormEvent) => {
-	// 	e.preventDefault();
 
-	// 	if (isEditMode && editingHotelId) {
-	// 		// Логика ОБНОВЛЕНИЯ
-	// 		const success = await dispatch(updateHotelThunk(editingHotelId, newHotel));
-	// 		if (success) {
-	// 			setIsModalOpen(false);
-	// 			setIsEditMode(false);
-	// 		}
-	// 	} else {
-	// 		if (!currentUser?.id) return;
-	// 		const hotelToSave = {
-	// 			...newHotel,
-	// 			id: Date.now(),
-	// 			ownerId: currentUser.id,
-	// 			cityId: Number(newHotel.cityId),
-	// 			priceFrom: Number(newHotel.priceFrom),
-	// 			rating: 5,
-	// 			reviewCount: 0,
-	// 			comments: newHotel.comments || [],
-	// 			rooms: [],
-	// 			images: newHotel.images ? newHotel.images : [],
-	// 		};
-
-	// 		const success = await dispatch(addHotelThunk(hotelToSave));
-
-	// 		if (success) {
-	// 			setIsModalOpen(false);
-	// 			setNewHotel({
-	// 				name: '',
-	// 				cityId: 0,
-	// 				description: '',
-	// 				priceFrom: 0,
-	// 				images: [],
-	// 				comments: [],
-	// 			});
-	// 		}
-	// 	}
-	// };
-
-	const handleDeleteBooking = async (bookingId: number) => {
+	const handleDeleteBooking = async (bookingId: string) => {
 		if (!window.confirm('Вы уверены, что хотите отменить это бронирование?')) return;
 		await dispatch(deleteBookingThunk(bookingId));
 	};

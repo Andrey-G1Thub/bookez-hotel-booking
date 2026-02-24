@@ -124,8 +124,8 @@ export const HotelModal = ({
 							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none"
 						>
 							<option value="">Выберите город</option>
-							{cities.map((city: any) => (
-								<option key={city.id} value={city.id}>
+							{cities.map((city) => (
+								<option key={city._id} value={city._id}>
 									{city.name}
 								</option>
 							))}

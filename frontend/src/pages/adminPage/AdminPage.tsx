@@ -21,7 +21,7 @@ export const AdminPage = () => {
 		dispatch(fetchAllUsersThunk());
 	}, [dispatch]);
 
-	const handleRoleChange = (userId: number, newRole: string) => {
+	const handleRoleChange = (userId: string, newRole: string) => {
 		// При смене на менеджера можно сразу задать дефолтные лимиты
 		const defaultLimits =
 			newRole === ROLES.MANAGER ? { maxHotels: 1, maxRooms: 5 } : null;
@@ -30,12 +30,12 @@ export const AdminPage = () => {
 
 	//Изменение конкретного лимита
 	const handleLimitChange = (
-		userId: number,
+		userId: string,
 		currentRole: string,
 		field: keyof UserLimits,
 		value: string,
 	) => {
-		const user = usersList.find((u: User) => u.id === userId);
+		const user = usersList.find((u: User) => u._id === userId);
 		if (!user) return;
 
 		const newLimits: UserLimits = {
@@ -48,7 +48,7 @@ export const AdminPage = () => {
 	};
 
 	// УДАЛЕНИЯ
-	const handleDeleteUser = (userId: number, userName: string) => {
+	const handleDeleteUser = (userId: string, userName: string) => {
 		if (window.confirm(`Вы уверены, что хотите удалить пользователя ${userName}?`)) {
 			dispatch(deleteUserThunk(userId));
 		}
@@ -79,7 +79,7 @@ export const AdminPage = () => {
 					<tbody>
 						{usersList?.map((user: User) => (
 							<tr
-								key={user.id}
+								key={user._id}
 								className="border-b hover:bg-gray-50/50 transition"
 							>
 								<td className="p-4 font-medium">{user.name}</td>
@@ -100,9 +100,9 @@ export const AdminPage = () => {
 								<td className="p-4">
 									<select
 										value={user.role}
-										disabled={user.id === currentUser?.id}
+										disabled={user._id === currentUser?._id}
 										onChange={(e) =>
-											handleRoleChange(user.id, e.target.value)
+											handleRoleChange(user._id, e.target.value)
 										}
 										className="border rounded p-1 text-sm outline-none focus:ring-2 focus:ring-teal-500 bg-white"
 									>
@@ -121,7 +121,7 @@ export const AdminPage = () => {
 													value={user.limits?.maxHotels || 1}
 													onChange={(e) =>
 														handleLimitChange(
-															user.id,
+															user._id,
 															user.role,
 															'maxHotels',
 															e.target.value,
@@ -138,7 +138,7 @@ export const AdminPage = () => {
 													value={user.limits?.maxRooms || 5}
 													onChange={(e) =>
 														handleLimitChange(
-															user.id,
+															user._id,
 															user.role,
 															'maxRooms',
 															e.target.value,
@@ -155,11 +155,11 @@ export const AdminPage = () => {
 								<td className="p-4">
 									<button
 										onClick={() =>
-											handleDeleteUser(user.id, user.name)
+											handleDeleteUser(user._id, user.name)
 										}
-										disabled={user.id === currentUser?.id}
+										disabled={user._id === currentUser?._id}
 										className={`px-3 py-1.5 rounded text-xs font-medium transition ${
-											user.id === currentUser?.id
+											user._id === currentUser?._id
 												? 'bg-gray-100 text-gray-400 cursor-not-allowed'
 												: 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white'
 										}`}

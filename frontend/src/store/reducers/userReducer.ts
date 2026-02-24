@@ -11,7 +11,7 @@ export interface UserLimits {
 	maxRooms: number;
 }
 export interface User {
-	id: number;
+	_id: string;
 	name: string;
 	email: string;
 	phone: string;
@@ -48,7 +48,7 @@ export const userReducer = (state = initialState, action: UserActions): UserStat
 			return {
 				...state,
 				usersList: state.usersList.filter(
-					(user: User) => user.id !== action.payload,
+					(user: User) => user._id !== action.payload,
 				),
 			};
 

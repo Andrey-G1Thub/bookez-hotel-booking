@@ -35,11 +35,11 @@ export const App = () => {
 			try {
 				const user: User = JSON.parse(savedUser);
 				dispatch({ type: SET_USER, payload: user });
-				dispatch(fetchBookingsThunk(user.id));
+				dispatch(fetchBookingsThunk(user._id));
 			} catch (error) {
 				const user: User = JSON.parse(savedUser);
 				dispatch({ type: SET_USER, payload: user });
-				dispatch(fetchBookingsThunk(user.id));
+				dispatch(fetchBookingsThunk(user._id));
 			}
 		}
 	}, [dispatch]);

@@ -25,7 +25,7 @@ interface FetchUsersAction {
 }
 interface DeleteUserAction {
 	type: typeof DELETE_USER_SUCCESS;
-	payload: number;
+	payload: string;
 }
 interface Credentials {
 	email: string;
@@ -47,7 +47,7 @@ export const registerThunk =
 		try {
 			// Проверяем, существует ли пользователь
 			const checkRes = await fetch(
-				`http://localhost:3001/users?email=${userData.email}`,
+				`http://localhost:5000/api/users?email=${userData.email}`,
 			);
 			const existing = await checkRes.json();
 
@@ -67,7 +67,7 @@ export const registerThunk =
 				id: Date.now(), // Если json-server не настроен на авто-id
 			};
 
-			const response = await fetch('http://localhost:3001/users', {
+			const response = await fetch('http://localhost:5000/api/users', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(newUser),
@@ -89,7 +89,7 @@ export const loginThunk =
 			const email = encodeURIComponent(credentials.email);
 			const password = encodeURIComponent(credentials.password || '');
 			const res = await fetch(
-				`http://localhost:3001/users?email=${email}&password=${password}`,
+				`http://localhost:5000/api/users?email=${email}&password=${password}`,
 			);
 			const users: User[] = await res.json();
 			if (users.length === 0) {
@@ -124,10 +124,10 @@ export const logoutThunk = () => (dispatch: Dispatch<UserActions>) => {
 
 // userActions.js
 export const updateUserRoleThunk =
-	(userId: number, newRole: string, limits: UserLimits | null = null) =>
+	(userId: string, newRole: string, limits: UserLimits | null = null) =>
 	async (dispatch: any, getState: () => RootState) => {
 		try {
-			const response = await fetch(`http://localhost:3001/users/${userId}`, {
+			const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -142,7 +142,7 @@ export const updateUserRoleThunk =
 
 				// 2. Если админ изменил роль самому себе
 				const currentUser = getState().users.currentUser;
-				if (currentUser && currentUser.id === userId) {
+				if (currentUser && currentUser._id === userId) {
 					const updatedUser = await response.json();
 					dispatch({ type: SET_USER, payload: updatedUser });
 					localStorage.setItem('bookez_user', JSON.stringify(updatedUser));
@@ -155,7 +155,7 @@ export const updateUserRoleThunk =
 	};
 export const fetchAllUsersThunk = () => async (dispatch: Dispatch<UserActions>) => {
 	try {
-		const res = await fetch('http://localhost:3001/users');
+		const res = await fetch('http://localhost:5000/api/users');
 		const data = await res.json();
 		dispatch({ type: FETCH_USERS_SUCCESS, payload: data });
 	} catch (e) {
@@ -163,10 +163,10 @@ export const fetchAllUsersThunk = () => async (dispatch: Dispatch<UserActions>) 
 	}
 };
 export const deleteUserThunk =
-	(userId: number) => async (dispatch: Dispatch<UserActions>) => {
+	(userId: string) => async (dispatch: Dispatch<UserActions>) => {
 		try {
 			// 1. Запрос к API
-			const res = await fetch(`http://localhost:3001/users/${userId}`, {
+			const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
 				method: 'DELETE',
 			});
 			if (res.ok) {
