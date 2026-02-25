@@ -1,21 +1,35 @@
 import { Schema, model } from 'mongoose'
 
-// Описываем интерфейс для TypeScript
-interface IHotel {
-  name: string
-  location: string
-  pricePerNight: number
-  description?: string
-  rating: number
-}
+// Схема для комментариев
+const commentSchema = new Schema({
+  userId: { type: String, required: true },
+  userName: { type: String, required: true },
+  text: { type: String, required: true },
+  date: { type: String, required: true },
+}) // MongoDB сама добавит _id каждому комментарию
 
-// Создаем схему для MongoDB
-const hotelSchema = new Schema<IHotel>({
-  name: { type: String, required: true },
-  location: { type: String, required: true },
-  pricePerNight: { type: Number, required: true },
-  description: { type: String },
-  rating: { type: Number, default: 0 },
+// Схема для комнат
+const roomSchema = new Schema({
+  type: { type: String, required: true },
+  capacity: { type: Number, required: true },
+  price: { type: Number, required: true },
+  amenities: { type: String },
+  images: [String],
+  hotelId: { type: String }, // Будет ссылаться на _id родительского отеля
 })
 
-export const Hotel = model<IHotel>('Hotel', hotelSchema)
+// Основная схема отеля
+const hotelSchema = new Schema({
+  name: { type: String, required: true },
+  cityId: { type: String, required: true },
+  description: { type: String },
+  priceFrom: { type: Number, required: true },
+  images: [String],
+  ownerId: { type: String, required: true },
+  rating: { type: Number, default: 0 },
+  reviewCount: { type: Number, default: 0 },
+  comments: [commentSchema],
+  rooms: [roomSchema],
+})
+
+export const Hotel = model('Hotel', hotelSchema)

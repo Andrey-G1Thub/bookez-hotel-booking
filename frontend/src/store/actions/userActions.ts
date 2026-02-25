@@ -59,7 +59,7 @@ export const registerThunk =
 			const { confirmPassword, ...dataToInscribe } = userData;
 			const newUser = {
 				...dataToInscribe,
-				role: ROLES.USER, // Используй константу
+				role: ROLES.USER,
 				limits: {
 					maxHotels: 0, // У обычного юзера нет отелей
 					maxRooms: 0,

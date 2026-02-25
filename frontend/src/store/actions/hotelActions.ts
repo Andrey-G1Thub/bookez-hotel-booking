@@ -65,9 +65,20 @@ export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) =
 };
 
 export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) => {
-	const response = await fetch('http://localhost:3001/cities');
-	const data: City[] = await response.json();
-	dispatch({ type: SET_CITIES, payload: data });
+	try {
+		const response = await fetch('http://localhost:5000/api/cities');
+
+		if (!response.ok) {
+			throw new Error(`Ошибка сервера: ${response.status}`);
+		}
+
+		const data: City[] = await response.json();
+
+		console.log('Загруженные города:', data);
+		dispatch({ type: SET_CITIES, payload: data });
+	} catch (error) {
+		console.error('Ошибка при загрузке городов:', error);
+	}
 };
 
 // Работа с отелем и комнатами

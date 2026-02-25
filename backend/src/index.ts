@@ -3,6 +3,8 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import hotelRoutes from './roures/hotelRoutes'
+import userRoutes from './roures/userRoutes'
+import cityRoutes from './roures/cityRoutes'
 
 dotenv.config()
 
@@ -13,7 +15,8 @@ const MONGO_URI = process.env.MONGO_URI || ''
 app.use(cors())
 app.use(express.json())
 app.use('/api/hotels', hotelRoutes)
-
+app.use('/api/users', userRoutes)
+app.use('/api/cities', cityRoutes)
 // Подключение к MongoDB
 mongoose
   .connect(MONGO_URI)

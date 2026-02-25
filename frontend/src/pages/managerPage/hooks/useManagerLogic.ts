@@ -271,7 +271,7 @@ export const useManagerLogic = () => {
 		// Создаем объект, который СТРОГО соответствует интерфейсу Hotel из редюсера
 		const hotelToSave: Hotel = {
 			...newHotel,
-			_id: isEditMode && editingHotelId ? editingHotelId : String(Date.now()),
+			// _id: isEditMode && editingHotelId ? editingHotelId : String(Date.now()), //mongo должен сам создать id
 			ownerId: currentUser?._id || 0,
 			// Явное преобразование к числу для Reducer/API
 			cityId: newHotel.cityId,
