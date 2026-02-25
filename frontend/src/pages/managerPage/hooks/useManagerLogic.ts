@@ -87,8 +87,9 @@ export const useManagerLogic = () => {
 	}, [allBookings, allHotels, allUsers, isAdmin, currentUser]);
 
 	const canAddHotel = useMemo(() => {
+		if (isAdmin) return true;
 		const maxHotels = currentUser?.limits?.maxHotels || 0;
-		return isAdmin || myHotels.length < maxHotels;
+		return myHotels.length < maxHotels;
 	}, [myHotels, currentUser, isAdmin]);
 
 	const handleEditHotelClick = (hotel: Hotel) => {
