@@ -249,14 +249,14 @@ export const useManagerLogic = () => {
 				price: Number(newRoom.price),
 				amenities: newRoom.amenities || '',
 				images: newRoom.images || [],
-				_id: String(Date.now()),
+				// _id: String(Date.now()),
 				hotelId: hotelToUpdate._id,
 			};
 			updatedRooms = [...currentRooms, roomData];
 		}
 
 		const success = await dispatch(
-			updateHotelRoomsThunk(hotelToUpdate._id, updatedRooms),
+			updateHotelRoomsThunk(hotelToUpdate._id, updatedRooms as Room[]),
 		);
 
 		if (success) {

@@ -20,15 +20,26 @@ export const createHotel = async (req: Request, res: Response) => {
     res.status(400).json({ message: 'Ошибка при создании отеля', error })
   }
 }
+
 export const updateHotel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    // { new: true } вернет уже обновленный документ
-    const updatedHotel = await Hotel.findByIdAndUpdate(id, req.body, {
-      new: true,
-    })
+    console.log('Updating hotel with ID:', id)
+    console.log('Data received:', req.body)
+
+    const updatedHotel = await Hotel.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true, runValidators: true },
+    )
+
+    if (!updatedHotel) {
+      return res.status(404).json({ message: 'Отель не найден' })
+    }
+
     res.json(updatedHotel)
   } catch (error) {
+    console.error('Update Error:', error)
     res.status(400).json({ message: 'Ошибка при обновлении', error })
   }
 }
