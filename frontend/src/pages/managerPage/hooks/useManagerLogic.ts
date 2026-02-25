@@ -44,6 +44,7 @@ const initialRoomState: RoomFormState = {
 export const useManagerLogic = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const currentUser = useAppSelector(selectCurrentUser);
+	console.log('Текущий пользователь из Redux:', currentUser);
 	const allHotels = useAppSelector(selectAllHotels);
 	const cities = useAppSelector(selectCities);
 	const allBookings = useAppSelector(selectBookingList);
@@ -268,11 +269,15 @@ export const useManagerLogic = () => {
 	const handleSaveHotel = async (e: React.FormEvent) => {
 		e.preventDefault();
 
+		if (!currentUser?._id) {
+			alert('Ошибка: пользователь не авторизован');
+			return;
+		}
 		// Создаем объект, который СТРОГО соответствует интерфейсу Hotel из редюсера
 		const hotelToSave: Hotel = {
-			...newHotel,
+			// ...newHotel,
 			// _id: isEditMode && editingHotelId ? editingHotelId : String(Date.now()), //mongo должен сам создать id
-			ownerId: currentUser?._id || 0,
+			ownerId: currentUser?._id,
 			// Явное преобразование к числу для Reducer/API
 			cityId: newHotel.cityId,
 			priceFrom: Number(newHotel.priceFrom),
@@ -280,7 +285,7 @@ export const useManagerLogic = () => {
 			description: newHotel.description || '',
 			rating: newHotel.rating ?? 5,
 			reviewCount: newHotel.reviewCount ?? 0,
-			comments: newHotel.comments || [],
+			comments: isEditMode ? newHotel.comments || [] : [],
 			rooms:
 				isEditMode && editingHotelId
 					? allHotels.find((h) => h._id === editingHotelId)?.rooms || []

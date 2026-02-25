@@ -45,38 +45,22 @@ export type UserActions =
 export const registerThunk =
 	(userData: RegisterData) => async (dispatch: Dispatch<UserActions>) => {
 		try {
-			// Проверяем, существует ли пользователь
-			const checkRes = await fetch(
-				`http://localhost:5000/api/users?email=${userData.email}`,
-			);
-			const existing = await checkRes.json();
-
-			if (existing.length > 0) {
-				alert('Пользователь с таким email уже существует!');
-				return false;
-			}
-			// Убираем confirmPassword перед отправкой и добавляем роль
 			const { confirmPassword, ...dataToInscribe } = userData;
-			const newUser = {
-				...dataToInscribe,
-				role: ROLES.USER,
-				limits: {
-					maxHotels: 0, // У обычного юзера нет отелей
-					maxRooms: 0,
-				},
-				id: Date.now(), // Если json-server не настроен на авто-id
-			};
 
-			const response = await fetch('http://localhost:5000/api/users', {
+			const response = await fetch('http://localhost:5000/api/users/register', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(newUser),
+				body: JSON.stringify(dataToInscribe),
 			});
+
+			const result = await response.json();
 
 			if (response.ok) {
 				return true;
+			} else {
+				alert(result.message || 'Ошибка регистрации');
+				return false;
 			}
-			return false;
 		} catch (error) {
 			console.error('Register Error:', error);
 			return false;

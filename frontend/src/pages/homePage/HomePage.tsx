@@ -63,9 +63,7 @@ export const HomePage = () => {
 
 		// 1. Фильтр по городу
 		if (searchFilters.cityId) {
-			result = result.filter(
-				(h) => Number(h.cityId) === Number(searchFilters.cityId),
-			);
+			result = result.filter((h) => h.cityId === searchFilters.cityId);
 		}
 
 		// 2. Поиск по названию
@@ -84,7 +82,7 @@ export const HomePage = () => {
 				if (!hotel.rooms) return false;
 				return hotel.rooms.some((room) => {
 					const roomBookings = (bookingsList || []).filter(
-						(b) => Number(b.roomId) === Number(room._id),
+						(b) => b.roomId === room._id,
 					);
 					return !roomBookings.some((b) => {
 						const bStart = new Date(b.checkIn);
@@ -211,7 +209,8 @@ export const HomePage = () => {
 					<div className="flex justify-center mt-10 gap-2">
 						{Array.from({ length: totalPages }).map((_, i) => (
 							<button
-								key={i}
+								// key={i}
+								key={`page-${i + 1}`}
 								onClick={() => setCurrentPage(i + 1)}
 								className={`px-4 py-2 rounded-lg transition-colors ${currentPage === i + 1 ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
 							>

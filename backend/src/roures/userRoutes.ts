@@ -1,12 +1,12 @@
 import { Router } from 'express'
-import { login } from '../controllers/userController'
+import { login, register } from '../controllers/userController'
 import { User } from '../models/User'
 
 const router = Router()
 
 // Маршрут для логина (лучше использовать POST)
 router.post('/login', login)
-
+router.post('/register', register)
 // Маршрут для получения всех пользователей (нужен для fetchAllUsersThunk)
 router.get('/', async (req, res) => {
   try {
