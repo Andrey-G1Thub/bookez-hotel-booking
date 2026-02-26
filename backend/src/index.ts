@@ -5,6 +5,7 @@ import cors from 'cors'
 import hotelRoutes from './roures/hotelRoutes'
 import userRoutes from './roures/userRoutes'
 import cityRoutes from './roures/cityRoutes'
+import bookingRoutes from './roures/bookingRoutes'
 
 dotenv.config()
 
@@ -17,6 +18,7 @@ app.use(express.json())
 app.use('/api/hotels', hotelRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/cities', cityRoutes)
+app.use('/api/bookings', bookingRoutes)
 // Подключение к MongoDB
 mongoose
   .connect(MONGO_URI)

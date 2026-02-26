@@ -19,7 +19,7 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, phone, password, role } = req.body
 
-    // 1. Проверяем, нет ли уже такого пользователя
+    //  Проверяем, нет ли уже такого пользователя
     const existingUser = await User.findOne({ email })
     if (existingUser) {
       return res
@@ -41,5 +41,21 @@ export const register = async (req: Request, res: Response) => {
     res.status(201).json(savedUser)
   } catch (error) {
     res.status(500).json({ message: 'Ошибка при регистрации', error })
+  }
+}
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.query
+
+    if (email && password) {
+      const user = await User.findOne({ email, password })
+      return res.json(user ? [user] : [])
+    }
+    // Иначе просто отдаем всех
+    const users = await User.find()
+    res.json(users)
+  } catch (e) {
+    res.status(500).json({ message: 'Ошибка сервера' })
   }
 }

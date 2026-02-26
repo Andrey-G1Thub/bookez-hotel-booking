@@ -5,9 +5,18 @@ import { City } from '../models/City'
 export const getCities = async (req: Request, res: Response) => {
   try {
     const cities = await City.find()
-    console.log(cities) // Посмотри в консоль сервера, есть ли там _id
+
     res.json(cities)
   } catch (error) {
-    res.status(500).json({ message: 'Ошибка' })
+    res.status(500).json({ message: 'Ошибка при получении городов' })
+  }
+}
+export const addCity = async (req: Request, res: Response) => {
+  try {
+    const newCity = new City(req.body)
+    await newCity.save()
+    res.status(201).json(newCity)
+  } catch (error) {
+    res.status(400).json({ message: 'Ошибка при создании города' })
   }
 }

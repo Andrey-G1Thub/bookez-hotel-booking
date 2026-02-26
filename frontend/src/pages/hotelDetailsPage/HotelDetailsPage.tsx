@@ -13,13 +13,18 @@ import { NotFoundPage } from '../notFoundPage/NotFoundPage';
 import { Rating } from '../../components/index';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { addCommentThunk, deleteCommentThunk } from '../../store/actions/hotelActions';
 import type { AppDispatch } from '../../store';
 import { useAppSelector } from '../../store/hooks';
 import { selectCurrentUser } from '../../selectors';
-import { selectAllHotels, selectCities } from '../../selectors/hotelSelectors';
+import {
+	selectAllHotels,
+	selectCities,
+	selectIsLoading,
+} from '../../selectors/hotelSelectors';
 import type { Comments } from '../../store/reducers/hotelReducer';
+import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 
 export const HotelDetailsPage = () => {
 	const { hotelId } = useParams<{ hotelId: string }>();
@@ -31,8 +36,17 @@ export const HotelDetailsPage = () => {
 	const cities = useAppSelector(selectCities);
 	const user = useAppSelector(selectCurrentUser);
 
-	const hotel = allHotels.find((h) => h._id === hotelId);
+	const isLoading = useAppSelector(selectIsLoading);
+
+	const hotel = useMemo(
+		() => allHotels.find((h) => h._id === hotelId),
+		[allHotels, hotelId],
+	);
 	const city = cities.find((c) => c._id === hotel?.cityId);
+
+	if (isLoading) {
+		return <LoadingSpinner />;
+	}
 
 	if (!hotel) return <NotFoundPage message="Отель не найден." />;
 

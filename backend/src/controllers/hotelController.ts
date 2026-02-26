@@ -23,13 +23,13 @@ export const createHotel = async (req: Request, res: Response) => {
 export const updateHotel = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    console.log('Updating hotel with ID:', id)
-    console.log('Data received:', req.body)
+    // console.log('Updating hotel with ID:', id)
+    // console.log('Data received:', req.body)
 
     const updatedHotel = await Hotel.findByIdAndUpdate(
       id,
       { $set: req.body },
-      { new: true, runValidators: true },
+      { returnDocument: 'after', runValidators: true },
     )
 
     if (!updatedHotel) {

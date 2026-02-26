@@ -74,7 +74,7 @@ export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 		const data: City[] = await response.json();
 
-		console.log('Загруженные города:', data);
+		// console.log('Загруженные города:', data);
 		dispatch({ type: SET_CITIES, payload: data });
 	} catch (error) {
 		console.error('Ошибка при загрузке городов:', error);

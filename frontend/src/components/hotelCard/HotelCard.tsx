@@ -20,7 +20,7 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
 
 	return (
 		<div
-			onClick={() => navigate(`/hotel/${hotel.id}`)}
+			onClick={() => navigate(`/hotel/${hotel._id}`)}
 			className="bg-white card-shadow rounded-xl overflow-hidden cursor-pointer hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 border border-gray-100"
 		>
 			<img

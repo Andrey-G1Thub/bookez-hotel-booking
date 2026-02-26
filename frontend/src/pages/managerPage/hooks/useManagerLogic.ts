@@ -44,7 +44,7 @@ const initialRoomState: RoomFormState = {
 export const useManagerLogic = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const currentUser = useAppSelector(selectCurrentUser);
-	console.log('Текущий пользователь из Redux:', currentUser);
+	// console.log('Текущий пользователь из Redux:', currentUser);
 	const allHotels = useAppSelector(selectAllHotels);
 	const cities = useAppSelector(selectCities);
 	const allBookings = useAppSelector(selectBookingList);

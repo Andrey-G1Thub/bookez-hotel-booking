@@ -73,7 +73,7 @@ export const hotelReducer = (state = initialState, action: HotelActions): HotelS
 				error: null,
 			};
 		case SET_HOTELS:
-			return { ...state, allHotels: action.payload };
+			return { ...state, allHotels: action.payload, isLoading: false };
 		case SET_CITIES:
 			return { ...state, cities: action.payload };
 		case UPDATE_HOTEL_ROOM_SUCCESS:

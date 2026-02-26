@@ -111,7 +111,7 @@ export const RoomBookingPage = () => {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			// Создание новой брони с привязкой по ID
 			const newBooking = {
-				_id: String(Date.now()),
+				// _id: String(Date.now()),//сервер сам должен добавить ID
 				userId: currentUser._id,
 				hotelId: hotel._id,
 				roomId: room._id,
