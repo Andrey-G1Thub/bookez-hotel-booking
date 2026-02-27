@@ -79,3 +79,33 @@ export const getUsers = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Ошибка сервера' })
   }
 }
+// Обновить пользователя (роль или лимиты)
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { role, limits } = req.body
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { role, limits },
+      { new: true }, // Вернуть уже обновленный объект
+    ).select('-password')
+
+    if (!updatedUser)
+      return res.status(404).json({ message: 'Пользователь не найден' })
+
+    res.json(updatedUser)
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка обновления' })
+  }
+}
+
+// Удалить пользователя
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    await User.findByIdAndDelete(req.params.id)
+    res.json({ message: 'Пользователь удален' })
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка удаления' })
+  }
+}

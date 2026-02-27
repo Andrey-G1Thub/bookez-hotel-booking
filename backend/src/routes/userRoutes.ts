@@ -1,12 +1,20 @@
 import { Router } from 'express'
-import { getUsers, login, register } from '../controllers/userController'
+import {
+  deleteUser,
+  getUsers,
+  login,
+  register,
+  updateUser,
+} from '../controllers/userController'
 
 const router = Router()
 
-// Маршрут для логина (лучше использовать POST)
+// Маршрут для логина
 router.post('/login', login)
 router.post('/register', register)
 // Маршрут для получения всех пользователей
 router.get('/', getUsers)
+router.patch('/:id', updateUser) // Для изменения роли
+router.delete('/:id', deleteUser) // Для удаления
 
 export default router
