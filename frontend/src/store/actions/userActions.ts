@@ -67,41 +67,68 @@ export const registerThunk =
 		}
 	};
 
+// export const loginThunk =
+// 	(credentials: Credentials) => async (dispatch: Dispatch<UserActions>) => {
+// 		try {
+// 			const email = encodeURIComponent(credentials.email);
+// 			const password = encodeURIComponent(credentials.password || '');
+// 			const res = await fetch(
+// 				`http://localhost:5000/api/users?email=${email}&password=${password}`,
+// 			);
+// 			const users: User[] = await res.json();
+// 			if (users.length === 0) {
+// 				alert('Неверный email или пароль.');
+// 				return false;
+// 			}
+
+// 			const user = users[0]; // Нашли пользователя
+
+// 			// 3. Сохраняем "сессию"
+// 			if (user) {
+// 				localStorage.setItem('bookez_user', JSON.stringify(user));
+// 				// 4. Обновляем Redux
+// 				dispatch({ type: SET_USER, payload: user });
+// 				return true;
+// 			} else {
+// 				alert('Пользователь не найден.');
+// 				return false;
+// 			}
+// 		} catch (error) {
+// 			console.error('Login Error:', error);
+// 			alert('Произошла ошибка при входе. Проверьте соединение с сервером.');
+// 			return false;
+// 		}
+// 	};
 export const loginThunk =
 	(credentials: Credentials) => async (dispatch: Dispatch<UserActions>) => {
 		try {
-			const email = encodeURIComponent(credentials.email);
-			const password = encodeURIComponent(credentials.password || '');
-			const res = await fetch(
-				`http://localhost:5000/api/users?email=${email}&password=${password}`,
-			);
-			const users: User[] = await res.json();
-			if (users.length === 0) {
-				alert('Неверный email или пароль.');
-				return false;
-			}
+			const res = await fetch(`http://localhost:5000/api/users/login`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(credentials),
+			});
 
-			const user = users[0]; // Нашли пользователя
+			const data = await res.json(); //  user и token
 
-			// 3. Сохраняем "сессию"
-			if (user) {
-				localStorage.setItem('bookez_user', JSON.stringify(user));
-				// 4. Обновляем Redux
-				dispatch({ type: SET_USER, payload: user });
+			if (res.ok) {
+				localStorage.setItem('bookez_token', data.token);
+				localStorage.setItem('bookez_user', JSON.stringify(data.user));
+
+				dispatch({ type: SET_USER, payload: data.user });
 				return true;
 			} else {
-				alert('Пользователь не найден.');
+				alert(data.message);
 				return false;
 			}
 		} catch (error) {
 			console.error('Login Error:', error);
-			alert('Произошла ошибка при входе. Проверьте соединение с сервером.');
 			return false;
 		}
 	};
 
 export const logoutThunk = () => (dispatch: Dispatch<UserActions>) => {
 	localStorage.removeItem('bookez_user');
+	localStorage.removeItem('bookez_token');
 	dispatch({ type: LOGOUT_USER });
 };
 // store/actions/userActions.js

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
-import { Booking } from '../models/booking'
-// import { Booking } from '../models/Booking'
+import { Booking } from '../models/Booking'
 
 export const getBookings = async (req: Request, res: Response) => {
   try {

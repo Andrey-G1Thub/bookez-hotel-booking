@@ -7,7 +7,7 @@ import {
 } from '../actions/bookingActions';
 
 export interface Booking {
-	_id: string;
+	_id?: string;
 	userId: string;
 	hotelId: string;
 	roomId: string;

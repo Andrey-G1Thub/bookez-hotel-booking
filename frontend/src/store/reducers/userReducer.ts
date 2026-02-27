@@ -1,3 +1,4 @@
+import { getInitialUser } from '../../utils/localStorageHelper';
 import {
 	SET_USER,
 	LOGOUT_USER,
@@ -27,7 +28,8 @@ interface UserState {
 const savedUser = localStorage.getItem('bookez_user');
 
 const initialState: UserState = {
-	currentUser: savedUser ? JSON.parse(savedUser) : null,
+	// currentUser: savedUser ? JSON.parse(savedUser) : null,
+	currentUser: getInitialUser(),
 	usersList: [],
 };
 

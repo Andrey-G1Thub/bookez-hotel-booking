@@ -2,10 +2,10 @@ import express, { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import cors from 'cors'
-import hotelRoutes from './roures/hotelRoutes'
-import userRoutes from './roures/userRoutes'
-import cityRoutes from './roures/cityRoutes'
-import bookingRoutes from './roures/bookingRoutes'
+import hotelRoutes from './routes/hotelRoutes'
+import userRoutes from './routes/userRoutes'
+import cityRoutes from './routes/cityRoutes'
+import bookingRoutes from './routes/bookingRoutes'
 
 dotenv.config()
 
