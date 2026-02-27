@@ -25,8 +25,6 @@ interface UserState {
 	usersList: User[];
 }
 
-const savedUser = localStorage.getItem('bookez_user');
-
 const initialState: UserState = {
 	// currentUser: savedUser ? JSON.parse(savedUser) : null,
 	currentUser: getInitialUser(),

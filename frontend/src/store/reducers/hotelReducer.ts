@@ -20,7 +20,7 @@ export interface Room {
 }
 
 export interface Comments {
-	_id: string;
+	_id?: string;
 	userId: string;
 	userName: string;
 	text: string;

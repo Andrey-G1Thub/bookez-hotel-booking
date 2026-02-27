@@ -70,7 +70,7 @@ export const HotelDetailsPage = () => {
 		if (!text.trim() || !user) return;
 
 		const newComment: Comments = {
-			_id: String(Date.now()),
+			// _id: String(Date.now()),
 			userId: user._id,
 			userName: user.name,
 			text: text,
@@ -80,7 +80,8 @@ export const HotelDetailsPage = () => {
 		e.currentTarget.reset();
 	};
 
-	const handleDeleteComment = (commentId: string) => {
+	const handleDeleteComment = (commentId: string | undefined) => {
+		if (!commentId) return; // Выходим, если ID нет
 		if (window.confirm('Удалить этот отзыв?')) {
 			dispatch(deleteCommentThunk(hotel._id, commentId));
 		}
