@@ -1,4 +1,16 @@
-import { Schema, model } from 'mongoose'
+// import { UserDocument } from './User';
+import { Schema, Types, model, Document } from 'mongoose'
+
+export interface UserDocument extends Document {
+  _id: Types.ObjectId
+  name: string
+  email: string
+  role: string
+  limits: {
+    maxHotels: number
+    maxRooms: number
+  }
+}
 
 const userSchema = new Schema({
   name: { type: String, required: true },

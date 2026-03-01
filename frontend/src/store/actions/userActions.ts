@@ -2,6 +2,7 @@ import type { Dispatch } from 'redux';
 import { ROLES } from '../../utils/permissions';
 import type { User } from '../reducers/userReducer';
 import type { RootState } from '..';
+import { apiFetch } from '../../utils/api';
 
 export const SET_USER = 'SET_USER' as const;
 export const LOGOUT_USER = 'LOGOUT_USER' as const;
@@ -67,38 +68,6 @@ export const registerThunk =
 		}
 	};
 
-// export const loginThunk =
-// 	(credentials: Credentials) => async (dispatch: Dispatch<UserActions>) => {
-// 		try {
-// 			const email = encodeURIComponent(credentials.email);
-// 			const password = encodeURIComponent(credentials.password || '');
-// 			const res = await fetch(
-// 				`http://localhost:5000/api/users?email=${email}&password=${password}`,
-// 			);
-// 			const users: User[] = await res.json();
-// 			if (users.length === 0) {
-// 				alert('Неверный email или пароль.');
-// 				return false;
-// 			}
-
-// 			const user = users[0]; // Нашли пользователя
-
-// 			// 3. Сохраняем "сессию"
-// 			if (user) {
-// 				localStorage.setItem('bookez_user', JSON.stringify(user));
-// 				// 4. Обновляем Redux
-// 				dispatch({ type: SET_USER, payload: user });
-// 				return true;
-// 			} else {
-// 				alert('Пользователь не найден.');
-// 				return false;
-// 			}
-// 		} catch (error) {
-// 			console.error('Login Error:', error);
-// 			alert('Произошла ошибка при входе. Проверьте соединение с сервером.');
-// 			return false;
-// 		}
-// 	};
 export const loginThunk =
 	(credentials: Credentials) => async (dispatch: Dispatch<UserActions>) => {
 		try {
@@ -138,7 +107,7 @@ export const updateUserRoleThunk =
 	(userId: string, newRole: string, limits: UserLimits | null = null) =>
 	async (dispatch: any, getState: () => RootState) => {
 		try {
-			const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+			const response = await apiFetch(`http://localhost:5000/api/users/${userId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -164,20 +133,22 @@ export const updateUserRoleThunk =
 			console.error(e);
 		}
 	};
+
 export const fetchAllUsersThunk = () => async (dispatch: Dispatch<UserActions>) => {
 	try {
-		const res = await fetch('http://localhost:5000/api/users');
+		const res = await apiFetch('http://localhost:5000/api/users');
 		const data = await res.json();
 		dispatch({ type: FETCH_USERS_SUCCESS, payload: data });
 	} catch (e) {
 		console.error('Ошибка при загрузке пользователей:', e);
 	}
 };
+
 export const deleteUserThunk =
 	(userId: string) => async (dispatch: Dispatch<UserActions>) => {
 		try {
 			// 1. Запрос к API
-			const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+			const res = await apiFetch(`http://localhost:5000/api/users/${userId}`, {
 				method: 'DELETE',
 			});
 			if (res.ok) {

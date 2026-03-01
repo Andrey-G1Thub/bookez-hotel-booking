@@ -6,6 +6,9 @@ import {
   register,
   updateUser,
 } from '../controllers/userController'
+import { authenticated } from '../middleware/authMiddleware'
+import { hasRole } from '../middleware/hasRole'
+import { ROLES } from '../constats/roles'
 
 const router = Router()
 
@@ -13,8 +16,8 @@ const router = Router()
 router.post('/login', login)
 router.post('/register', register)
 // Маршрут для получения всех пользователей
-router.get('/', getUsers)
-router.patch('/:id', updateUser) // Для изменения роли
-router.delete('/:id', deleteUser) // Для удаления
+router.get('/', authenticated, hasRole([ROLES.ADMIN, ROLES.MANAGER]), getUsers)
+router.patch('/:id', authenticated, hasRole([ROLES.ADMIN]), updateUser) // Для изменения роли
+router.delete('/:id', authenticated, hasRole([ROLES.ADMIN]), deleteUser) // Для удаления
 
 export default router

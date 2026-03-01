@@ -1,5 +1,6 @@
 import type { Dispatch } from 'redux';
 import type { Booking } from '../reducers/bookingReducer';
+import { apiFetch } from '../../utils/api';
 
 export const SET_BOOKINGS = 'SET_BOOKINGS' as const;
 export const ADD_BOOKING = 'ADD_BOOKING' as const;
@@ -37,7 +38,7 @@ export const fetchBookingsThunk =
 			const url = userId
 				? `http://localhost:5000/api/bookings?userId=${userId}`
 				: `http://localhost:5000/api/bookings`;
-			const res = await fetch(url);
+			const res = await apiFetch(url);
 			if (!res.ok) throw new Error('Ошибка сети');
 			const data: Booking[] = await res.json();
 
@@ -53,7 +54,7 @@ export const fetchBookingsThunk =
 export const addBookingThunk =
 	(newBooking: Booking) => async (dispatch: Dispatch<BookingActions>) => {
 		try {
-			const response = await fetch('http://localhost:5000/api/bookings', {
+			const response = await apiFetch('http://localhost:5000/api/bookings', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ export const deleteBookingThunk =
 	(_id: string) => async (dispatch: Dispatch<BookingActions>) => {
 		try {
 			// Отправляем запрос на удаление конкретного ID
-			const response = await fetch(`http://localhost:5000/api/bookings/${_id}`, {
+			const response = await apiFetch(`http://localhost:5000/api/bookings/${_id}`, {
 				method: 'DELETE',
 			});
 
@@ -84,5 +85,20 @@ export const deleteBookingThunk =
 			}
 		} catch (error) {
 			console.error('Ошибка при удалении из db.json:', error);
+		}
+	};
+// store/actions/bookingActions.ts
+export const fetchRoomBookingsThunk =
+	(roomId: string) => async (dispatch: Dispatch<BookingActions>) => {
+		try {
+			const res = await apiFetch(
+				`http://localhost:5000/api/bookings/room/${roomId}`,
+			);
+			if (!res.ok) throw new Error('Ошибка загрузки занятых дат');
+			const data: Booking[] = await res.json();
+
+			dispatch({ type: SET_BOOKINGS, payload: data });
+		} catch (e) {
+			console.error(e);
 		}
 	};

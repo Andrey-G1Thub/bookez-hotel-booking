@@ -7,6 +7,7 @@ import {
 } from '../actions/bookingActions';
 
 export interface Booking {
+	hotelOwnerId: string;
 	_id?: string;
 	userId: string;
 	hotelId: string;

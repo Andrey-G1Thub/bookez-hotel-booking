@@ -17,6 +17,7 @@ const bookingSchema = new Schema({
     type: String,
     required: true,
   },
+  hotelOwnerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   hotelName: { type: String },
   roomType: { type: String },
   checkIn: { type: Schema.Types.Mixed, required: true },

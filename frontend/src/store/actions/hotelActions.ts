@@ -1,6 +1,7 @@
 import type { Dispatch } from 'redux';
 import type { City, Comments, Hotel, Room } from '../reducers/hotelReducer';
 import type { RootState } from '..';
+import { apiFetch } from '../../utils/api';
 
 export const SET_HOTELS = 'SET_HOTELS';
 export const SET_CITIES = 'SET_CITIES';
@@ -86,11 +87,14 @@ export const updateHotelThunk =
 	(hotelId: string, updatedRooms: Partial<Hotel>) =>
 	async (dispatch: Dispatch<HotelActions>) => {
 		try {
-			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(updatedRooms),
-			});
+			const response = await apiFetch(
+				`http://localhost:5000/api/hotels/${hotelId}`,
+				{
+					method: 'PATCH',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(updatedRooms),
+				},
+			);
 			if (response.ok) {
 				const updatedHotel: Hotel = await response.json();
 				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
@@ -106,11 +110,14 @@ export const updateHotelThunk =
 export const updateHotelRoomsThunk =
 	(hotelId: string, roomsArray: Room[]) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
-			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ rooms: roomsArray }),
-			});
+			const response = await apiFetch(
+				`http://localhost:5000/api/hotels/${hotelId}`,
+				{
+					method: 'PATCH',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ rooms: roomsArray }),
+				},
+			);
 
 			if (response.ok) {
 				const updatedRoomHotel: Hotel = await response.json();
@@ -132,7 +139,7 @@ export const updateHotelRoomsThunk =
 export const addHotelThunk =
 	(hotelData: Partial<Hotel>) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
-			const response = await fetch('http://localhost:5000/api/hotels', {
+			const response = await apiFetch('http://localhost:5000/api/hotels', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(hotelData),
@@ -156,9 +163,12 @@ export const addHotelThunk =
 export const deleteHotelThunk =
 	(hotelId: string) => async (dispatch: Dispatch<HotelActions>) => {
 		try {
-			const response = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
-				method: 'DELETE',
-			});
+			const response = await apiFetch(
+				`http://localhost:5000/api/hotels/${hotelId}`,
+				{
+					method: 'DELETE',
+				},
+			);
 
 			if (response.ok) {
 				dispatch({
@@ -184,7 +194,7 @@ export const addCommentThunk =
 
 			const updatedComments = [...(hotel.comments || []), newComment];
 
-			const res = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
+			const res = await apiFetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ comments: updatedComments }),
@@ -208,7 +218,7 @@ export const deleteCommentThunk =
 			if (!hotel) return;
 			const filteredComments = hotel.comments.filter((c) => c._id !== commentId);
 
-			const res = await fetch(`http://localhost:5000/api/hotels/${hotelId}`, {
+			const res = await apiFetch(`http://localhost:5000/api/hotels/${hotelId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ comments: filteredComments }),

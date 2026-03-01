@@ -1,7 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage';
-import { addBookingThunk } from '../../store/actions/bookingActions';
+import {
+	addBookingThunk,
+	fetchRoomBookingsThunk,
+} from '../../store/actions/bookingActions';
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
 import type { AppDispatch } from '../../store/index';
 import { selectCurrentUser } from '../../selectors/userSelectors';
@@ -69,6 +72,12 @@ export const RoomBookingPage = () => {
 		}
 	}, [checkIn, checkOut, room]);
 
+	useEffect(() => {
+		if (roomId) {
+			dispatch(fetchRoomBookingsThunk(roomId));
+		}
+	}, [roomId, dispatch]);
+
 	const displayHotelId = hotelId || 'не указан';
 	const displayRoomId = roomId || 'не указан';
 
@@ -114,6 +123,7 @@ export const RoomBookingPage = () => {
 				// _id: String(Date.now()),//сервер сам должен добавить ID
 				userId: currentUser._id,
 				hotelId: hotel._id,
+				hotelOwnerId: hotel.ownerId,
 				roomId: room._id,
 				hotelName: hotel.name,
 				roomType: room.type,
@@ -122,7 +132,8 @@ export const RoomBookingPage = () => {
 				price: totalPrice,
 				status: 'Подтверждено' as const,
 			};
-
+			console.log('hotel', hotel);
+			console.log('Sending booking data:', newBooking);
 			await dispatch(addBookingThunk(newBooking));
 			alert(
 				`Сумма к оплате зафиксирована успешно! Номер "${room.type}" забронирован. Скоро с Вами свяжется менеджер нашего отеля.`,

@@ -1,5 +1,8 @@
 import { Schema, model } from 'mongoose'
-
+import { UserDocument } from './User'
+export interface AuthenticatedRequest extends Request {
+  user?: UserDocument
+}
 // Схема для комментариев
 const commentSchema = new Schema({
   userId: { type: String, required: true },
@@ -25,7 +28,8 @@ const hotelSchema = new Schema({
   description: { type: String },
   priceFrom: { type: Number, required: true },
   images: [String],
-  ownerId: { type: String, required: true },
+  // ownerId: { type: String, required: true },
+  ownerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   rating: { type: Number, default: 0 },
   reviewCount: { type: Number, default: 0 },
   comments: [commentSchema],

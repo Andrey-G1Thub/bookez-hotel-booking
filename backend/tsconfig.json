@@ -7,8 +7,12 @@
     "esModuleInterop": true /* Позволяет импортировать CommonJS пакеты как ES-модули */,
     "forceConsistentCasingInFileNames": true,
     "strict": true /* Включаем строгую проверку типов (ты же любишь TS!) */,
-    "skipLibCheck": true /* Ускоряет сборку, пропуская проверку типов в node_modules */
+    "skipLibCheck": true /* Ускоряет сборку, пропуская проверку типов в node_modules */,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["src/**/*"] /* Указываем TS смотреть только в папку src */,
+  "include": [
+    "src/**/*",
+    "src/types/*.d.ts"
+  ] /* Указываем TS смотреть только в папку src */,
   "exclude": ["node_modules"]
 }

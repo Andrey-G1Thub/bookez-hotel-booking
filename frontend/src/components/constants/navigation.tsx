@@ -2,7 +2,6 @@ import { ShieldAlert, Hotel } from 'lucide-react';
 import { ROLES } from '../../utils/permissions';
 // import { ROLES } from '../utils/permissions';
 
-// Универсальный интерфейс
 export interface NavItem {
 	title: string;
 	path: string;
