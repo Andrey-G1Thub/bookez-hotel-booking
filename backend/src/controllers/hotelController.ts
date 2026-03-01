@@ -115,16 +115,33 @@ export const deleteHotel = async (req: any, res: Response) => {
   }
 }
 // Добавить комментарий
-export const addComment = async (req: Request, res: Response) => {
+export const addComment = async (req: any, res: Response) => {
   try {
     const { hotelId } = req.params
-    const newComment = req.body // { userId, userName, text, date }
+    const { text } = req.body
+    const user = req.user // Данные из токена
+
+    if (!user) {
+      return res.status(401).json({ message: 'Пользователь не авторизован' })
+    }
+
+    const commentData = {
+      userId: user._id,
+      userName: user.name,
+      text: text,
+      date: new Date().toLocaleDateString('ru-RU'),
+    }
 
     const updatedHotel = await Hotel.findByIdAndUpdate(
       hotelId,
-      { $push: { comments: newComment } }, // Добавляем только один объект
+      { $push: { comments: commentData } }, // Добавляем только один объект
       { new: true },
     )
+
+    if (!updatedHotel) {
+      return res.status(404).json({ message: 'Отель не найден' })
+    }
+
     res.json(updatedHotel)
   } catch (error) {
     res.status(400).json({ message: 'Ошибка добавления комментария' })

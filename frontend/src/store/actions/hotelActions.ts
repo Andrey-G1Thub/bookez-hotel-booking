@@ -2,6 +2,7 @@ import type { Dispatch } from 'redux';
 import type { City, Comments, Hotel, Room } from '../reducers/hotelReducer';
 import type { RootState } from '..';
 import { apiFetch } from '../../utils/api';
+import type { text } from 'node:stream/consumers';
 
 export const SET_HOTELS = 'SET_HOTELS';
 export const SET_CITIES = 'SET_CITIES';
@@ -188,17 +189,22 @@ export const addCommentThunk =
 	(hotelId: string, newComment: Comments) =>
 	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
 		try {
-			const state = getState();
-			const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
-			if (!hotel) return;
+			// const state = getState();
+			// const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+			// if (!hotel) return;
 
-			const updatedComments = [...(hotel.comments || []), newComment];
+			// const updatedComments = [...(hotel.comments || []), newComment];
 
-			const res = await apiFetch(`http://localhost:5000/api/hotels/${hotelId}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ comments: updatedComments }),
-			});
+			const res = await apiFetch(
+				`http://localhost:5000/api/hotels/${hotelId}/comments`,
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					// body: JSON.stringify({ comments: updatedComments }),
+					// body: JSON.stringify({ comments: newComment.text }),
+					body: JSON.stringify({ text: newComment.text }),
+				},
+			);
 
 			if (res.ok) {
 				const updatedHotel: Hotel = await res.json();
@@ -214,15 +220,18 @@ export const deleteCommentThunk =
 	(hotelId: string, commentId: string) =>
 	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
 		try {
-			const hotel = getState().hotels.allHotels.find((h) => h._id === hotelId);
-			if (!hotel) return;
-			const filteredComments = hotel.comments.filter((c) => c._id !== commentId);
+			// const hotel = getState().hotels.allHotels.find((h) => h._id === hotelId);
+			// if (!hotel) return;
+			// const filteredComments = hotel.comments.filter((c) => c._id !== commentId);
 
-			const res = await apiFetch(`http://localhost:5000/api/hotels/${hotelId}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ comments: filteredComments }),
-			});
+			const res = await apiFetch(
+				`http://localhost:5000/api/hotels/${hotelId}/comments/${commentId}`,
+				{
+					method: 'DELETE',
+					// headers: { 'Content-Type': 'application/json' },
+					// body: JSON.stringify({ comments: filteredComments }),
+				},
+			);
 
 			if (res.ok) {
 				const updatedHotel: Hotel = await res.json();

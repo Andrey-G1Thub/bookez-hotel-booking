@@ -121,14 +121,20 @@ export const deleteBooking = async (req: any, res: Response) => {
       return res.status(404).json({ message: 'Бронь не найдена' })
     }
 
-    const isOwner = booking.userId.toString() === user._id.toString()
+    const isClient = booking.userId.toString() === user._id.toString()
+
     const isAdmin = user.role === ROLES.ADMIN
 
-    if (!isOwner && !isAdmin) {
+    const isHotelOwner =
+      user.role === ROLES.MANAGER &&
+      booking.hotelOwnerId?.toString() === user._id.toString()
+
+    if (!isClient && !isAdmin && !isHotelOwner) {
       return res
         .status(403)
-        .json({ message: 'Вы не можете удалить чужую бронь' })
+        .json({ message: 'У вас нет прав на отмену этой брони' })
     }
+
     await Booking.findByIdAndDelete(id)
     res.json({ message: 'Бронь успешно удалена' })
   } catch (error) {
