@@ -1,4 +1,4 @@
-import { ArrowUpDown, Search, Zap } from 'lucide-react';
+import { ArrowUpDown, Plus, Search, Zap } from 'lucide-react';
 import { HotelCard } from '../../components/hotelCard/HotelCard';
 import { getMinDate } from '../../utils/helpers';
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
@@ -7,6 +7,9 @@ import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinne
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectAllHotels, selectCities } from '../../selectors/hotelSelectors';
 import { selectBookingList } from '../../selectors/bookingSelectors';
+import { selectCurrentUser } from '../../selectors';
+import { addCityThunk } from '../../store/actions/cityActions';
+import { ROLES } from '../../utils/permissions';
 
 interface SearchFilters {
 	cityId: string | null;
@@ -19,6 +22,8 @@ export const HomePage = () => {
 	const allHotels = useAppSelector(selectAllHotels);
 	const cities = useAppSelector(selectCities);
 
+	const currentUser = useAppSelector(selectCurrentUser);
+
 	const bookingsList = useAppSelector(selectBookingList); //
 
 	const [nameSearch, setNameSearch] = useState('');
@@ -30,6 +35,10 @@ export const HomePage = () => {
 		checkOut: '',
 	});
 	const [isLoading, setIsLoading] = useState(true);
+	const [isCityModalOpen, setIsCityModalOpen] = useState(false);
+	const [newCityData, setNewCityData] = useState({ name: '', description: '' });
+
+	const isAdmin = currentUser?.role === ROLES.ADMIN;
 
 	useEffect(() => {
 		const loadData = async () => {
@@ -109,6 +118,15 @@ export const HomePage = () => {
 	);
 	if (isLoading) return <LoadingSpinner />;
 
+	const handleAddCity = async (e: React.FormEvent) => {
+		e.preventDefault();
+		const success = await dispatch(addCityThunk(newCityData));
+		if (success) {
+			setIsCityModalOpen(false);
+			setNewCityData({ name: '', description: '' });
+		}
+	};
+
 	return (
 		<main>
 			{/* Секция Hero с Поиском */}
@@ -124,7 +142,7 @@ export const HomePage = () => {
 						className="bg-white p-4 md:p-6 rounded-xl card-shadow flex flex-col md:flex-row gap-3"
 					>
 						{/* ПОЛЕ ВЫБОРА ГОРОДА (ВЫПАДАЮЩИЙ СПИСОК) */}
-						<select
+						{/* <select
 							name="city"
 							onChange={handleCityChange}
 							className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border bg-white"
@@ -136,6 +154,39 @@ export const HomePage = () => {
 							</option>
 							{cities.map((city) => (
 								// Используем имя города в качестве значения
+								<option key={city._id} value={city.name}>
+									{city.name}
+								</option>
+							))}
+						</select>
+				     */}
+
+						<select
+							name="city"
+							onChange={(e) => {
+								if (e.target.value === 'ADD_NEW_CITY_ACTION') {
+									setIsCityModalOpen(true);
+									e.target.value = ''; // Сбрасываем выбор
+									return;
+								}
+								handleCityChange(e);
+							}}
+							className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 bg-white"
+							defaultValue=""
+							required
+						>
+							{isAdmin && (
+								<option
+									value="ADD_NEW_CITY_ACTION"
+									className="text-red-600 font-bold"
+								>
+									+ Добавить новый город
+								</option>
+							)}
+							<option value="" disabled>
+								Выберите город
+							</option>
+							{cities.map((city) => (
 								<option key={city._id} value={city.name}>
 									{city.name}
 								</option>
@@ -165,7 +216,57 @@ export const HomePage = () => {
 							<Zap className="w-5 h-5 inline mr-1 -mt-1" /> Найти
 						</button>
 					</form>
+					{/* ПРОСТАЯ МОДАЛКА  */}
+					{isCityModalOpen && (
+						<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
+							<div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl">
+								<h2 className="text-xl font-bold mb-4">Новый город</h2>
+								<form onSubmit={handleAddCity} className="space-y-4">
+									<input
+										className="w-full p-2 border rounded"
+										placeholder="Название города"
+										value={newCityData.name}
+										onChange={(e) =>
+											setNewCityData({
+												...newCityData,
+												name: e.target.value,
+											})
+										}
+										required
+									/>
+									<textarea
+										className="w-full p-2 border rounded"
+										placeholder="Описание"
+										value={newCityData.description}
+										onChange={(e) =>
+											setNewCityData({
+												...newCityData,
+												description: e.target.value,
+											})
+										}
+										required
+									/>
+									<div className="flex gap-2">
+										<button
+											type="submit"
+											className="flex-grow bg-teal-600 text-white p-2 rounded"
+										>
+											Сохранить
+										</button>
+										<button
+											type="button"
+											onClick={() => setIsCityModalOpen(false)}
+											className="flex-grow bg-gray-200 p-2 rounded"
+										>
+											Отмена
+										</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					)}
 				</div>
+				{/* </div> */}
 			</div>
 
 			<div className="max-w-7xl mx-auto px-4 mt-8">

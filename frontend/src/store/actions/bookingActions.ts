@@ -1,6 +1,8 @@
 import type { Dispatch } from 'redux';
 import type { Booking } from '../reducers/bookingReducer';
 import { apiFetch } from '../../utils/api';
+import { checkPermission } from '../../utils/permissions';
+import type { RootState } from '..';
 
 export const SET_BOOKINGS = 'SET_BOOKINGS' as const;
 export const ADD_BOOKING = 'ADD_BOOKING' as const;
@@ -31,7 +33,15 @@ export type BookingActions =
 
 // GET - получение данных
 export const fetchBookingsThunk =
-	(userId?: string | null) => async (dispatch: Dispatch<BookingActions>) => {
+	(userId?: string | null) =>
+	async (dispatch: Dispatch<BookingActions>, getState: () => RootState) => {
+		const user = getState().users.currentUser;
+
+		if (!userId && !checkPermission(user, 'VIEW_BOOKINGS')) {
+			console.error('Нет прав для просмотра всех бронирований');
+			return;
+		}
+
 		try {
 			dispatch({ type: SET_BOOKINGS_LOADING, payload: true });
 
@@ -52,7 +62,15 @@ export const fetchBookingsThunk =
 
 // POST - добавление новой брони
 export const addBookingThunk =
-	(newBooking: Booking) => async (dispatch: Dispatch<BookingActions>) => {
+	(newBooking: Booking) =>
+	async (dispatch: Dispatch<BookingActions>, getState: () => RootState) => {
+		const user = getState().users.currentUser;
+
+		if (!checkPermission(user, 'ADD_BOOKING')) {
+			alert('Необходимо войти в систему, чтобы забронировать номер');
+			return;
+		}
+
 		try {
 			const response = await apiFetch('http://localhost:5000/api/bookings', {
 				method: 'POST',
@@ -73,9 +91,29 @@ export const addBookingThunk =
 	};
 
 export const deleteBookingThunk =
-	(_id: string) => async (dispatch: Dispatch<BookingActions>) => {
+	(_id: string) =>
+	async (dispatch: Dispatch<BookingActions>, getState: () => RootState) => {
+		const state = getState();
+		const user = state.users.currentUser;
+
+		const booking = state.bookings.list.find((b) => b._id === _id);
+
+		if (!booking) {
+			console.error('Бронирование не найдено в сторе');
+			return;
+		}
+
+		const targetData = {
+			userId: booking.userId,
+			hotelOwnerId: booking.hotelOwnerId,
+		};
+
+		if (!checkPermission(user, 'DELETE_BOOKING', targetData)) {
+			alert('У вас нет прав на отмену этого бронирования');
+			return;
+		}
+
 		try {
-			// Отправляем запрос на удаление конкретного ID
 			const response = await apiFetch(`http://localhost:5000/api/bookings/${_id}`, {
 				method: 'DELETE',
 			});
@@ -87,7 +125,7 @@ export const deleteBookingThunk =
 			console.error('Ошибка при удалении из db.json:', error);
 		}
 	};
-// store/actions/bookingActions.ts
+
 export const fetchRoomBookingsThunk =
 	(roomId: string) => async (dispatch: Dispatch<BookingActions>) => {
 		try {

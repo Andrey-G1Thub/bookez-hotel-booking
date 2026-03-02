@@ -1,4 +1,5 @@
 import {
+	ADD_CITY_SUCCESS,
 	ADD_HOTEL_SUCCESS,
 	DELETE_HOTEL_SUCCESS,
 	FETCH_HOTELS_START,
@@ -43,9 +44,10 @@ export interface Hotel {
 }
 
 export interface City {
-	_id: string;
+	_id?: string;
 	name: string;
 	description: string;
+	isLoading: false;
 }
 
 // 2. Тип состояния
@@ -76,6 +78,12 @@ export const hotelReducer = (state = initialState, action: HotelActions): HotelS
 			return { ...state, allHotels: action.payload, isLoading: false };
 		case SET_CITIES:
 			return { ...state, cities: action.payload };
+
+		case ADD_CITY_SUCCESS:
+			return {
+				...state,
+				cities: [...state.cities, action.payload], // Добавляем новый город в массив
+			};
 		case UPDATE_HOTEL_ROOM_SUCCESS:
 		case UPDATE_HOTEL_SUCCESS:
 			return {

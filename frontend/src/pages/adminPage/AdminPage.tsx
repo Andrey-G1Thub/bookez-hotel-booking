@@ -5,7 +5,7 @@ import {
 	fetchAllUsersThunk,
 	updateUserRoleThunk,
 } from '../../store/actions/userActions';
-import { ROLES } from '../../utils/permissions';
+import { checkPermission, ROLES } from '../../utils/permissions';
 import type { AppDispatch } from '../../store';
 import { selectCurrentUser, selectUsersList } from '../../selectors';
 import { useAppSelector } from '../../store/hooks';
@@ -17,12 +17,15 @@ export const AdminPage = () => {
 	const currentUser = useAppSelector(selectCurrentUser);
 	const usersList = useAppSelector(selectUsersList);
 
+	const canManageUsers = checkPermission(currentUser, 'ADMIN_USERS');
+	const canViewList = checkPermission(currentUser, 'VIEW_USERS_LIST');
+
 	useEffect(() => {
 		dispatch(fetchAllUsersThunk());
 	}, [dispatch]);
 
 	const handleRoleChange = (userId: string, newRole: string) => {
-		// При смене на менеджера можно сразу задать дефолтные лимиты
+		if (!canManageUsers) return;
 		const defaultLimits =
 			newRole === ROLES.MANAGER ? { maxHotels: 1, maxRooms: 5 } : null;
 		dispatch(updateUserRoleThunk(userId, newRole, defaultLimits));
@@ -35,6 +38,7 @@ export const AdminPage = () => {
 		field: keyof UserLimits,
 		value: string,
 	) => {
+		if (!canManageUsers) return;
 		const user = usersList.find((u: User) => u._id === userId);
 		if (!user) return;
 
@@ -49,10 +53,18 @@ export const AdminPage = () => {
 
 	// УДАЛЕНИЯ
 	const handleDeleteUser = (userId: string, userName: string) => {
+		if (!canManageUsers) {
+			alert('У вас недостаточно прав');
+			return;
+		}
+
 		if (window.confirm(`Вы уверены, что хотите удалить пользователя ${userName}?`)) {
 			dispatch(deleteUserThunk(userId));
 		}
 	};
+	if (!canViewList) {
+		return <div className="p-8 text-center text-red-500">Доступ запрещен</div>;
+	}
 
 	return (
 		<div className="p-8 mt-10 max-w-7xl mx-auto">
@@ -100,11 +112,15 @@ export const AdminPage = () => {
 								<td className="p-4">
 									<select
 										value={user.role}
-										disabled={user._id === currentUser?._id}
+										// Блокируем, если нельзя управлять юзерами ИЛИ это сам текущий юзер
+										disabled={
+											!canManageUsers ||
+											user._id === currentUser?._id
+										}
 										onChange={(e) =>
 											handleRoleChange(user._id, e.target.value)
 										}
-										className="border rounded p-1 text-sm outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+										className="border rounded p-1 text-sm outline-none focus:ring-2 focus:ring-teal-500 bg-white disabled:bg-gray-50 disabled:text-gray-400"
 									>
 										<option value={ROLES.USER}>User</option>
 										<option value={ROLES.MANAGER}>Manager</option>
@@ -118,6 +134,7 @@ export const AdminPage = () => {
 												<input
 													type="number"
 													min="1"
+													disabled={!canManageUsers} // Добавлена защита лимитов
 													value={user.limits?.maxHotels || 1}
 													onChange={(e) =>
 														handleLimitChange(
@@ -127,7 +144,7 @@ export const AdminPage = () => {
 															e.target.value,
 														)
 													}
-													className="w-12 border rounded p-1 text-center text-xs font-bold text-blue-600"
+													className="w-12 border rounded p-1 text-center text-xs font-bold text-blue-600 disabled:opacity-50"
 												/>
 											</div>
 											<span className="text-gray-300">/</span>
@@ -135,6 +152,7 @@ export const AdminPage = () => {
 												<input
 													type="number"
 													min="1"
+													disabled={!canManageUsers} // Добавлена защита лимитов
 													value={user.limits?.maxRooms || 5}
 													onChange={(e) =>
 														handleLimitChange(
@@ -144,7 +162,7 @@ export const AdminPage = () => {
 															e.target.value,
 														)
 													}
-													className="w-12 border rounded p-1 text-center text-xs font-bold text-teal-600"
+													className="w-12 border rounded p-1 text-center text-xs font-bold text-teal-600 disabled:opacity-50"
 												/>
 											</div>
 										</div>
@@ -157,8 +175,12 @@ export const AdminPage = () => {
 										onClick={() =>
 											handleDeleteUser(user._id, user.name)
 										}
-										disabled={user._id === currentUser?._id}
+										disabled={
+											!canManageUsers ||
+											user._id === currentUser?._id
+										}
 										className={`px-3 py-1.5 rounded text-xs font-medium transition ${
+											!canManageUsers ||
 											user._id === currentUser?._id
 												? 'bg-gray-100 text-gray-400 cursor-not-allowed'
 												: 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white'

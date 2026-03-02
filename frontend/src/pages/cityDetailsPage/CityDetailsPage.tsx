@@ -32,11 +32,9 @@ export const CityDetailsPage = () => {
 		);
 	}
 
-	const city = cities.find((c) => Number(c._id) === Number(cityId));
+	const city = cities.find((c) => c._id === cityId);
 
-	const filteredHotels = allHotels.filter(
-		(hotel) => Number(hotel.cityId) === Number(cityId),
-	);
+	const filteredHotels = allHotels.filter((hotel) => hotel.cityId === cityId);
 
 	if (!city) return <NotFoundPage message="Город не найден." />;
 

@@ -22,39 +22,6 @@ export const getBookings = async (req: any, res: Response) => {
   }
 }
 
-// export const createBooking = async (req: any, res: Response) => {
-//   try {
-//     const { roomId, checkIn, checkOut } = req.body
-
-//     const overlappingBooking = await Booking.findOne({
-//       roomId: roomId,
-//       $or: [
-//         {
-//           checkIn: { $lt: checkOut },
-//           checkOut: { $gt: checkIn },
-//         },
-//       ],
-//     })
-
-//     if (overlappingBooking) {
-//       return res.status(400).json({
-//         message: 'Этот номер уже забронирован на выбранные даты',
-//       })
-//     }
-
-//     const bookingData = {
-//       ...req.body,
-//       userId: req.user._id,
-//     }
-//     const newBooking = new Booking(bookingData)
-
-//     const savedBooking = await newBooking.save()
-//     res.status(201).json(savedBooking)
-//   } catch (error) {
-//     res.status(400).json({ message: 'Ошибка при бронировании', error })
-//   }
-// }
-
 export const createBooking = async (req: any, res: Response) => {
   try {
     const {

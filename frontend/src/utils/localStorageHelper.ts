@@ -1,9 +1,8 @@
-const savedUser = localStorage.getItem('bookez_user');
-
 export const getInitialUser = () => {
-	if (!savedUser || savedUser === 'undefined') return null;
+	const saved = localStorage.getItem('bookez_user'); // Должно совпадать с loginThunk
+	if (!saved) return null;
 	try {
-		return JSON.parse(savedUser);
+		return JSON.parse(saved);
 	} catch (e) {
 		return null;
 	}

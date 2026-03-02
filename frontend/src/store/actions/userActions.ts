@@ -1,5 +1,5 @@
 import type { Dispatch } from 'redux';
-import { ROLES } from '../../utils/permissions';
+import { checkPermission, ROLES } from '../../utils/permissions';
 import type { User } from '../reducers/userReducer';
 import type { RootState } from '..';
 import { apiFetch } from '../../utils/api';
@@ -48,7 +48,7 @@ export const registerThunk =
 		try {
 			const { confirmPassword, ...dataToInscribe } = userData;
 
-			const response = await fetch('http://localhost:5000/api/users/register', {
+			const response = await apiFetch('http://localhost:5000/api/users/register', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(dataToInscribe),
@@ -71,7 +71,7 @@ export const registerThunk =
 export const loginThunk =
 	(credentials: Credentials) => async (dispatch: Dispatch<UserActions>) => {
 		try {
-			const res = await fetch(`http://localhost:5000/api/users/login`, {
+			const res = await apiFetch(`http://localhost:5000/api/users/login`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(credentials),
@@ -106,6 +106,12 @@ export const logoutThunk = () => (dispatch: Dispatch<UserActions>) => {
 export const updateUserRoleThunk =
 	(userId: string, newRole: string, limits: UserLimits | null = null) =>
 	async (dispatch: any, getState: () => RootState) => {
+		const user = getState().users.currentUser;
+		if (!checkPermission(user, 'ADMIN_USERS')) {
+			alert('У вас нет прав на управление пользователями');
+			return;
+		}
+
 		try {
 			const response = await apiFetch(`http://localhost:5000/api/users/${userId}`, {
 				method: 'PATCH',
@@ -134,18 +140,33 @@ export const updateUserRoleThunk =
 		}
 	};
 
-export const fetchAllUsersThunk = () => async (dispatch: Dispatch<UserActions>) => {
-	try {
-		const res = await apiFetch('http://localhost:5000/api/users');
-		const data = await res.json();
-		dispatch({ type: FETCH_USERS_SUCCESS, payload: data });
-	} catch (e) {
-		console.error('Ошибка при загрузке пользователей:', e);
-	}
-};
+export const fetchAllUsersThunk =
+	() => async (dispatch: Dispatch<UserActions>, getState: () => RootState) => {
+		const user = getState().users.currentUser;
+
+		if (!checkPermission(user, 'VIEW_USERS_LIST')) {
+			console.error('Доступ запрещен: требуется роль администратора');
+			return;
+		}
+		try {
+			const res = await apiFetch('http://localhost:5000/api/users');
+			const data = await res.json();
+			dispatch({ type: FETCH_USERS_SUCCESS, payload: data });
+		} catch (e) {
+			console.error('Ошибка при загрузке пользователей:', e);
+		}
+	};
 
 export const deleteUserThunk =
-	(userId: string) => async (dispatch: Dispatch<UserActions>) => {
+	(userId: string) =>
+	async (dispatch: Dispatch<UserActions>, getState: () => RootState) => {
+		const user = getState().users.currentUser;
+
+		if (!checkPermission(user, 'ADMIN_USERS')) {
+			alert('Нет прав на удаление пользователя');
+			return;
+		}
+
 		try {
 			// 1. Запрос к API
 			const res = await apiFetch(`http://localhost:5000/api/users/${userId}`, {

@@ -1,8 +1,10 @@
+import { addCityThunk } from './cityActions';
 import type { Dispatch } from 'redux';
 import type { City, Comments, Hotel, Room } from '../reducers/hotelReducer';
 import type { RootState } from '..';
 import { apiFetch } from '../../utils/api';
 import type { text } from 'node:stream/consumers';
+import { checkPermission } from '../../utils/permissions';
 
 export const SET_HOTELS = 'SET_HOTELS';
 export const SET_CITIES = 'SET_CITIES';
@@ -11,6 +13,7 @@ export const DELETE_HOTEL_SUCCESS = 'DELETE_HOTEL_SUCCESS';
 export const UPDATE_HOTEL_SUCCESS = 'UPDATE_HOTEL_SUCCESS';
 export const UPDATE_HOTEL_ROOM_SUCCESS = 'UPDATE_HOTEL_ROOM_SUCCESS';
 export const FETCH_HOTELS_START = 'FETCH_HOTELS_START';
+export const ADD_CITY_SUCCESS = 'ADD_CITY_SUCCESS';
 
 interface SetHotelsAction {
 	type: typeof SET_HOTELS;
@@ -48,6 +51,7 @@ export type HotelActions =
 	| DeleteHotelAction
 	| UpdateHotelAction
 	| UpdateHotelRoomAction;
+// addCityThunk;/
 
 // Загрузка данных
 export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) => {
@@ -68,7 +72,7 @@ export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) => {
 	try {
-		const response = await fetch('http://localhost:5000/api/cities');
+		const response = await apiFetch('http://localhost:5000/api/cities');
 
 		if (!response.ok) {
 			throw new Error(`Ошибка сервера: ${response.status}`);
@@ -85,15 +89,24 @@ export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 // Работа с отелем и комнатами
 export const updateHotelThunk =
-	(hotelId: string, updatedRooms: Partial<Hotel>) =>
-	async (dispatch: Dispatch<HotelActions>) => {
+	(hotelId: string, updatedData: Partial<Hotel>) =>
+	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+		const state = getState();
+		const user = state.users.currentUser;
+		const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+
+		if (!checkPermission(user, 'EDIT_HOTEL', hotel)) {
+			alert('Нет прав на редактирование');
+			return false;
+		}
+
 		try {
 			const response = await apiFetch(
 				`http://localhost:5000/api/hotels/${hotelId}`,
 				{
 					method: 'PATCH',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(updatedRooms),
+					body: JSON.stringify(updatedData),
 				},
 			);
 			if (response.ok) {
@@ -109,7 +122,16 @@ export const updateHotelThunk =
 
 // Thunk для обновления комнат (или любых данных отеля)
 export const updateHotelRoomsThunk =
-	(hotelId: string, roomsArray: Room[]) => async (dispatch: Dispatch<HotelActions>) => {
+	(hotelId: string, roomsArray: Room[]) =>
+	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+		const state = getState();
+		const user = state.users.currentUser;
+		const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+
+		if (!checkPermission(user, 'EDIT_ROOM_HOTEL', hotel)) {
+			alert('У вас нет прав на редактирование комнат этого отеля');
+			return false;
+		}
 		try {
 			const response = await apiFetch(
 				`http://localhost:5000/api/hotels/${hotelId}`,
@@ -138,7 +160,14 @@ export const updateHotelRoomsThunk =
 
 // Добавление и удаление отелей
 export const addHotelThunk =
-	(hotelData: Partial<Hotel>) => async (dispatch: Dispatch<HotelActions>) => {
+	(hotelData: Partial<Hotel>) =>
+	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+		const user = getState().users.currentUser;
+		if (!checkPermission(user, 'CREATE_HOTEL')) {
+			alert('У вас нет прав на создание отеля');
+			return false;
+		}
+
 		try {
 			const response = await apiFetch('http://localhost:5000/api/hotels', {
 				method: 'POST',
@@ -162,7 +191,18 @@ export const addHotelThunk =
 
 // Thunk для удаления отеля
 export const deleteHotelThunk =
-	(hotelId: string) => async (dispatch: Dispatch<HotelActions>) => {
+	(hotelId: string) =>
+	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+		const state = getState();
+		const user = state.users.currentUser;
+
+		const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+
+		if (!checkPermission(user, 'DELETE_HOTEL', hotel)) {
+			alert('У вас нет прав на удаление этого отеля');
+			return false;
+		}
+
 		try {
 			const response = await apiFetch(
 				`http://localhost:5000/api/hotels/${hotelId}`,
@@ -188,20 +228,20 @@ export const deleteHotelThunk =
 export const addCommentThunk =
 	(hotelId: string, newComment: Comments) =>
 	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+		const user = getState().users.currentUser;
+
+		if (!checkPermission(user, 'ADD_COMMENT')) {
+			alert('Только авторизованные пользователи могут оставлять комментарии');
+			return;
+		}
+
 		try {
-			// const state = getState();
-			// const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
-			// if (!hotel) return;
-
-			// const updatedComments = [...(hotel.comments || []), newComment];
-
 			const res = await apiFetch(
 				`http://localhost:5000/api/hotels/${hotelId}/comments`,
 				{
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					// body: JSON.stringify({ comments: updatedComments }),
-					// body: JSON.stringify({ comments: newComment.text }),
+
 					body: JSON.stringify({ text: newComment.text }),
 				},
 			);
@@ -219,17 +259,26 @@ export const addCommentThunk =
 export const deleteCommentThunk =
 	(hotelId: string, commentId: string) =>
 	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
-		try {
-			// const hotel = getState().hotels.allHotels.find((h) => h._id === hotelId);
-			// if (!hotel) return;
-			// const filteredComments = hotel.comments.filter((c) => c._id !== commentId);
+		const state = getState();
+		const user = state.users.currentUser;
+		const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+		const comment = hotel?.comments.find((c) => c._id === commentId);
 
+		const targetData = {
+			userId: comment?.userId, // Кто написал коммент
+			hotelOwnerId: hotel?.ownerId, // Владелец отеля (менеджер тоже может удалять)
+		};
+
+		if (!checkPermission(user, 'DELETE_COMMENT', targetData)) {
+			alert('Нет прав на удаление этого комментария');
+			return;
+		}
+
+		try {
 			const res = await apiFetch(
 				`http://localhost:5000/api/hotels/${hotelId}/comments/${commentId}`,
 				{
 					method: 'DELETE',
-					// headers: { 'Content-Type': 'application/json' },
-					// body: JSON.stringify({ comments: filteredComments }),
 				},
 			);
 

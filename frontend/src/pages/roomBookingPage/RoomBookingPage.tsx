@@ -18,6 +18,7 @@ import { NAVIGATION_CONFIG } from '../../components/constants/navigation';
 import { checkDateOverlap } from '../../utils/dataHelpers';
 import type { Hotel, Room } from '../../store/reducers/hotelReducer';
 import type { Booking } from '../../store/reducers/bookingReducer';
+import { checkPermission } from '../../utils/permissions';
 
 // Страница бронирования конкретного номера _/;
 export const RoomBookingPage = () => {
@@ -81,7 +82,7 @@ export const RoomBookingPage = () => {
 	const displayHotelId = hotelId || 'не указан';
 	const displayRoomId = roomId || 'не указан';
 
-	if (isLoading || allHotels.length === 0) {
+	if (isLoading) {
 		return <BookingSkeleton />;
 	}
 	// Если отель или комната не найдены
@@ -96,9 +97,15 @@ export const RoomBookingPage = () => {
 	const handleBooking = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		if (!currentUser) {
-			alert('Пожалуйста, войдите в систему, чтобы забронировать номер.');
-			navigate('/login');
+		const canBook = checkPermission(currentUser, 'ADD_BOOKING');
+
+		if (!canBook || !currentUser) {
+			if (!currentUser) {
+				alert('Пожалуйста, войдите в систему, чтобы забронировать номер.');
+				navigate('/login');
+			} else {
+				alert('У вас нет прав для совершения бронирования.');
+			}
 			return;
 		}
 		if (!agreement) {
@@ -106,11 +113,12 @@ export const RoomBookingPage = () => {
 			return;
 		}
 
-		const formData = new FormData(e.currentTarget);
-		const checkIn = formData.get('checkIn') as string;
-		const checkOut = formData.get('checkOut') as string;
+		// const formData = new FormData(e.currentTarget);
+		// const checkIn = formData.get('checkIn') as string;
+		// const checkOut = formData.get('checkOut') as string;
 
 		const overlapResult = checkDateOverlap(checkIn, checkOut, roomBookings);
+
 		if (overlapResult.overlap) {
 			alert(overlapResult.message);
 			return;
@@ -118,9 +126,8 @@ export const RoomBookingPage = () => {
 		setIsPaying(true);
 		try {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
-			// Создание новой брони с привязкой по ID
+
 			const newBooking = {
-				// _id: String(Date.now()),//сервер сам должен добавить ID
 				userId: currentUser._id,
 				hotelId: hotel._id,
 				hotelOwnerId: hotel.ownerId,
@@ -132,8 +139,6 @@ export const RoomBookingPage = () => {
 				price: totalPrice,
 				status: 'Подтверждено' as const,
 			};
-			console.log('hotel', hotel);
-			console.log('Sending booking data:', newBooking);
 			await dispatch(addBookingThunk(newBooking));
 			alert(
 				`Сумма к оплате зафиксирована успешно! Номер "${room.type}" забронирован. Скоро с Вами свяжется менеджер нашего отеля.`,

@@ -25,6 +25,7 @@ import {
 } from '../../selectors/hotelSelectors';
 import type { Comments } from '../../store/reducers/hotelReducer';
 import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
+import { checkPermission } from '../../utils/permissions';
 
 export const HotelDetailsPage = () => {
 	const { hotelId } = useParams<{ hotelId: string }>();
@@ -53,24 +54,29 @@ export const HotelDetailsPage = () => {
 	const comments = hotel.comments || [];
 	const rooms = hotel?.rooms || [];
 
-	const canDeleteComment = (comment: Comments): boolean => {
-		if (!user) return false;
-		if (user.role === 'admin') return true;
-		if (user.role === 'manager' && hotel.ownerId === user._id) return true;
+	const canAddComment = checkPermission(user, 'ADD_COMMENT');
 
-		// 3. Обычный пользователь удаляет только свои
-		return user._id === comment.userId;
+	const canDeleteComment = (comment: Comments): boolean => {
+		return checkPermission(user, 'DELETE_COMMENT', {
+			userId: comment.userId,
+			hotelOwnerId: hotel.ownerId,
+		});
 	};
 
 	const handleAddComment = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		// Проверка прав перед действием
+		if (!canAddComment || !user) {
+			alert('У вас нет прав для добавления комментария');
+			return;
+		}
+
 		const formData = new FormData(e.currentTarget);
 		const text = formData.get('comment') as string;
 
 		if (!text.trim() || !user) return;
 
 		const newComment: Comments = {
-			// _id: String(Date.now()),
 			userId: user._id,
 			userName: user.name,
 			text: text,
@@ -81,7 +87,7 @@ export const HotelDetailsPage = () => {
 	};
 
 	const handleDeleteComment = (commentId: string | undefined) => {
-		if (!commentId) return; // Выходим, если ID нет
+		if (!commentId) return;
 		if (window.confirm('Удалить этот отзыв?')) {
 			dispatch(deleteCommentThunk(hotel._id, commentId));
 		}
@@ -205,7 +211,7 @@ export const HotelDetailsPage = () => {
 					Отзывы гостей ({comments.length})
 				</h2>
 
-				{user ? (
+				{canAddComment ? (
 					<form
 						onSubmit={handleAddComment}
 						className="mb-12 bg-teal-50/30 p-8 rounded-2xl border border-teal-100"
