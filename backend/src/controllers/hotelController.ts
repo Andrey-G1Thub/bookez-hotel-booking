@@ -4,6 +4,7 @@ import { UserDocument } from '../models/User'
 import { ROLES } from '../constats/roles'
 import fs from 'fs'
 import path from 'path'
+import { deleteFileFromStorage } from '../utils/deleteFileFromStorage'
 
 export const getHotels = async (req: Request, res: Response) => {
   try {
@@ -62,7 +63,6 @@ export const updateHotel = async (req: any, res: Response) => {
     let finalImages = []
     if (updateData.images) {
       try {
-        // Если пришла строка (из FormData), парсим её
         finalImages =
           typeof updateData.images === 'string'
             ? JSON.parse(updateData.images)
@@ -72,21 +72,17 @@ export const updateHotel = async (req: any, res: Response) => {
       }
     }
 
-    // 2. Если загружен новый файл через Multer (req.file)
     if (req.file) {
       const newFilePath = `/backend/uploads/${req.file.filename}`
       finalImages.push(newFilePath)
     }
 
-    // 3. Если вдруг пришел одиночный imageUrl (из функции handleAddHotelPhoto)
     if (updateData.imageUrl) {
       finalImages.push(updateData.imageUrl)
     }
 
-    // 4. Обновляем данные перед сохранением
-    updateData.images = [...new Set(finalImages)] // Убираем дубликаты
+    updateData.images = [...new Set(finalImages)]
 
-    // Удаляем вспомогательные поля, чтобы они не попали в БД
     delete updateData.imageUrl
 
     // Парсим комнаты, если они пришли строкой
@@ -107,31 +103,46 @@ export const updateHotel = async (req: any, res: Response) => {
   }
 }
 
-// обновление комнаты с фото с ПК
 export const updateHotelRooms = async (req: any, res: Response) => {
   try {
     const { hotelId } = req.params
-    let rooms = JSON.parse(req.body.rooms)
+    let newRooms =
+      typeof req.body.rooms === 'string'
+        ? JSON.parse(req.body.rooms)
+        : req.body.rooms
 
+    const oldHotel = await Hotel.findById(hotelId)
+    if (!oldHotel) return res.status(404).json({ message: 'Отель не найден' })
+
+    // ЛОГИКА ОЧИСТКИ ФАЙЛОВ:
+
+    const newRoomIds = newRooms.map((r: any) => r._id?.toString())
+    const removedRooms = oldHotel.rooms.filter(
+      (oldRoom: any) => !newRoomIds.includes(oldRoom._id.toString()),
+    )
+
+    // Удаляем фото удаленных комнат
+    removedRooms.forEach((room: any) => {
+      room.images?.forEach((img: string) => deleteFileFromStorage(img))
+    })
+
+    // Далее твой существующий код обработки нового фото (multer)
     const targetRoomId = req.body.editingRoomId
-
-    // Если загружен файл для комнаты
     if (req.file) {
       const imageUrl = `/backend/uploads/${req.file.filename}`
-
       const roomIndex = targetRoomId
-        ? rooms.findIndex((r: any) => r._id === targetRoomId)
-        : rooms.length - 1
+        ? newRooms.findIndex((r: any) => r._id === targetRoomId)
+        : newRooms.length - 1
 
       if (roomIndex !== -1) {
-        if (!rooms[roomIndex].images) rooms[roomIndex].images = []
-        rooms[roomIndex].images.push(imageUrl)
+        if (!newRooms[roomIndex].images) newRooms[roomIndex].images = []
+        newRooms[roomIndex].images.push(imageUrl)
       }
     }
 
     const updatedHotel = await Hotel.findByIdAndUpdate(
       hotelId,
-      { $set: { rooms: rooms } },
+      { $set: { rooms: newRooms } },
       { new: true },
     )
     res.json(updatedHotel)
@@ -158,6 +169,19 @@ export const deleteHotel = async (req: any, res: Response) => {
         .status(403)
         .json({ message: 'Вы не можете удалить чужой отель' })
     }
+
+    // 1. Собираем ВСЕ фото отеля
+    const allPhotos: string[] = [...(hotel.images || [])]
+
+    // 2. Добавляем фото из всех комнат
+    hotel.rooms.forEach((room: any) => {
+      if (room.images && room.images.length > 0) {
+        allPhotos.push(...room.images)
+      }
+    })
+
+    // 3. Физически удаляем каждый файл
+    allPhotos.forEach((photoUrl) => deleteFileFromStorage(photoUrl))
 
     await Hotel.findByIdAndDelete(id)
     res.json({ message: 'Отель успешно удален' })
