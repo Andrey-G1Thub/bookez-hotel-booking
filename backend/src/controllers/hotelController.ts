@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { AuthenticatedRequest, Hotel } from '../models/Hotel'
-import { UserDocument } from '../models/User'
+import { User, UserDocument } from '../models/User'
 import { ROLES } from '../constats/roles'
 import fs from 'fs'
 import path from 'path'
@@ -106,6 +106,7 @@ export const updateHotel = async (req: any, res: Response) => {
 export const updateHotelRooms = async (req: any, res: Response) => {
   try {
     const { hotelId } = req.params
+    const userFromToken = req.user
     let newRooms =
       typeof req.body.rooms === 'string'
         ? JSON.parse(req.body.rooms)
@@ -113,6 +114,28 @@ export const updateHotelRooms = async (req: any, res: Response) => {
 
     const oldHotel = await Hotel.findById(hotelId)
     if (!oldHotel) return res.status(404).json({ message: 'Отель не найден' })
+
+    // --- ПРОВЕРКА ЛИМИТОВ ---
+    if (userFromToken.role !== ROLES.ADMIN) {
+      // Подтягиваем свежие данные пользователя, чтобы увидеть актуальные лимиты
+      const fullUser = await User.findById(userFromToken._id)
+
+      if (!fullUser) {
+        return res.status(404).json({ message: 'Пользователь не найден' })
+      }
+
+      const maxRooms = fullUser.limits?.maxRooms || 0
+
+      // Если количество комнат в новом массиве больше лимита
+      if (newRooms.length > maxRooms) {
+        // Если мы пытаемся ДОБАВИТЬ новую (длина выросла), а не просто редактируем старую
+        if (newRooms.length > oldHotel.rooms.length) {
+          return res.status(403).json({
+            message: `Превышен лимит комнат. Ваш максимум: ${maxRooms}`,
+          })
+        }
+      }
+    }
 
     // ЛОГИКА ОЧИСТКИ ФАЙЛОВ:
 

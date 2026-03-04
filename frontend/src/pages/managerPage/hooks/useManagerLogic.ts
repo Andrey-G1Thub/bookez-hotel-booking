@@ -96,6 +96,19 @@ export const useManagerLogic = () => {
 		return myHotels.length < maxHotels;
 	}, [myHotels, currentUser, isAdmin]);
 
+	const canAddRoom = useMemo(() => {
+		if (isAdmin) return true;
+		if (!selectedHotel) return false;
+
+		// Берем лимит из данных пользователя
+		const maxRooms = currentUser?.limits?.maxRooms || 0;
+
+		// Считаем текущее кол-во комнат в выбранном отеле
+		const currentRoomsCount = selectedHotel.rooms?.length || 0;
+
+		return currentRoomsCount < maxRooms;
+	}, [selectedHotel, currentUser, isAdmin]);
+
 	const handleEditHotelClick = (hotel: Hotel) => {
 		setIsEditMode(true);
 		setEditingHotelId(hotel._id);
@@ -128,6 +141,13 @@ export const useManagerLogic = () => {
 
 	const handleOpenAddRoomModal = (hotel: Hotel) => {
 		setSelectedHotel(hotel);
+
+		const maxRooms = currentUser?.limits?.maxRooms || 0;
+		if (!isAdmin && (hotel.rooms?.length || 0) >= maxRooms) {
+			alert(`Превышен лимит комнат! Максимум для вашего тарифа: ${maxRooms}`);
+			return;
+		}
+
 		setIsEditMode(false);
 		setEditingRoomId(null);
 		setNewRoom(initialRoomState);
@@ -409,13 +429,13 @@ export const useManagerLogic = () => {
 			selectedHotel,
 			isAdmin,
 			canAddHotel,
+			canAddRoom,
 			newHotel,
 			setNewHotel,
 			newRoom,
 			photoUrl,
 			setPhotoUrl,
-			// hotelPhotoUrl,
-			// setHotelPhotoUrl,
+
 			setSelectedHotel,
 			setNewRoom,
 		},
