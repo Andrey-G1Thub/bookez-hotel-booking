@@ -16,14 +16,13 @@ import { ROLES } from '../../../utils/permissions';
 import {
 	addHotelThunk,
 	deleteHotelThunk,
+	deletePhotoThunk,
 	fetchCitiesThunk,
 	fetchHotelsThunk,
 	updateHotelRoomsThunk,
 	updateHotelThunk,
 } from '../../../store/actions/hotelActions';
 import type { HotelFormFields } from '../../../types/forms';
-
-type RoomFormState = Omit<Room, '_id' | 'hotelId'>;
 
 const initialHotelState: HotelFormFields = {
 	name: '',
@@ -33,12 +32,17 @@ const initialHotelState: HotelFormFields = {
 	images: [],
 	comments: [],
 };
-const initialRoomState: RoomFormState = {
+export interface RoomFormFields extends Omit<Room, '_id' | 'hotelId'> {
+	imageFile?: File;
+}
+
+const initialRoomState: RoomFormFields = {
 	type: '',
 	capacity: 2,
 	price: 0,
 	amenities: '',
 	images: [],
+	// imageFile: undefined,
 };
 
 export const useManagerLogic = () => {
@@ -59,7 +63,7 @@ export const useManagerLogic = () => {
 	const [photoUrl, setPhotoUrl] = useState('');
 
 	const [newHotel, setNewHotel] = useState<HotelFormFields>(initialHotelState);
-	const [newRoom, setNewRoom] = useState<RoomFormState>(initialRoomState);
+	const [newRoom, setNewRoom] = useState<RoomFormFields>(initialRoomState);
 
 	const isAdmin = currentUser?.role === ROLES.ADMIN;
 
@@ -136,7 +140,7 @@ export const useManagerLogic = () => {
 		setIsModalOpen(true);
 	};
 
-	const handleRemovePhoto = (type: 'hotel' | 'room', urlToRemove: string) => {
+	const handleRemovePhoto = async (type: 'hotel' | 'room', urlToRemove: string) => {
 		if (type === 'hotel') {
 			setNewHotel((prev) => ({
 				...prev,
@@ -148,6 +152,25 @@ export const useManagerLogic = () => {
 				images: (prev.images || []).filter((img) => img !== urlToRemove),
 			}));
 		}
+		// 2. Если это существующий отель (есть ID) и фото не временное (не blob)
+		const isServerPhoto = urlToRemove.startsWith('/backend/uploads/');
+
+		if (isServerPhoto) {
+			if (type === 'hotel' && editingHotelId) {
+				// Удаляем фото отеля
+				await dispatch(deletePhotoThunk(editingHotelId, urlToRemove, 'hotel'));
+			} else if (type === 'room' && selectedHotel?._id && editingRoomId) {
+				// Удаляем фото конкретной комнаты
+				await dispatch(
+					deletePhotoThunk(
+						selectedHotel._id,
+						urlToRemove,
+						'room',
+						editingRoomId,
+					),
+				);
+			}
+		}
 	};
 
 	useEffect(() => {
@@ -156,25 +179,24 @@ export const useManagerLogic = () => {
 		dispatch(fetchCitiesThunk());
 		if (currentUser?._id) {
 			dispatch(fetchBookingsThunk());
-			dispatch(fetchAllUsersThunk());
+
+			if (currentUser.role === ROLES.ADMIN) {
+				dispatch(fetchAllUsersThunk());
+			}
 		}
-	}, [dispatch, currentUser?._id]);
+	}, [dispatch, currentUser?._id, currentUser?.role]);
 
 	const handleAddHotelPhoto = async (hotelId: string) => {
 		if (!photoUrl) return;
-		const hotel = myHotels.find((h: Hotel) => h._id === hotelId);
-		if (!hotel) return;
 
-		const updatedImages = [...(hotel.images || []), photoUrl];
+		// Создаем FormData, как и при загрузке файла
+		const formData = new FormData();
+		formData.append('imageUrl', photoUrl); // Добавляем URL картинки
 
-		const success = await dispatch(
-			updateHotelThunk(hotelId, { images: updatedImages }),
-		);
+		// Отправляем formData в Thunk
+		const success = await dispatch(updateHotelThunk(hotelId, formData));
+
 		if (success) {
-			// Если фото добавлялось в модалке, обновляем и выделенный отель
-			if (selectedHotel?._id === hotelId) {
-				setSelectedHotel({ ...selectedHotel, images: updatedImages });
-			}
 			setPhotoUrl('');
 		}
 	};
@@ -206,101 +228,165 @@ export const useManagerLogic = () => {
 		setIsRoomModalOpen(false);
 	};
 
+	// const handleAddRoom = async (e: React.FormEvent) => {
+	// 	e.preventDefault();
+	// 	if (!selectedHotel?._id) return;
+
+	// 	const hotelToUpdate = allHotels.find((h) => h._id === selectedHotel._id);
+	// 	if (!hotelToUpdate) return;
+
+	// 	const currentRooms = hotelToUpdate.rooms || [];
+	// 	const { imageFile, ...restRoom } = newRoom;
+	// 	let updatedRooms;
+
+	// 	if (isEditMode && editingRoomId) {
+	// 		updatedRooms = currentRooms.map((room) =>
+	// 			room._id === editingRoomId
+	// 				? {
+	// 						...room,
+	// 						...newRoom,
+	// 						price: Number(newRoom.price),
+	// 						capacity: Number(newRoom.capacity),
+	// 					}
+	// 				: room,
+	// 		);
+	// 	} else {
+	// 		updatedRooms = [
+	// 			...currentRooms,
+	// 			{
+	// 				...newRoom,
+	// 				price: Number(newRoom.price),
+	// 				capacity: Number(newRoom.capacity),
+	// 				hotelId: hotelToUpdate._id,
+	// 			},
+	// 		];
+	// 	}
+
+	// 	const formData = new FormData();
+	// 	formData.append('rooms', JSON.stringify(updatedRooms));
+
+	// 	// ВАЖНО: передаем ID редактируемой комнаты
+	// 	if (editingRoomId) {
+	// 		formData.append('editingRoomId', editingRoomId);
+	// 	}
+
+	// 	if (newRoom.imageFile) {
+	// 		formData.append('roomImage', newRoom.imageFile); // 'roomImage' должен совпадать с именем в multer на бэкенде
+	// 	}
+
+	// 	const success = await dispatch(
+	// 		updateHotelRoomsThunk(hotelToUpdate._id, formData),
+	// 	);
+
+	// 	if (success) {
+	// 		setIsRoomModalOpen(false);
+	// 		setNewRoom(initialRoomState);
+	// 		setEditingRoomId(null);
+	// 	}
+	// };
+
 	const handleAddRoom = async (e: React.FormEvent) => {
 		e.preventDefault();
-
 		if (!selectedHotel?._id) return;
+
 		const hotelToUpdate = allHotels.find((h) => h._id === selectedHotel._id);
 		if (!hotelToUpdate) return;
 
-		const currentRooms = Array.isArray(hotelToUpdate.rooms)
-			? hotelToUpdate.rooms
-			: [];
+		const currentRooms = hotelToUpdate.rooms || [];
+
+		// 1. Создаем объект комнаты для отправки (БЕЗ imageFile)
+		// Деструктуризация вытащит imageFile, а в restRoom останется всё остальное
+		const { imageFile, ...restRoom } = newRoom;
 
 		let updatedRooms;
 
 		if (isEditMode && editingRoomId) {
-			// РЕЖИМ РЕДАКТИРОВАНИЯ
 			updatedRooms = currentRooms.map((room) =>
 				room._id === editingRoomId
 					? {
 							...room,
-							...newRoom,
-
-							type: newRoom.type || room.type,
-							price: Number(newRoom.price),
-							capacity: Number(newRoom.capacity),
-							images: newRoom.images || room.images || [],
+							...restRoom,
+							price: Number(restRoom.price),
+							capacity: Number(restRoom.capacity),
 						}
 					: room,
 			);
 		} else {
-			// РЕЖИМ СОЗДАНИЯ
-			const maxRooms = currentUser?.limits?.maxRooms || 0;
-			if (!isAdmin && currentRooms.length >= maxRooms) {
-				alert(`Превышен лимит номеров! Ваш максимум: ${maxRooms}`);
-				return;
-			}
-
 			const roomData = {
-				...newRoom,
-				type: newRoom.type || 'Стандарт',
-				capacity: Number(newRoom.capacity),
-				price: Number(newRoom.price),
-				amenities: newRoom.amenities || '',
-				images: newRoom.images || [],
-				// _id: String(Date.now()),
+				...restRoom,
+				price: Number(restRoom.price),
+				capacity: Number(restRoom.capacity),
 				hotelId: hotelToUpdate._id,
 			};
 			updatedRooms = [...currentRooms, roomData];
 		}
 
+		const formData = new FormData();
+		// На сервер уходят только чистые данные (тип, цена, удобства)
+		formData.append('rooms', JSON.stringify(updatedRooms));
+
+		if (editingRoomId) {
+			formData.append('editingRoomId', editingRoomId);
+		}
+
+		// 2. А сам файл отправляем отдельным полем Multipart
+		if (newRoom.imageFile) {
+			formData.append('roomImage', newRoom.imageFile);
+		}
+
 		const success = await dispatch(
-			updateHotelRoomsThunk(hotelToUpdate._id, updatedRooms as Room[]),
+			updateHotelRoomsThunk(hotelToUpdate._id, formData),
 		);
 
 		if (success) {
 			setIsRoomModalOpen(false);
-			setIsEditMode(false);
+			setNewRoom(initialRoomState);
 			setEditingRoomId(null);
-			setNewRoom({ type: '', capacity: 2, price: 0, amenities: '', images: [] });
 		}
 	};
 
 	const handleSaveHotel = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (!currentUser?._id) return;
 
-		if (!currentUser?._id) {
-			alert('Ошибка: пользователь не авторизован');
-			return;
+		// Создаем FormData
+		const formData = new FormData();
+
+		// Добавляем простые поля
+		formData.append('name', newHotel.name || '');
+		formData.append('description', newHotel.description || '');
+		formData.append('cityId', newHotel.cityId);
+		formData.append('priceFrom', String(newHotel.priceFrom));
+
+		if (newHotel.images && newHotel.images.length > 0) {
+			formData.append('images', JSON.stringify(newHotel.images));
 		}
-		// Создаем объект, который СТРОГО соответствует интерфейсу Hotel из редюсера
-		const hotelToSave: Hotel = {
-			// ownerId: currentUser?._id,
-			ownerId:
-				isEditMode && editingHotelId
-					? allHotels.find((h) => h._id === editingHotelId)?.ownerId ||
-						currentUser?._id
-					: currentUser?._id,
 
-			cityId: newHotel.cityId,
-			priceFrom: Number(newHotel.priceFrom),
-			name: newHotel.name || '',
-			description: newHotel.description || '',
-			rating: newHotel.rating ?? 5,
-			reviewCount: newHotel.reviewCount ?? 0,
-			comments: isEditMode ? newHotel.comments || [] : [],
-			rooms:
-				isEditMode && editingHotelId
-					? allHotels.find((h) => h._id === editingHotelId)?.rooms || []
-					: [],
-			images: newHotel.images || [],
-		} as Hotel;
+		const currentOwnerId =
+			isEditMode && editingHotelId
+				? allHotels.find((h) => h._id === editingHotelId)?.ownerId
+				: currentUser._id;
+		formData.append('ownerId', currentOwnerId || '');
+
+		// ВАЖНО: Добавляем файл, если он есть
+		//  HotelFormFields есть поле imageFile?
+		if (newHotel.imageFile) {
+			formData.append('image', newHotel.imageFile);
+		}
+
+		// Если нужно передать массив (например, комнаты) как строку JSON
+		// Бэкенд на Express должен будет сделать JSON.parse(req.body.rooms)
+		const rooms =
+			isEditMode && editingHotelId
+				? allHotels.find((h) => h._id === editingHotelId)?.rooms || []
+				: [];
+		formData.append('rooms', JSON.stringify(rooms));
 
 		if (isEditMode && editingHotelId) {
-			await dispatch(updateHotelThunk(editingHotelId, hotelToSave));
+			// Для PATCH тоже используем FormData
+			await dispatch(updateHotelThunk(editingHotelId, formData));
 		} else {
-			await dispatch(addHotelThunk(hotelToSave));
+			await dispatch(addHotelThunk(formData));
 		}
 
 		setIsModalOpen(false);

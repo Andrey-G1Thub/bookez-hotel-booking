@@ -13,6 +13,7 @@ import {
 import type { Hotel, Room } from '../../../../store/reducers/hotelReducer';
 import type { Booking } from '../../../../store/reducers/bookingReducer';
 import type { User as UserType } from '../../../../store/reducers/userReducer';
+import { getFullImageUrl } from '../../../../utils/getFullImageUrl';
 
 interface EnrichedBooking extends Booking {
 	client?: UserType | null;
@@ -87,9 +88,13 @@ export const ItemInCardManager = ({
 										<div className="w-10 h-10 bg-white rounded-lg border flex items-center justify-center overflow-hidden">
 											{room.images && room.images[0] ? (
 												<img
-													src={room.images[0]}
+													src={getFullImageUrl(room.images[0])}
 													className="object-cover w-full h-full"
 													alt={room.type}
+													onError={(e) => {
+														e.currentTarget.src =
+															'https://placehold.co/40x40?text=Error';
+													}}
 												/>
 											) : (
 												<BedDouble

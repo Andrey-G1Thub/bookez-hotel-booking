@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import { AuthenticatedRequest, Hotel } from '../models/Hotel'
 import { UserDocument } from '../models/User'
 import { ROLES } from '../constats/roles'
+import fs from 'fs'
+import path from 'path'
 
 export const getHotels = async (req: Request, res: Response) => {
   try {
@@ -12,42 +14,28 @@ export const getHotels = async (req: Request, res: Response) => {
   }
 }
 
-export const createHotel = async (req: Request, res: Response) => {
+// Создание отеля с фото
+export const createHotel = async (req: any, res: Response) => {
   try {
-    // const user = req.user as UserDocument
-    // const user = (req as AuthenticatedRequest).user
-    const user = (req as any).user as UserDocument
+    const user = req.user
+    const hotelData = req.body
 
-    if (!user) {
-      return res.status(401).json({ message: 'Пользователь не определен' })
+    // Если загружен основной файл отеля
+    if (req.file) {
+      hotelData.images = [`/backend/uploads/${req.file.filename}`]
     }
 
-    const ownerId = user._id
-    const userRole = user.role
-
-    if (userRole === 'manager') {
-      const currentHotelsCount = await Hotel.countDocuments({
-        ownerId: ownerId,
-      })
-
-      // const maxHotels = user.limits?.maxHotels || 0
-      const maxHotels = user.limits?.maxHotels ?? 0
-
-      if (currentHotelsCount >= maxHotels) {
-        return res.status(403).json({ message: 'Лимит отелей исчерпан' })
-      }
-    }
-
-    // Создаем отель, добавляя ID владельца из токена
     const newHotel = new Hotel({
-      ...req.body,
-      ownerId: ownerId, // Важно привязать отель к создателю!
+      ...hotelData,
+      ownerId: user._id,
+      // Если комнаты пришли строкой, их надо распарсить
+      rooms: hotelData.rooms ? JSON.parse(hotelData.rooms) : [],
     })
 
     const savedHotel = await newHotel.save()
     res.status(201).json(savedHotel)
   } catch (error) {
-    res.status(400).json({ message: 'Ошибка при создании отеля', error })
+    res.status(400).json({ message: 'Ошибка создания отеля', error })
   }
 }
 
@@ -55,14 +43,12 @@ export const updateHotel = async (req: any, res: Response) => {
   try {
     const { id } = req.params
     const user = req.user
+    const updateData = { ...req.body }
 
     const hotel = await Hotel.findById(id)
-
     if (!hotel) return res.status(404).json({ message: 'Отель не найден' })
-    console.log('User ID from token:', user._id)
-    console.log('Hotel Owner ID from DB:', hotel.ownerId)
 
-    // ПРОВЕРКА: Только админ или владелец может редактировать
+    // Только админ или владелец может редактировать
     if (
       user.role === ROLES.MANAGER &&
       hotel.ownerId.toString() !== user._id.toString()
@@ -73,15 +59,46 @@ export const updateHotel = async (req: any, res: Response) => {
         .json({ message: 'Нет прав на редактирование чужого отеля' })
     }
 
+    let finalImages = []
+    if (updateData.images) {
+      try {
+        // Если пришла строка (из FormData), парсим её
+        finalImages =
+          typeof updateData.images === 'string'
+            ? JSON.parse(updateData.images)
+            : updateData.images
+      } catch (e) {
+        finalImages = []
+      }
+    }
+
+    // 2. Если загружен новый файл через Multer (req.file)
+    if (req.file) {
+      const newFilePath = `/backend/uploads/${req.file.filename}`
+      finalImages.push(newFilePath)
+    }
+
+    // 3. Если вдруг пришел одиночный imageUrl (из функции handleAddHotelPhoto)
+    if (updateData.imageUrl) {
+      finalImages.push(updateData.imageUrl)
+    }
+
+    // 4. Обновляем данные перед сохранением
+    updateData.images = [...new Set(finalImages)] // Убираем дубликаты
+
+    // Удаляем вспомогательные поля, чтобы они не попали в БД
+    delete updateData.imageUrl
+
+    // Парсим комнаты, если они пришли строкой
+    if (typeof updateData.rooms === 'string') {
+      updateData.rooms = JSON.parse(updateData.rooms)
+    }
+
     const updatedHotel = await Hotel.findByIdAndUpdate(
       id,
-      { $set: req.body },
-      { returnDocument: 'after', runValidators: true },
+      { $set: updateData },
+      { new: true },
     )
-
-    if (!updatedHotel) {
-      return res.status(404).json({ message: 'Отель не найден' })
-    }
 
     res.json(updatedHotel)
   } catch (error) {
@@ -89,6 +106,40 @@ export const updateHotel = async (req: any, res: Response) => {
     res.status(400).json({ message: 'Ошибка при обновлении', error })
   }
 }
+
+// обновление комнаты с фото с ПК
+export const updateHotelRooms = async (req: any, res: Response) => {
+  try {
+    const { hotelId } = req.params
+    let rooms = JSON.parse(req.body.rooms)
+
+    const targetRoomId = req.body.editingRoomId
+
+    // Если загружен файл для комнаты
+    if (req.file) {
+      const imageUrl = `/backend/uploads/${req.file.filename}`
+
+      const roomIndex = targetRoomId
+        ? rooms.findIndex((r: any) => r._id === targetRoomId)
+        : rooms.length - 1
+
+      if (roomIndex !== -1) {
+        if (!rooms[roomIndex].images) rooms[roomIndex].images = []
+        rooms[roomIndex].images.push(imageUrl)
+      }
+    }
+
+    const updatedHotel = await Hotel.findByIdAndUpdate(
+      hotelId,
+      { $set: { rooms: rooms } },
+      { new: true },
+    )
+    res.json(updatedHotel)
+  } catch (error) {
+    res.status(400).json({ message: 'Ошибка при обновлении комнат', error })
+  }
+}
+
 export const deleteHotel = async (req: any, res: Response) => {
   try {
     const { id } = req.params
@@ -161,5 +212,48 @@ export const deleteComment = async (req: Request, res: Response) => {
     res.json(updatedHotel)
   } catch (error) {
     res.status(400).json({ message: 'Ошибка удаления комментария' })
+  }
+}
+
+export const removePhoto = async (req: Request, res: Response) => {
+  try {
+    const { hotelId } = req.params
+    const { imageUrl, type, roomId } = req.body
+
+    let updateQuery = {}
+    let options: any = { new: true }
+
+    if (type === 'hotel') {
+      updateQuery = { $pull: { images: imageUrl } }
+    } else if (type === 'room' && roomId) {
+      updateQuery = { $pull: { 'rooms.$[elem].images': imageUrl } }
+      // arrayFilters нужен ТОЛЬКО если мы удаляем из комнаты
+      options.arrayFilters = [{ 'elem._id': roomId }]
+    }
+
+    const hotel = await Hotel.findByIdAndUpdate(hotelId, updateQuery, options)
+
+    if (!hotel) {
+      return res.status(404).json({ message: 'Отель не найден' })
+    }
+
+    // Физическое удаление файла
+    if (imageUrl) {
+      const fileName = imageUrl.split('/').pop()
+      // Учитывая src/controllers -> ../../uploads
+      const filePath = path.join(__dirname, '../../uploads', fileName)
+
+      console.log('Попытка удаления файла:', filePath)
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath)
+      } else {
+        console.log('Файл не найден на диске, но удален из БД')
+      }
+    }
+
+    res.json(hotel)
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка удаления', error })
   }
 }

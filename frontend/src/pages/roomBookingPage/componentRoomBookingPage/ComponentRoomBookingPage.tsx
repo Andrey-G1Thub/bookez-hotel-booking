@@ -12,6 +12,7 @@ import type { ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Hotel, Room } from '../../../store/reducers/hotelReducer';
 import type { Booking } from '../../../store/reducers/bookingReducer';
+import { getFullImageUrl } from '../../../utils/getFullImageUrl';
 
 interface Props {
 	room: Room;
@@ -59,7 +60,7 @@ export const ComponentRoomBookingPage = ({
 					<div className="w-full h-64 rounded-xl mb-4 overflow-hidden shadow-md">
 						{room.images && room.images.length > 0 ? (
 							<img
-								src={room.images[0]}
+								src={getFullImageUrl(room.images[0])}
 								alt={room.type}
 								className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
 								onError={(

@@ -26,6 +26,8 @@ import {
 import type { Comments } from '../../store/reducers/hotelReducer';
 import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 import { checkPermission } from '../../utils/permissions';
+import { getFullImageUrl } from '../../utils/getFullImageUrl';
+// import { getFullImageUrl } from '../../utils/urlOrPhoto';
 
 export const HotelDetailsPage = () => {
 	const { hotelId } = useParams<{ hotelId: string }>();
@@ -93,6 +95,8 @@ export const HotelDetailsPage = () => {
 		}
 	};
 
+	const mainPhoto = getFullImageUrl(hotel.images?.[0]);
+
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 			{/* Заголовок */}
@@ -113,7 +117,7 @@ export const HotelDetailsPage = () => {
 			<div className="w-full h-[450px] mb-10 overflow-hidden rounded-3xl shadow-2xl bg-gray-100 relative group">
 				{hotel.images?.[0] ? (
 					<img
-						src={hotel.images[0]}
+						src={mainPhoto}
 						alt={hotel.name}
 						className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 					/>
@@ -145,12 +149,13 @@ export const HotelDetailsPage = () => {
 							>
 								<div className="md:w-1/3 h-52 md:h-auto bg-gray-200">
 									<img
-										src={
-											room.images?.[0] ||
-											'https://placehold.co/400x300?text=No+Photo'
-										}
+										src={getFullImageUrl(room.images?.[0])}
 										alt={room.type}
 										className="w-full h-full object-cover"
+										onError={(e) => {
+											e.currentTarget.src =
+												'https://placehold.co/400x300?text=No+Photo';
+										}}
 									/>
 								</div>
 								<div className="p-6 flex-1 flex flex-col justify-between">

@@ -13,3 +13,6 @@ npm install --save-dev @types/jsonwebtoken
 
 npm install bcryptjs
 npm install --save-dev @types/bcryptjs
+
+npm install multer
+npm install --save-dev @types/multer

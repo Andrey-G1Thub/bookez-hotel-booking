@@ -89,78 +89,84 @@ export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 // Работа с отелем и комнатами
 export const updateHotelThunk =
-	(hotelId: string, updatedData: Partial<Hotel>) =>
-	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
-		const state = getState();
-		const user = state.users.currentUser;
-		const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+	// (hotelId: string, updatedData: Partial<Hotel>) =>
+	(hotelId: string, updatedData: FormData | Partial<Hotel>) =>
+		async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+			const state = getState();
+			const user = state.users.currentUser;
+			const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
 
-		if (!checkPermission(user, 'EDIT_HOTEL', hotel)) {
-			alert('Нет прав на редактирование');
-			return false;
-		}
-
-		try {
-			const response = await apiFetch(
-				`http://localhost:5000/api/hotels/${hotelId}`,
-				{
-					method: 'PATCH',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(updatedData),
-				},
-			);
-			if (response.ok) {
-				const updatedHotel: Hotel = await response.json();
-				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
-				return true;
+			if (!checkPermission(user, 'EDIT_HOTEL', hotel)) {
+				alert('Нет прав на редактирование');
+				return false;
 			}
-		} catch (error) {
-			console.error('Ошибка при обновлении отеля:', error);
-			return false;
-		}
-	};
+
+			try {
+				const isFormData = updatedData instanceof FormData;
+
+				const response = await apiFetch(
+					`http://localhost:5000/api/hotels/${hotelId}`,
+					{
+						method: 'PATCH',
+						// headers: { 'Content-Type': 'application/json' },
+						// body: JSON.stringify(updatedData),
+						headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+						body: isFormData ? updatedData : JSON.stringify(updatedData),
+					},
+				);
+				if (response.ok) {
+					const updatedHotel: Hotel = await response.json();
+					dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
+					return true;
+				}
+			} catch (error) {
+				console.error('Ошибка при обновлении отеля:', error);
+				return false;
+			}
+		};
 
 // Thunk для обновления комнат (или любых данных отеля)
 export const updateHotelRoomsThunk =
-	(hotelId: string, roomsArray: Room[]) =>
-	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
-		const state = getState();
-		const user = state.users.currentUser;
-		const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+	// (hotelId: string, roomsArray: Room[]) =>
+	(hotelId: string, data: FormData | Room[]) =>
+		async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+			const state = getState();
+			const user = state.users.currentUser;
+			const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
 
-		if (!checkPermission(user, 'EDIT_ROOM_HOTEL', hotel)) {
-			alert('У вас нет прав на редактирование комнат этого отеля');
-			return false;
-		}
-		try {
-			const response = await apiFetch(
-				`http://localhost:5000/api/hotels/${hotelId}`,
-				{
-					method: 'PATCH',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ rooms: roomsArray }),
-				},
-			);
-
-			if (response.ok) {
-				const updatedRoomHotel: Hotel = await response.json();
-
-				// Отправляем обновленный объект отеля в редьюсер
-				dispatch({
-					type: UPDATE_HOTEL_ROOM_SUCCESS,
-					payload: updatedRoomHotel,
-				});
-				return true;
+			if (!checkPermission(user, 'EDIT_ROOM_HOTEL', hotel)) {
+				alert('У вас нет прав на редактирование комнат этого отеля');
+				return false;
 			}
-		} catch (error) {
-			console.error('Ошибка при обновлении комнат отеля:', error);
-			return false;
-		}
-	};
+			try {
+				const isFormData = data instanceof FormData;
+				const response = await apiFetch(
+					`http://localhost:5000/api/hotels/${hotelId}/rooms`,
+					{
+						method: 'PATCH',
+
+						headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+						body: isFormData ? data : JSON.stringify({ rooms: data }),
+					},
+				);
+
+				if (response.ok) {
+					const updatedRoomHotel: Hotel = await response.json();
+					dispatch({
+						type: UPDATE_HOTEL_ROOM_SUCCESS,
+						payload: updatedRoomHotel,
+					});
+					return true;
+				}
+			} catch (error) {
+				console.error('Ошибка при обновлении комнат отеля:', error);
+				return false;
+			}
+		};
 
 // Добавление и удаление отелей
 export const addHotelThunk =
-	(hotelData: Partial<Hotel>) =>
+	(formData: FormData) =>
 	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
 		const user = getState().users.currentUser;
 		if (!checkPermission(user, 'CREATE_HOTEL')) {
@@ -171,8 +177,8 @@ export const addHotelThunk =
 		try {
 			const response = await apiFetch('http://localhost:5000/api/hotels', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(hotelData),
+
+				body: formData,
 			});
 
 			if (response.ok) {
@@ -288,5 +294,30 @@ export const deleteCommentThunk =
 			}
 		} catch (error) {
 			console.error('Ошибка при удалении комментария:', error);
+		}
+	};
+// Thunk для физического удаления фото
+export const deletePhotoThunk =
+	(hotelId: string, imageUrl: string, type: 'hotel' | 'room', roomId?: string) =>
+	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+		try {
+			const response = await apiFetch(
+				`http://localhost:5000/api/hotels/${hotelId}/remove-photo`,
+				{
+					method: 'POST', // или DELETE, бэкенде
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ imageUrl, type, roomId }),
+				},
+			);
+
+			if (response.ok) {
+				const updatedHotel: Hotel = await response.json();
+				// Обновляем отель в Redux (используем существующий экшен)
+				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
+				return true;
+			}
+		} catch (error) {
+			console.error('Ошибка при удалении фото:', error);
+			return false;
 		}
 	};

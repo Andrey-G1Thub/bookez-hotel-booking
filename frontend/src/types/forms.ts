@@ -12,4 +12,6 @@ export interface HotelFormFields extends HotelBase {
 	priceFrom: string | number;
 	rating?: number;
 	reviewCount?: number;
+	imageFile?: File;
 }
+// interface HotelFormFields { ... imageFile?: File }

@@ -6,6 +6,8 @@ import hotelRoutes from './routes/hotelRoutes'
 import userRoutes from './routes/userRoutes'
 import cityRoutes from './routes/cityRoutes'
 import bookingRoutes from './routes/bookingRoutes'
+// import path from 'node:path'
+import path from 'path'
 
 dotenv.config()
 
@@ -19,6 +21,9 @@ app.use('/api/hotels', hotelRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/cities', cityRoutes)
 app.use('/api/bookings', bookingRoutes)
+
+// app.use('/backend/uploads/', express.static('uploads'))
+app.use('/backend/uploads', express.static(path.join(__dirname, '../uploads')))
 // Подключение к MongoDB
 mongoose
   .connect(MONGO_URI)

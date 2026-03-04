@@ -41,6 +41,16 @@ export const App = () => {
 				dispatch({ type: SET_USER, payload: user });
 				dispatch(fetchBookingsThunk(user._id));
 			}
+			// 	try {
+			// 		const user: User = JSON.parse(savedUser);
+			// 		if (user && user._id) {
+			// 			dispatch({ type: SET_USER, payload: user });
+			// 			dispatch(fetchBookingsThunk(user._id));
+			// 		}
+			// 	} catch (error) {
+			// 		console.error('Failed to restore session:', error);
+			// 		localStorage.removeItem('bookez_user');
+			// 	}
 		}
 	}, [dispatch]);
 

@@ -2,9 +2,11 @@ import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import type { City } from '../../../../store/reducers/hotelReducer';
 import type { HotelFormFields } from '../../../../types/forms';
+import { getFullImageUrl } from '../../../../utils/getFullImageUrl';
+import { PhotoPreview } from './component/PhotoPreview';
 
 interface HotelModalProps {
-	newHotel: HotelFormFields;
+	newHotel: HotelFormFields & { imageFile?: File };
 	setNewHotel: (value: React.SetStateAction<HotelFormFields>) => void;
 	cities: City[];
 	isModalOpen: boolean;
@@ -39,7 +41,7 @@ export const HotelModal = ({
 
 	return (
 		<div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-			<div className="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl relative">
+			<div className="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl relative overflow-y-auto max-h-[90vh]">
 				<button
 					onClick={() => setIsModalOpen(false)}
 					className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -50,49 +52,74 @@ export const HotelModal = ({
 					{isEditMode ? 'Редактирование отеля' : 'Новый отель'}
 				</h2>
 
-				<div>
-					<label className="block text-sm font-medium text-gray-700 mb-1">
-						Ссылка на главное фото отеля
-					</label>
-					<div className="flex gap-4 items-center">
+				<div className="space-y-4 mb-6">
+					{/* ЗАГРУЗКА С ПК */}
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">
+							Загрузить фото с ПК
+						</label>
 						<input
-							type="text"
-							value={hotelPhotoUrl}
-							onChange={(e) => setHotelPhotoUrl(e.target.value)}
-							className="flex-1 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none"
-							placeholder="https://example.com/hotel.jpg"
+							type="file"
+							accept="image/*"
+							onChange={(e) => {
+								const file = e.target.files?.[0];
+								if (file) {
+									setNewHotel({ ...newHotel, imageFile: file });
+								}
+							}}
+							className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
 						/>
-						<button
-							type="button"
-							onClick={addPhoto}
-							className="bg-teal-50 text-teal-600 p-3 rounded-xl hover:bg-teal-100 transition"
-						>
-							<Plus size={24} />
-						</button>
 					</div>
 
-					{/* ПРЕВЬЮ ЗАГРУЖЕННЫХ ФОТО */}
-					<div className="flex flex-wrap gap-2">
+					{/* ССЫЛКА (URL) */}
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">
+							Добавить по ссылке (URL)
+						</label>
+						<div className="flex gap-2">
+							<input
+								type="text"
+								value={hotelPhotoUrl}
+								onChange={(e) => setHotelPhotoUrl(e.target.value)}
+								className="flex-1 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none"
+								placeholder="https://..."
+							/>
+							<button
+								type="button"
+								onClick={addPhoto}
+								className="bg-teal-50 text-teal-600 p-3 rounded-xl hover:bg-teal-100 transition"
+							>
+								<Plus size={24} />
+							</button>
+						</div>
+					</div>
+
+					<div className="flex flex-wrap gap-3 mt-2">
+						{/* Локальное фото с ПК */}
+						{newHotel.imageFile && (
+							<PhotoPreview
+								src={newHotel.imageFile}
+								isPrimary={true}
+								onRemove={() => {
+									const { imageFile, ...rest } = newHotel;
+									setNewHotel(rest);
+								}}
+							/>
+						)}
+
+						{/* Фото из галереи (URL) */}
 						{newHotel.images?.map((img, idx) => (
-							<div key={idx} className="relative w-20 h-20">
-								<img
-									src={img}
-									alt="Preview"
-									className="w-full h-full rounded-lg object-cover border"
-								/>
-								<button
-									type="button"
-									onClick={() => handleRemovePhoto(img)}
-									className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition"
-								>
-									<X size={12} />
-								</button>
-							</div>
+							<PhotoPreview
+								key={idx}
+								src={img}
+								onRemove={() => handleRemovePhoto(img)}
+							/>
 						))}
 					</div>
 				</div>
 
 				<form onSubmit={handleSaveHotel} className="space-y-4">
+					{/* Поля формы */}
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Название
@@ -104,10 +131,10 @@ export const HotelModal = ({
 							onChange={(e) =>
 								setNewHotel({ ...newHotel, name: e.target.value })
 							}
-							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none"
-							placeholder="Напр: Морской Бриз"
+							className="w-full border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-teal-500"
 						/>
 					</div>
+
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Город
@@ -116,12 +143,9 @@ export const HotelModal = ({
 							required
 							value={newHotel.cityId}
 							onChange={(e) =>
-								setNewHotel({
-									...newHotel,
-									cityId: e.target.value,
-								})
+								setNewHotel({ ...newHotel, cityId: e.target.value })
 							}
-							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none"
+							className="w-full border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-teal-500"
 						>
 							<option value="">Выберите город</option>
 							{cities.map((city) => (
@@ -131,24 +155,22 @@ export const HotelModal = ({
 							))}
 						</select>
 					</div>
+
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">
-							Минимальная цена (за ночь)
+							Мин. цена
 						</label>
 						<input
 							required
 							type="number"
 							value={newHotel.priceFrom}
 							onChange={(e) =>
-								setNewHotel({
-									...newHotel,
-									priceFrom: e.target.value,
-								})
+								setNewHotel({ ...newHotel, priceFrom: e.target.value })
 							}
-							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none"
-							placeholder="5000"
+							className="w-full border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-teal-500"
 						/>
 					</div>
+
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Описание
@@ -157,13 +179,9 @@ export const HotelModal = ({
 							required
 							value={newHotel.description}
 							onChange={(e) =>
-								setNewHotel({
-									...newHotel,
-									description: e.target.value,
-								})
+								setNewHotel({ ...newHotel, description: e.target.value })
 							}
-							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-teal-500 outline-none h-24"
-							placeholder="Коротко об отеле..."
+							className="w-full border-gray-200 rounded-xl p-3 border outline-none h-24 focus:ring-2 focus:ring-teal-500"
 						/>
 					</div>
 
