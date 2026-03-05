@@ -12,10 +12,10 @@ import {
 	selectBookingList,
 } from '../../selectors/bookingSelectors';
 import { selectCurrentUser } from '../../selectors';
-import type { Booking } from '../../store/reducers/bookingReducer';
 import { useAppSelector } from '../../store/hooks';
 import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 import { checkPermission } from '../../utils/permissions';
+import type { Booking } from '../../types/models';
 
 export const BookingsPage = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -29,20 +29,12 @@ export const BookingsPage = () => {
 		if (currentUser?._id) {
 			dispatch(fetchBookingsThunk(currentUser._id));
 		}
-		// const fetchId = currentUser?.role === 'admin' ? null : currentUser?._id;
-		// if (currentUser) {
-		// 	dispatch(fetchBookingsThunk(fetchId));
-		// }
 	}, [dispatch, currentUser?._id]);
 
 	const filterByRole = (bookings: Booking[], status: 'Подтверждено' | 'Отменено') => {
 		return bookings.filter((b) => {
 			const matchStatus = b.status === status;
 			if (!matchStatus) return false;
-
-			// if (currentUser?.role === 'admin') return true;
-			// if (currentUser?.role === 'manager') {
-			// 	return b.userId === currentUser._id || b.hotelOwnerId === currentUser._id;
 			return b.userId === currentUser?._id;
 		});
 	};

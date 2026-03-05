@@ -1,20 +1,6 @@
 import { Plus, X } from 'lucide-react';
-import type { Hotel, Room } from '../../../../store/reducers/hotelReducer';
-import { getFullImageUrl } from '../../../../utils/getFullImageUrl';
 import { PhotoPreview } from './component/PhotoPreview';
-
-interface RoomModalProps {
-	isRoomModalOpen: boolean;
-	setIsRoomModalOpen: (open: boolean) => void;
-	selectedHotel: Hotel | null;
-	handleAddRoom: (e: React.FormEvent) => Promise<void>;
-	newRoom: Omit<Room, '_id' | 'hotelId'> & { imageFile?: File };
-	setNewRoom: React.Dispatch<React.SetStateAction<any>>;
-	photoUrl: string;
-	setPhotoUrl: (url: string) => void;
-	isEditMode: boolean;
-	handleRemovePhoto: (type: 'hotel' | 'room', url: string) => void;
-}
+import type { RoomModalProps } from '../../../../types/components';
 
 export const RoomModal = ({
 	isRoomModalOpen,

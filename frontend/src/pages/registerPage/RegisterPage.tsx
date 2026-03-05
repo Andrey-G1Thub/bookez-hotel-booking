@@ -3,10 +3,8 @@ import { useMemo, useState } from 'react';
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
 import { PatternFormat } from 'react-number-format';
 import { Eye, EyeOff } from 'lucide-react';
-
 import * as yup from 'yup';
 import { registerThunk } from '../../store/actions/userActions';
 import type { AppDispatch } from '../../store';

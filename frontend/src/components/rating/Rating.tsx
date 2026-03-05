@@ -1,6 +1,4 @@
-interface RatingProps {
-	rating: number;
-}
+import type { RatingProps } from '../../types/models';
 
 export const Rating = ({ rating }: RatingProps) => (
 	<div className="flex items-center text-sm font-semibold text-yellow-500">

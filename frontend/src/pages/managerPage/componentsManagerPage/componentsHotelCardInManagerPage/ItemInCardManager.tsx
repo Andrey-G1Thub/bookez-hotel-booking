@@ -10,21 +10,8 @@ import {
 	Phone,
 	User,
 } from 'lucide-react';
-import type { Hotel, Room } from '../../../../store/reducers/hotelReducer';
-import type { Booking } from '../../../../store/reducers/bookingReducer';
-import type { User as UserType } from '../../../../store/reducers/userReducer';
 import { getFullImageUrl } from '../../../../utils/getFullImageUrl';
-
-interface EnrichedBooking extends Booking {
-	client?: UserType | null;
-}
-interface ItemInCardManagerProps {
-	hotel: Hotel;
-	allBookings: EnrichedBooking[];
-	handleDeleteRoom: (hotelId: string, roomId: string) => void;
-	handleEditRoomClick: (hotel: Hotel, room: Room) => void;
-	handleDeleteBooking: (bookingId: string) => void;
-}
+import type { ItemInCardManagerProps } from '../../../../types/components';
 
 export const ItemInCardManager = ({
 	hotel,

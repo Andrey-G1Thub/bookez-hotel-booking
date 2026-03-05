@@ -1,14 +1,15 @@
 import { Edit3, Trash2 } from 'lucide-react';
-import type { City, Hotel } from '../../../store/reducers/hotelReducer';
+import type { HotelCardInManagerPageProps } from '../../../types/models';
+// import type { City, Hotel } from '../../../store/reducers/hotelReducer';
 
-interface HotelCardInManagerPageProps {
-	hotel: Hotel;
-	cities: City[];
-	setSelectedHotel: (hotel: Hotel | null) => void;
-	handleDeleteHotel: (_id: string) => void;
-	handleEditHotelClick: (hotel: Hotel) => void;
-	handleOpenAddRoomModal: (hotel: Hotel) => void;
-}
+// export interface HotelCardInManagerPageProps {
+// 	hotel: Hotel;
+// 	cities: City[];
+// 	setSelectedHotel: (hotel: Hotel | null) => void;
+// 	handleDeleteHotel: (_id: string) => void;
+// 	handleEditHotelClick: (hotel: Hotel) => void;
+// 	handleOpenAddRoomModal: (hotel: Hotel) => void;
+// }
 
 export const HotelCardInManagerPage = ({
 	hotel,
@@ -33,7 +34,7 @@ export const HotelCardInManagerPage = ({
 				}}
 				className="text-sm bg-teal-50 text-teal-700 px-3 py-1 rounded-lg hover:bg-teal-100 transition"
 			>
-				+ Номер
+				Добавить Номер
 			</button>
 			<button
 				onClick={() => handleEditHotelClick(hotel)}

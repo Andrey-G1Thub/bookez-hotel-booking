@@ -1,12 +1,12 @@
-import type { Hotel } from '../store/reducers/hotelReducer';
+// Поля форм (HotelFormFields, RoomFormFields, RegisterData)
+
+import type { Hotel, Room } from './models';
 
 type HotelBase = Omit<
 	Hotel,
 	'id' | '_id' | 'ownerId' | 'rating' | 'reviewCount' | 'rooms' | 'cityId' | 'priceFrom'
 >;
-
 export interface HotelFormFields extends HotelBase {
-	// id?: number;
 	_id?: string;
 	cityId: string;
 	priceFrom: string | number;
@@ -14,4 +14,19 @@ export interface HotelFormFields extends HotelBase {
 	reviewCount?: number;
 	imageFile?: File;
 }
-// interface HotelFormFields { ... imageFile?: File }
+export interface RoomFormFields extends Omit<Room, '_id' | 'hotelId'> {
+	imageFile?: File;
+}
+export interface Credentials {
+	email: string;
+	password?: string;
+}
+export interface RegisterData extends Credentials {
+	name: string;
+	confirmPassword?: string;
+}
+export interface SearchFilters {
+	cityId: string | null;
+	checkIn: string;
+	checkOut: string;
+}

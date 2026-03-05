@@ -1,7 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage';
 import { HotelCard } from '../../components/index';
-
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppSelector } from '../../store/hooks';
 import {
@@ -18,7 +17,6 @@ export const CityDetailsPage = () => {
 
 	const allHotels = useAppSelector(selectAllHotels);
 	const cities = useAppSelector(selectCities);
-
 	const isLoading = useAppSelector(selectIsLoading);
 	// Сначала проверяем, загрузились ли данные вообще
 	if (isLoading) {

@@ -1,5 +1,7 @@
+import type { HotelActions, HotelState } from '../../types/store';
 import {
 	ADD_CITY_SUCCESS,
+	// ADD_CITY_SUCCESS,
 	ADD_HOTEL_SUCCESS,
 	DELETE_HOTEL_SUCCESS,
 	FETCH_HOTELS_START,
@@ -7,56 +9,8 @@ import {
 	SET_HOTELS,
 	UPDATE_HOTEL_ROOM_SUCCESS,
 	UPDATE_HOTEL_SUCCESS,
-	type HotelActions,
+	// type HotelActions,
 } from '../actions/hotelActions';
-
-export interface Room {
-	type: string;
-	capacity: number;
-	price: number;
-	amenities: string;
-	images: string[];
-	_id: string;
-	hotelId: string;
-}
-
-export interface Comments {
-	_id?: string;
-	userId: string;
-	userName: string;
-	text: string;
-	date: string;
-}
-
-export interface Hotel {
-	_id: string;
-	name: string;
-	cityId: string;
-	description: string;
-	image?: string;
-	priceFrom: number;
-	images?: string[];
-	ownerId: string;
-	rating: number;
-	reviewCount: number;
-	comments: Comments[];
-	rooms: Room[];
-}
-
-export interface City {
-	_id?: string;
-	name: string;
-	description: string;
-	isLoading: false;
-}
-
-// 2. Тип состояния
-interface HotelState {
-	allHotels: Hotel[];
-	cities: City[];
-	isLoading: boolean;
-	error: string | null;
-}
 
 const initialState: HotelState = {
 	allHotels: [],

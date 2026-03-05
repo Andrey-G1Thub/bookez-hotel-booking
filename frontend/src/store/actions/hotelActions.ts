@@ -1,10 +1,10 @@
-import { addCityThunk } from './cityActions';
 import type { Dispatch } from 'redux';
-import type { City, Comments, Hotel, Room } from '../reducers/hotelReducer';
+// import type { City, Comments, Hotel, Room } from '../reducers/hotelReducer';
 import type { RootState } from '..';
 import { apiFetch } from '../../utils/api';
-import type { text } from 'node:stream/consumers';
+
 import { checkPermission } from '../../utils/permissions';
+import type { City, Comments, Hotel, HotelActions, Room } from '../../types/models';
 
 export const SET_HOTELS = 'SET_HOTELS';
 export const SET_CITIES = 'SET_CITIES';
@@ -14,44 +14,6 @@ export const UPDATE_HOTEL_SUCCESS = 'UPDATE_HOTEL_SUCCESS';
 export const UPDATE_HOTEL_ROOM_SUCCESS = 'UPDATE_HOTEL_ROOM_SUCCESS';
 export const FETCH_HOTELS_START = 'FETCH_HOTELS_START';
 export const ADD_CITY_SUCCESS = 'ADD_CITY_SUCCESS';
-
-interface SetHotelsAction {
-	type: typeof SET_HOTELS;
-	payload: Hotel[];
-}
-interface SetCitiesAction {
-	type: typeof SET_CITIES;
-	payload: City[];
-}
-interface AddHotelAction {
-	type: typeof ADD_HOTEL_SUCCESS;
-	payload: Hotel;
-}
-interface DeleteHotelAction {
-	type: typeof DELETE_HOTEL_SUCCESS;
-	payload: string;
-}
-interface UpdateHotelAction {
-	type: typeof UPDATE_HOTEL_SUCCESS;
-	payload: Hotel;
-}
-interface UpdateHotelRoomAction {
-	type: typeof UPDATE_HOTEL_ROOM_SUCCESS;
-	payload: Hotel;
-}
-interface FetchHotelsStartAction {
-	type: typeof FETCH_HOTELS_START;
-}
-
-export type HotelActions =
-	| FetchHotelsStartAction
-	| SetHotelsAction
-	| SetCitiesAction
-	| AddHotelAction
-	| DeleteHotelAction
-	| UpdateHotelAction
-	| UpdateHotelRoomAction;
-// addCityThunk;/
 
 // Загрузка данных
 export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) => {

@@ -1,16 +1,6 @@
 import { ShieldAlert, Hotel } from 'lucide-react';
 import { ROLES } from '../../utils/permissions';
-// import { ROLES } from '../utils/permissions';
-
-export interface NavItem {
-	title: string;
-	path: string;
-	icon?: React.ReactNode;
-	roles?: string[];
-	className?: string;
-	onlyAuth?: boolean; // Флаг: показывать только залогиненным
-	hasSeparator?: boolean;
-}
+import type { NavItem } from '../../types/models';
 
 export const NAVIGATION_CONFIG: NavItem[] = [
 	{

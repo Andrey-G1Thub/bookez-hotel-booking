@@ -1,35 +1,14 @@
 import type { Dispatch } from 'redux';
-import type { Booking } from '../reducers/bookingReducer';
 import { apiFetch } from '../../utils/api';
 import { checkPermission } from '../../utils/permissions';
 import type { RootState } from '..';
+import type { Booking } from '../../types/models';
+import type { BookingActions } from '../../types/store';
 
 export const SET_BOOKINGS = 'SET_BOOKINGS' as const;
 export const ADD_BOOKING = 'ADD_BOOKING' as const;
 export const DELETE_BOOKING = 'DELETE_BOOKING' as const;
 export const SET_BOOKINGS_LOADING = 'SET_BOOKINGS_LOADING' as const;
-interface SetBookingsAction {
-	type: typeof SET_BOOKINGS;
-	payload: Booking[];
-}
-interface AddBookingAction {
-	type: typeof ADD_BOOKING;
-	payload: Booking;
-}
-interface DeleteBookingAction {
-	type: typeof DELETE_BOOKING;
-	payload: string;
-}
-interface SetLoadingAction {
-	type: typeof SET_BOOKINGS_LOADING;
-	payload: boolean;
-}
-
-export type BookingActions =
-	| SetBookingsAction
-	| AddBookingAction
-	| DeleteBookingAction
-	| SetLoadingAction;
 
 // GET - получение данных
 export const fetchBookingsThunk =

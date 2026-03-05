@@ -1,47 +1,15 @@
 import type { Dispatch } from 'redux';
 import { checkPermission, ROLES } from '../../utils/permissions';
-import type { User } from '../reducers/userReducer';
 import type { RootState } from '..';
 import { apiFetch } from '../../utils/api';
+import type { UserLimits } from '../../types/models';
+import type { Credentials, RegisterData } from '../../types/forms';
+import type { UserActions } from '../../types/store';
 
 export const SET_USER = 'SET_USER' as const;
 export const LOGOUT_USER = 'LOGOUT_USER' as const;
 export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS' as const;
 export const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS' as const;
-
-interface RegisterData extends Credentials {
-	name: string;
-	confirmPassword?: string;
-}
-interface SetUserAction {
-	type: typeof SET_USER;
-	payload: User;
-}
-interface LogoutUserAction {
-	type: typeof LOGOUT_USER;
-}
-interface FetchUsersAction {
-	type: typeof FETCH_USERS_SUCCESS;
-	payload: User[];
-}
-interface DeleteUserAction {
-	type: typeof DELETE_USER_SUCCESS;
-	payload: string;
-}
-interface Credentials {
-	email: string;
-	password?: string;
-}
-interface UserLimits {
-	maxHotels: number;
-	maxRooms: number;
-}
-
-export type UserActions =
-	| SetUserAction
-	| LogoutUserAction
-	| FetchUsersAction
-	| DeleteUserAction;
 
 export const registerThunk =
 	(userData: RegisterData) => async (dispatch: Dispatch<UserActions>) => {
@@ -100,7 +68,6 @@ export const logoutThunk = () => (dispatch: Dispatch<UserActions>) => {
 	localStorage.removeItem('bookez_token');
 	dispatch({ type: LOGOUT_USER });
 };
-// store/actions/userActions.js
 
 // userActions.js
 export const updateUserRoleThunk =

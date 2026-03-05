@@ -10,24 +10,8 @@ import { getMinDate } from '../../../utils/helpers';
 import { calculateNights } from '../../../utils/calculateNights';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Hotel, Room } from '../../../store/reducers/hotelReducer';
-import type { Booking } from '../../../store/reducers/bookingReducer';
 import { getFullImageUrl } from '../../../utils/getFullImageUrl';
-
-interface Props {
-	room: Room;
-	hotel: Hotel;
-	roomBookings: Booking[];
-	checkIn: string;
-	checkOut: string;
-	totalPrice: number;
-	agreement: boolean;
-	isPaying: boolean;
-	setCheckIn: (val: string) => void;
-	setCheckOut: (val: string) => void;
-	setAgreement: (val: boolean) => void;
-	handleBooking: (e: FormEvent<HTMLFormElement>) => void;
-}
+import type { BookingFormProps } from '../../../types/components';
 
 export const ComponentRoomBookingPage = ({
 	room,
@@ -42,7 +26,7 @@ export const ComponentRoomBookingPage = ({
 	agreement,
 	setAgreement,
 	isPaying,
-}: Props) => {
+}: BookingFormProps) => {
 	const navigate = useNavigate();
 	return (
 		<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

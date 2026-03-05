@@ -1,26 +1,5 @@
-import React from 'react';
 import { ClipboardList, Trash2 } from 'lucide-react';
-
-interface EnrichedBooking {
-	_id: string;
-	hotelId: string;
-	hotelName: string;
-	roomId: string;
-	price: number;
-	checkIn: string;
-	checkOut: string;
-	status: string;
-	client?: {
-		name: string;
-		phone: string;
-	} | null;
-}
-
-interface BookingListProps {
-	myBookings: EnrichedBooking[];
-	isAdmin: boolean;
-	handleDeleteBooking: (_id: string) => void;
-}
+import type { BookingListProps } from '../../../types/components';
 
 export const BookingList = ({
 	myBookings,

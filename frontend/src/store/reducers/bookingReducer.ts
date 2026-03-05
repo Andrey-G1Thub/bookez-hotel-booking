@@ -1,3 +1,4 @@
+import type { BookingState } from '../../types/models';
 import {
 	ADD_BOOKING,
 	DELETE_BOOKING,
@@ -5,25 +6,6 @@ import {
 	SET_BOOKINGS_LOADING,
 	type BookingActions,
 } from '../actions/bookingActions';
-
-export interface Booking {
-	hotelOwnerId: string;
-	_id?: string;
-	userId: string;
-	hotelId: string;
-	roomId: string;
-	hotelName: string;
-	roomType: string;
-	checkIn: string;
-	checkOut: string;
-	price: number;
-	status: 'Подтверждено' | 'Ожидание' | 'Отменено';
-}
-
-interface BookingState {
-	list: Booking[];
-	loading: boolean;
-}
 
 const initialState: BookingState = {
 	list: [],

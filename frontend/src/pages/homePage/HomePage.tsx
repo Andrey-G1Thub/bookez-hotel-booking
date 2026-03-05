@@ -10,12 +10,8 @@ import { selectBookingList } from '../../selectors/bookingSelectors';
 import { selectCurrentUser } from '../../selectors';
 import { addCityThunk } from '../../store/actions/cityActions';
 import { ROLES } from '../../utils/permissions';
+import type { SearchFilters } from '../../types/forms';
 
-interface SearchFilters {
-	cityId: string | null;
-	checkIn: string;
-	checkOut: string;
-}
 //  Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = () => {
 	const dispatch = useAppDispatch();
@@ -23,7 +19,6 @@ export const HomePage = () => {
 	const cities = useAppSelector(selectCities);
 
 	const currentUser = useAppSelector(selectCurrentUser);
-
 	const bookingsList = useAppSelector(selectBookingList); //
 
 	const [nameSearch, setNameSearch] = useState('');

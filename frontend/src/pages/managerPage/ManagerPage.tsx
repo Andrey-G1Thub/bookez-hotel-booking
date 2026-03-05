@@ -4,9 +4,9 @@ import { HotelCardInManagerPage } from './componentsManagerPage/HotelCardInManag
 import { ItemInCardManager } from './componentsManagerPage/componentsHotelCardInManagerPage/ItemInCardManager';
 import { HotelModal } from './componentsManagerPage/componentModalForm/HotelModal';
 import { RoomModal } from './componentsManagerPage/componentModalForm/RoomModal';
-import type { Hotel } from '../../store/reducers/hotelReducer';
 
 import { useManagerLogic } from './hooks/useManagerLogic';
+import type { Hotel } from '../../types/models';
 
 export const ManagerPage = () => {
 	const { state, actions } = useManagerLogic();

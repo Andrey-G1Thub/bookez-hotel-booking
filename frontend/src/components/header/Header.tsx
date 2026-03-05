@@ -1,5 +1,3 @@
-// - Компонент верхнего навигационного меню.
-
 import { LogOut, User } from 'lucide-react';
 import { useMemo } from 'react';
 import { logoutThunk } from '../../store/actions/userActions';
@@ -16,7 +14,7 @@ export const Header = () => {
 	const currentUser = useAppSelector(selectCurrentUser);
 
 	const navLinks = useMemo(() => {
-		// 1. Сначала фильтруем по правам доступа
+		//  Сначала фильтруем по правам доступа
 		const filtered = NAVIGATION_CONFIG.filter((link) => {
 			if (link.onlyAuth && !currentUser) return false;
 			if (link.roles) {
@@ -25,7 +23,7 @@ export const Header = () => {
 			return true;
 		});
 
-		// 2. Добавляем мета-данные (например, нужен ли разделитель)
+		// Добавляем мета-данные (например, нужен ли разделитель)
 		return filtered.map((link, index) => {
 			const isStaff = link.roles?.some((r) =>
 				[ROLES.ADMIN, ROLES.MANAGER].includes(r),

@@ -1,12 +1,6 @@
 import { X } from 'lucide-react';
 import { getFullImageUrl } from '../../../../../utils/getFullImageUrl';
-// import { getFullImageUrl } from '../../../../utils/getFullImageUrl';
-
-interface PhotoPreviewProps {
-	src: string | File;
-	onRemove: () => void;
-	isPrimary?: boolean;
-}
+import type { PhotoPreviewProps } from '../../../../../types/components';
 
 export const PhotoPreview = ({ src, onRemove, isPrimary }: PhotoPreviewProps) => {
 	// Определяем URL для отображения

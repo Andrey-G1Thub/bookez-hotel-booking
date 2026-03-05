@@ -1,20 +1,7 @@
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import type { City } from '../../../../store/reducers/hotelReducer';
-import type { HotelFormFields } from '../../../../types/forms';
-import { getFullImageUrl } from '../../../../utils/getFullImageUrl';
 import { PhotoPreview } from './component/PhotoPreview';
-
-interface HotelModalProps {
-	newHotel: HotelFormFields & { imageFile?: File };
-	setNewHotel: (value: React.SetStateAction<HotelFormFields>) => void;
-	cities: City[];
-	isModalOpen: boolean;
-	setIsModalOpen: (open: boolean) => void;
-	handleSaveHotel: (e: React.FormEvent) => void;
-	isEditMode: boolean;
-	handleRemovePhoto: (url: string) => void;
-}
+import type { HotelModalProps } from '../../../../types/components';
 
 export const HotelModal = ({
 	newHotel,

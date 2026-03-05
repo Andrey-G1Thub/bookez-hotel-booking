@@ -23,11 +23,11 @@ import {
 	selectCities,
 	selectIsLoading,
 } from '../../selectors/hotelSelectors';
-import type { Comments } from '../../store/reducers/hotelReducer';
+
 import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 import { checkPermission } from '../../utils/permissions';
 import { getFullImageUrl } from '../../utils/getFullImageUrl';
-// import { getFullImageUrl } from '../../utils/urlOrPhoto';
+import type { Comments } from '../../types/models';
 
 export const HotelDetailsPage = () => {
 	const { hotelId } = useParams<{ hotelId: string }>();

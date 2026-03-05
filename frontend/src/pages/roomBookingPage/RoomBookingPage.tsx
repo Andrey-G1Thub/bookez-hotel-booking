@@ -16,9 +16,8 @@ import { calculateNights } from '../../utils/calculateNights';
 import { ComponentRoomBookingPage } from './componentRoomBookingPage/ComponentRoomBookingPage';
 import { NAVIGATION_CONFIG } from '../../components/constants/navigation';
 import { checkDateOverlap } from '../../utils/dataHelpers';
-import type { Hotel, Room } from '../../store/reducers/hotelReducer';
-import type { Booking } from '../../store/reducers/bookingReducer';
 import { checkPermission } from '../../utils/permissions';
+import type { Booking, Hotel, Room } from '../../types/models';
 
 // Страница бронирования конкретного номера _/;
 export const RoomBookingPage = () => {

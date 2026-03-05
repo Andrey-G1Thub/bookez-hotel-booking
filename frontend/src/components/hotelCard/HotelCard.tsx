@@ -1,24 +1,14 @@
 import { ChevronRight, MessageSquare } from 'lucide-react';
 import { Rating } from '../rating/Rating';
 import { useNavigate } from 'react-router-dom';
-import type { Hotel } from '../../store/reducers/hotelReducer';
 import { SERVER_URL } from '../constants/serverUrl';
 import { useMemo } from 'react';
-
-interface HotelCardProps {
-	hotel: Hotel;
-}
+import type { HotelCardProps } from '../../types/components';
 
 export const HotelCard = ({ hotel }: HotelCardProps) => {
 	const navigate = useNavigate();
 
-	// Считаем количество отзывов динамически из массива comments
 	const reviewsCount = hotel.comments ? hotel.comments?.length : 0;
-
-	// const hotelImage =
-	// 	hotel.images && hotel.images.length > 0
-	// 		? hotel.images[0]
-	// 		: `https://placehold.co/400x250/E6F6F6/007C80?text=${encodeURIComponent(hotel.name)}`;
 
 	const hotelImage = useMemo(() => {
 		// 1. Если картинок нет вообще
@@ -32,12 +22,12 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
 
 		const firstImage = hotel.images[0];
 
-		// Если это уже полная ссылка (начинается с http или data:image)
+		// Если это уже полная ссылка
 		if (firstImage.startsWith('http') || firstImage.startsWith('data:')) {
 			return firstImage;
 		}
 
-		// Если это локальный путь с бэкенда (убеждаемся, что нет лишних слешей)
+		// Если это локальный путь с бэкенда
 		const cleanPath = firstImage.startsWith('/') ? firstImage : `/${firstImage}`;
 		return `${SERVER_URL}${cleanPath}`;
 	}, [hotel.images, hotel.name]);

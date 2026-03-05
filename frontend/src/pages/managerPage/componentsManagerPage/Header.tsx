@@ -1,14 +1,5 @@
 import { PlusCircle } from 'lucide-react';
-import type { User } from '../../../store/reducers/userReducer';
-import type { Hotel } from '../../../store/reducers/hotelReducer';
-
-interface DashboardHeaderProps {
-	isAdmin: boolean;
-	currentUser: User | null;
-	myHotels: Hotel[];
-	canAddHotel: boolean;
-	setIsModalOpen: (isOpen: boolean) => void;
-}
+import type { DashboardHeaderProps } from '../../../types/components';
 
 export const DashboardHeader = ({
 	isAdmin,

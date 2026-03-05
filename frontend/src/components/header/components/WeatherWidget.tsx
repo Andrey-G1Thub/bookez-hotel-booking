@@ -1,16 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CloudSun, MapPin } from 'lucide-react';
-
-interface WeatherResponse {
-	name: string;
-	main: {
-		temp: number;
-	};
-	weather: Array<{
-		description: string;
-		icon: string;
-	}>;
-}
+import type { WeatherResponse } from '../../../types/models';
 
 export const WeatherWidget = () => {
 	const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
