@@ -27,7 +27,9 @@ import {
 import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 import { checkPermission } from '../../utils/permissions';
 import { getFullImageUrl } from '../../utils/getFullImageUrl';
+import { RoomCard } from './components/RoomCard';
 import type { Comments } from '../../types/models';
+import { CommentsClient } from './components/commentsClient/CommentsCLient';
 
 export const HotelDetailsPage = () => {
 	const { hotelId } = useParams<{ hotelId: string }>();
@@ -142,63 +144,7 @@ export const HotelDetailsPage = () => {
 				</h2>
 				<div className="grid gap-6">
 					{rooms.length > 0 ? (
-						rooms.map((room) => (
-							<div
-								key={room._id}
-								className="bg-white rounded-xl shadow-md border overflow-hidden flex flex-col md:flex-row hover:shadow-xl transition-shadow"
-							>
-								<div className="md:w-1/3 h-52 md:h-auto bg-gray-200">
-									<img
-										src={getFullImageUrl(room.images?.[0])}
-										alt={room.type}
-										className="w-full h-full object-cover"
-										onError={(e) => {
-											e.currentTarget.src =
-												'https://placehold.co/400x300?text=No+Photo';
-										}}
-									/>
-								</div>
-								<div className="p-6 flex-1 flex flex-col justify-between">
-									<div>
-										<h3 className="text-2xl font-bold text-[#00a3a8] mb-2">
-											{room.type}
-										</h3>
-										<div className="space-y-2">
-											<p className="text-gray-600 flex items-center text-sm">
-												<User className="w-4 h-4 mr-2" />{' '}
-												Вместимость: {room.capacity} чел.
-											</p>
-											<p className="text-gray-500 text-sm">
-												<span className="font-semibold text-gray-700">
-													Удобства:
-												</span>{' '}
-												{room.amenities}
-											</p>
-										</div>
-									</div>
-									<div className="mt-6 flex items-center justify-between border-t pt-4">
-										<div>
-											<span className="text-3xl font-black text-gray-800">
-												{room.price} ₽
-											</span>
-											<span className="text-gray-500 text-sm ml-1">
-												/ ночь
-											</span>
-										</div>
-										<button
-											onClick={() =>
-												navigate(
-													`/room/${room.hotelId}/${room._id}`,
-												)
-											}
-											className="px-8 py-3 bg-[#00a3a8] text-white rounded-xl font-bold hover:bg-[#008c91] transition-colors shadow-lg shadow-teal-100"
-										>
-											Забронировать
-										</button>
-									</div>
-								</div>
-							</div>
-						))
+						rooms.map((room) => <RoomCard key={room._id} room={room} />)
 					) : (
 						<div className="p-10 text-center bg-gray-50 rounded-2xl border-2 border-dashed">
 							<p className="text-gray-500">
@@ -210,85 +156,14 @@ export const HotelDetailsPage = () => {
 			</section>
 
 			{/* Комментарии */}
-			<section id="comments" ref={commentsRef} className="pt-10 border-t">
-				<h2 className="text-3xl font-bold text-gray-800 mb-8 flex items-center">
-					<MessageSquare className="mr-3 text-[#00a3a8]" />
-					Отзывы гостей ({comments.length})
-				</h2>
-
-				{canAddComment ? (
-					<form
-						onSubmit={handleAddComment}
-						className="mb-12 bg-teal-50/30 p-8 rounded-2xl border border-teal-100"
-					>
-						<label className="block text-gray-800 font-bold mb-3">
-							Ваш отзыв
-						</label>
-						<div className="flex flex-col sm:flex-row gap-4">
-							<textarea
-								name="comment"
-								required
-								className="flex-1 p-4 border rounded-xl focus:ring-2 focus:ring-[#00a3a8] outline-none min-h-[100px] resize-none"
-								placeholder="Расскажите о вашем отдыхе..."
-							/>
-							<button
-								type="submit"
-								className="sm:self-end p-5 bg-[#00a3a8] text-white rounded-xl hover:bg-[#008c91] transition shadow-md"
-							>
-								<Send className="w-6 h-6" />
-							</button>
-						</div>
-					</form>
-				) : (
-					<div className="bg-amber-50 p-5 rounded-xl mb-10 text-amber-800 border border-amber-100 flex items-center">
-						<Star className="w-5 h-5 mr-3" />
-						Войдите в систему, чтобы оставить свой отзыв.
-					</div>
-				)}
-
-				<div className="space-y-6">
-					{comments.length > 0 ? (
-						[...comments].reverse().map((c) => (
-							<div
-								key={c._id}
-								className="bg-white p-6 rounded-2xl shadow-sm border hover:border-[#00a3a8]/30 transition-colors flex justify-between gap-4"
-							>
-								<div className="flex-1">
-									<div className="flex items-center gap-3 mb-3">
-										<div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center text-[#00a3a8] font-bold">
-											{c.userName?.[0]?.toUpperCase() || '?'}
-										</div>
-										<div>
-											<p className="font-bold text-gray-800 leading-none mb-1">
-												{c.userName}
-											</p>
-											<p className="text-xs text-gray-400">
-												{c.date}
-											</p>
-										</div>
-									</div>
-									<p className="text-gray-600 leading-relaxed">
-										{c.text}
-									</p>
-								</div>
-								{canDeleteComment(c) && (
-									<button
-										onClick={() => handleDeleteComment(c._id)}
-										className="text-gray-300 hover:text-red-500 transition-colors self-start p-2"
-										title="Удалить отзыв"
-									>
-										<Trash2 className="w-5 h-5" />
-									</button>
-								)}
-							</div>
-						))
-					) : (
-						<p className="text-center text-gray-400 py-10 italic">
-							Здесь пока пусто. Станьте первым, кто напишет отзыв!
-						</p>
-					)}
-				</div>
-			</section>
+			<CommentsClient
+				commentsRef={commentsRef}
+				comments={comments}
+				canAddComment={canAddComment}
+				handleAddComment={handleAddComment}
+				canDeleteComment={canDeleteComment}
+				handleDeleteComment={handleDeleteComment}
+			/>
 
 			<button
 				onClick={() => navigate(-1)}

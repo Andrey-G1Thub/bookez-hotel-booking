@@ -1,6 +1,6 @@
 import { Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import type { NotFoundPageProps } from '../../types/models';
+import type { NotFoundPageProps } from '../../types/components';
 
 export const NotFoundPage = ({ message = 'Маршрут не найден.' }: NotFoundPageProps) => {
 	const navigate = useNavigate();

@@ -21,7 +21,7 @@ export const BookingList = ({
 					>
 						{/* КНОПКА УДАЛЕНИЯ БРОНИ (Видна всем менеджерам/админам в этой панели) */}
 						<button
-							onClick={() => handleDeleteBooking(book._id)}
+							onClick={() => book._id && handleDeleteBooking(book._id)}
 							className="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 transition-colors"
 							title="Удалить бронирование"
 						>

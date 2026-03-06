@@ -9,6 +9,7 @@ import {
 	selectIsLoading,
 } from '../../selectors/hotelSelectors';
 import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
+import { useMemo } from 'react';
 
 export const CityDetailsPage = () => {
 	const navigate = useNavigate();
@@ -32,7 +33,10 @@ export const CityDetailsPage = () => {
 
 	const city = cities.find((c) => c._id === cityId);
 
-	const filteredHotels = allHotels.filter((hotel) => hotel.cityId === cityId);
+	const filteredHotels = useMemo(
+		() => allHotels.filter((hotel) => hotel.cityId === cityId),
+		[allHotels],
+	);
 
 	if (!city) return <NotFoundPage message="Город не найден." />;
 

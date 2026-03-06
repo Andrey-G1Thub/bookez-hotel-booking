@@ -7,6 +7,11 @@ export const PhotoPreview = ({ src, onRemove, isPrimary }: PhotoPreviewProps) =>
 	const displayUrl =
 		typeof src === 'string' ? getFullImageUrl(src) : URL.createObjectURL(src);
 
+	const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		onRemove();
+	};
+
 	return (
 		<div className={`relative w-20 h-20 group`}>
 			<img
@@ -21,10 +26,7 @@ export const PhotoPreview = ({ src, onRemove, isPrimary }: PhotoPreviewProps) =>
 			/>
 			<button
 				type="button"
-				onClick={(e) => {
-					e.preventDefault();
-					onRemove();
-				}}
+				onClick={handleRemove}
 				className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1
                            shadow-md hover:bg-red-600 transition-transform scale-90
                            group-hover:scale-110"

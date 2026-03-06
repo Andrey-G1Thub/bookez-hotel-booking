@@ -38,7 +38,7 @@ export const ManagerPage = () => {
 								hotel={hotel}
 								cities={state.cities}
 								handleOpenAddRoomModal={actions.handleOpenAddRoomModal}
-								setSelectedHotel={state.setSelectedHotel}
+								setSelectedHotel={actions.setSelectedHotel}
 								handleDeleteHotel={actions.handleDeleteHotel}
 								handleEditHotelClick={actions.handleEditHotelClick}
 							/>
@@ -59,15 +59,13 @@ export const ManagerPage = () => {
 
 			<HotelModal
 				newHotel={state.newHotel}
-				setNewHotel={state.setNewHotel}
+				setNewHotel={actions.setNewHotel}
 				cities={state.cities}
 				isModalOpen={state.isModalOpen}
 				setIsModalOpen={actions.setIsModalOpen}
 				handleSaveHotel={actions.handleSaveHotel}
 				isEditMode={state.isEditMode}
 				handleRemovePhoto={(url) => actions.handleRemovePhoto('hotel', url)}
-				// setHotelPhotoUrl={state.setHotelPhotoUrl}
-				// hotelPhotoUrl={state.hotelPhotoUrl}
 			/>
 			{/* Модалка добавления номера */}
 
@@ -77,12 +75,11 @@ export const ManagerPage = () => {
 				selectedHotel={state.selectedHotel}
 				handleAddRoom={actions.handleAddRoom}
 				newRoom={state.newRoom}
-				setNewRoom={state.setNewRoom}
+				setNewRoom={actions.setNewRoom}
 				photoUrl={state.photoUrl}
-				setPhotoUrl={state.setPhotoUrl}
+				setPhotoUrl={actions.setPhotoUrl}
 				handleRemovePhoto={actions.handleRemovePhoto}
 				isEditMode={state.isEditMode}
-				// handleOpenCreateModal={actions.handleOpenCreateModal}
 			/>
 		</div>
 	);

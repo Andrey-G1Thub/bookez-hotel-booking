@@ -1,5 +1,5 @@
 import { Plus, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { PhotoPreview } from './component/PhotoPreview';
 import type { HotelModalProps } from '../../../../types/components';
 
@@ -25,6 +25,18 @@ export const HotelModal = ({
 		}));
 		setHotelPhotoUrl('');
 	};
+	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			setNewHotel({ ...newHotel, imageFile: file });
+		}
+	};
+
+	const removeLocalFile = () => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { imageFile, ...rest } = newHotel;
+		setNewHotel(rest);
+	};
 
 	return (
 		<div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -48,12 +60,7 @@ export const HotelModal = ({
 						<input
 							type="file"
 							accept="image/*"
-							onChange={(e) => {
-								const file = e.target.files?.[0];
-								if (file) {
-									setNewHotel({ ...newHotel, imageFile: file });
-								}
-							}}
+							onChange={handleFileChange}
 							className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
 						/>
 					</div>
@@ -87,10 +94,7 @@ export const HotelModal = ({
 							<PhotoPreview
 								src={newHotel.imageFile}
 								isPrimary={true}
-								onRemove={() => {
-									const { imageFile, ...rest } = newHotel;
-									setNewHotel(rest);
-								}}
+								onRemove={removeLocalFile}
 							/>
 						)}
 

@@ -1,6 +1,7 @@
 import { Plus, X } from 'lucide-react';
 import { PhotoPreview } from './component/PhotoPreview';
 import type { RoomModalProps } from '../../../../types/components';
+import type { ChangeEvent } from 'react';
 
 export const RoomModal = ({
 	isRoomModalOpen,
@@ -23,6 +24,24 @@ export const RoomModal = ({
 			images: [...newRoom.images, photoUrl],
 		});
 		setPhotoUrl('');
+	};
+	const handlNewRoomFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			setNewRoom({ ...newRoom, imageFile: file });
+		}
+	};
+	const handlRemoveImageFile = () => {
+		const { imageFile, ...rest } = newRoom;
+		setNewRoom(rest);
+	};
+
+	const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		const { name, value } = e.target;
+		setNewRoom({
+			...newRoom,
+			[name]: name === 'capacity' ? Number(value) : value,
+		});
 	};
 
 	return (
@@ -54,12 +73,7 @@ export const RoomModal = ({
 						<input
 							type="file"
 							accept="image/*"
-							onChange={(e) => {
-								const file = e.target.files?.[0];
-								if (file) {
-									setNewRoom({ ...newRoom, imageFile: file });
-								}
-							}}
+							onChange={handlNewRoomFileChange}
 							className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition"
 						/>
 					</div>
@@ -94,10 +108,7 @@ export const RoomModal = ({
 							<PhotoPreview
 								src={newRoom.imageFile}
 								isPrimary={true}
-								onRemove={() => {
-									const { imageFile, ...rest } = newRoom;
-									setNewRoom(rest);
-								}}
+								onRemove={handlRemoveImageFile}
 							/>
 						)}
 
@@ -121,9 +132,7 @@ export const RoomModal = ({
 							required
 							type="text"
 							value={newRoom.type}
-							onChange={(e) =>
-								setNewRoom({ ...newRoom, type: e.target.value })
-							}
+							onChange={handleChange}
 							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-blue-500 outline-none"
 							placeholder="Напр: Люкс, Стандарт"
 						/>
@@ -139,12 +148,7 @@ export const RoomModal = ({
 								type="number"
 								min="1"
 								value={newRoom.capacity}
-								onChange={(e) =>
-									setNewRoom({
-										...newRoom,
-										capacity: Number(e.target.value),
-									})
-								}
+								onChange={handleChange}
 								className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-blue-500 outline-none"
 							/>
 						</div>
@@ -156,9 +160,7 @@ export const RoomModal = ({
 								required
 								type="number"
 								value={newRoom.price}
-								onChange={(e) =>
-									setNewRoom({ ...newRoom, price: e.target.value })
-								}
+								onChange={handleChange}
 								className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-blue-500 outline-none"
 								placeholder="3000"
 							/>
@@ -172,9 +174,7 @@ export const RoomModal = ({
 						<input
 							type="text"
 							value={newRoom.amenities}
-							onChange={(e) =>
-								setNewRoom({ ...newRoom, amenities: e.target.value })
-							}
+							onChange={handleChange}
 							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-blue-500 outline-none"
 							placeholder="WiFi, Кондиционер, Завтрак"
 						/>

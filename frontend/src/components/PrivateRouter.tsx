@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../store/hooks';
 import { selectCurrentUser } from '../selectors';
-import type { PrivateRouteProps } from '../types/models';
+import type { PrivateRouteProps } from '../types/components';
 
 export const PrivateRoute = ({ children, roles }: PrivateRouteProps) => {
 	const currentUser = useAppSelector(selectCurrentUser);

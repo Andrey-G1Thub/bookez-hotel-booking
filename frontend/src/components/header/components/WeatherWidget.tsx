@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CloudSun, MapPin } from 'lucide-react';
-import type { WeatherResponse } from '../../../types/models';
+import type { WeatherResponse } from '../../../types/components';
+import { WeatherSkeleton } from '../../componentsLoading/WeatherSkeleton';
 
 export const WeatherWidget = () => {
 	const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
@@ -22,35 +23,34 @@ export const WeatherWidget = () => {
 	}, []);
 
 	if (loading) {
-		return (
-			<div className="hidden lg:flex items-center gap-3 px-4 py-1.5 bg-gray-50 rounded-2xl border border-gray-100 animate-pulse">
-				<div className="w-12 h-8 bg-gray-200 rounded-lg"></div>
-				<div className="w-16 h-8 bg-gray-200 rounded-lg"></div>
-			</div>
-		);
+		return <WeatherSkeleton />;
 	}
-
 	if (!weatherData || !weatherData.main) return null;
 
-	const temp = Math.round(weatherData.main.temp);
-	const description = weatherData.weather?.[0]?.description || 'Нет данных';
-	const cityName = weatherData.name;
+	const displayData = {
+		temp: Math.round(weatherData.main.temp),
+		description: weatherData.weather?.[0]?.description || 'Нет данных',
+		cityName: weatherData.name,
+		date: new Date().toLocaleString('ru', { day: 'numeric', month: 'short' }),
+	};
 
 	return (
 		<div className="hidden lg:flex items-center gap-3 px-4 py-1.5 bg-blue-50/50 rounded-2xl border border-blue-100/50">
 			<div className="flex flex-col items-end">
 				<span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1">
-					<MapPin size={10} /> {cityName}
+					<MapPin size={10} /> {displayData.cityName}
 				</span>
-				<span className="text-sm font-extrabold text-blue-600">{temp}°C</span>
+				<span className="text-sm font-extrabold text-blue-600">
+					{displayData.temp}°C
+				</span>
 			</div>
 			<div className="h-8 w-[1px] bg-blue-200/50"></div>
 			<div className="flex flex-col">
 				<span className="text-[10px] font-medium text-blue-500 capitalize">
-					{description}
+					{displayData.description}
 				</span>
 				<span className="text-[10px] text-blue-400 font-medium">
-					{new Date().toLocaleString('ru', { day: 'numeric', month: 'short' })}
+					{displayData.date}
 				</span>
 			</div>
 			<CloudSun className="text-blue-500 ml-1" size={20} />

@@ -10,7 +10,6 @@ import type { AppDispatch } from '../../store';
 import { selectCurrentUser, selectUsersList } from '../../selectors';
 import { useAppSelector } from '../../store/hooks';
 import type { User, UserLimits } from '../../types/models';
-// import type { User, UserLimits } from '../../store/reducers/userReducer';
 
 export const AdminPage = () => {
 	const dispatch = useDispatch<AppDispatch>();

@@ -1,6 +1,7 @@
 import { updateHotelRoomsThunk } from '../../../../store/actions/hotelActions';
 import type { AppDispatch } from '../../../../store';
 import type { Hotel } from '../../../../types/models';
+import type { UseRoomActionsDeps } from '../../../../types/hooks';
 
 export const useRoomActions = (
 	dispatch: AppDispatch,
@@ -13,10 +14,10 @@ export const useRoomActions = (
 		modals,
 		setModals,
 		filteredBookings,
-	}: any,
+	}: UseRoomActionsDeps,
 ) => {
 	const handleDeleteRoom = async (hotelId: string, roomId: string) => {
-		const isRoomBooked = filteredBookings.some((b: any) => b.roomId === roomId);
+		const isRoomBooked = filteredBookings.some((b) => b.roomId === roomId);
 		if (isRoomBooked) {
 			alert('Нельзя удалить номер, на который есть активные бронирования!');
 			return;

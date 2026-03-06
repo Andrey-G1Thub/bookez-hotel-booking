@@ -1,6 +1,6 @@
 import type { FormEvent, JSX } from 'react';
 import type { HotelFormFields } from './forms';
-import type { Booking, City, Hotel, Room, User } from './models';
+import type { Booking, City, Comments, Hotel, Room, User } from './models';
 
 // Пропсы компонентов
 export interface EnrichedBooking extends Booking {
@@ -103,4 +103,56 @@ export interface WeatherResponse {
 		description: string;
 		icon: string;
 	}>;
+}
+export interface LoadingSpinnerProps {
+	message?: string;
+}
+export interface BookingCardProps {
+	booking: Booking;
+	variant: 'active' | 'canceled';
+	actionButton?: React.ReactNode;
+}
+export interface CityModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+}
+export interface RoomCardProps {
+	room: Room;
+}
+export interface CommentFormProps {
+	onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}
+export interface CommentItemProps {
+	comment: Comments;
+	canDelete: boolean;
+	onDelete: (id: string | undefined) => void;
+}
+export interface CommentsClientProps {
+	commentsRef: React.RefObject<HTMLDivElement | null>;
+	comments: Comments[];
+	canAddComment: boolean;
+	handleAddComment: (e: React.FormEvent<HTMLFormElement>) => void;
+	canDeleteComment: (comment: Comments) => boolean;
+	handleDeleteComment: (commentId: string | undefined) => void;
+}
+export interface RoomItemProps {
+	room: Room;
+	hotel: Hotel;
+	bookings: EnrichedBooking[];
+	onEdit: (hotel: Hotel, room: Room) => void;
+	onDeleteRoom: (hotelId: string, roomId: string) => void;
+	onDeleteBooking: (bookingId: string) => void;
+}
+export interface BookingFormChildProps {
+	room: Room;
+	handleBooking: (e: FormEvent<HTMLFormElement>) => void;
+	setCheckIn: (date: string) => void;
+	checkIn: string;
+	setCheckOut: (date: string) => void;
+	checkOut: string;
+	totalPrice: number;
+	calculateNights: (start: string, end: string) => number;
+	agreement: boolean;
+	setAgreement: (val: boolean) => void;
+	isPaying: boolean;
 }

@@ -1,4 +1,4 @@
-// Поля форм (HotelFormFields, RoomFormFields, RegisterData)
+// Поля форм (HotelFormFields, RoomFormFields, RsterData)egi forms.ts
 
 import type { Hotel, Room } from './models';
 

@@ -78,3 +78,30 @@ export interface ManagerLogicReturn {
 		handleRemovePhoto: (type: 'hotel' | 'room', urlToRemove: string) => Promise<void>;
 	};
 }
+export interface UseHotelActionsDeps {
+	newHotel: HotelFormFields;
+	isEditMode: boolean;
+	editingHotelId: string | null;
+	currentUser: User | null;
+	allHotels: Hotel[];
+	setIsModalOpen: (open: boolean) => void;
+	filteredBookings: EnrichedBooking[];
+}
+export interface UseRoomActionsDeps {
+	allHotels: Hotel[];
+	newRoom: RoomFormFields & { imageFile?: File };
+	resetRoom: () => void;
+	selectedHotel: Hotel | null;
+	editing: {
+		editingRoomId: string | null;
+		setEditingRoomId: (id: string | null) => void;
+	};
+	modals: {
+		isEditMode: boolean;
+		isRoomModalOpen: boolean;
+	};
+	setModals: {
+		setIsRoomModalOpen: (val: boolean) => void;
+	};
+	filteredBookings: EnrichedBooking[];
+}

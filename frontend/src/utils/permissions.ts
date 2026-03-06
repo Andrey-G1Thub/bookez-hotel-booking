@@ -1,5 +1,4 @@
-import type { Hotel } from '../store/reducers/hotelReducer';
-import type { User } from '../store/reducers/userReducer';
+import type { User } from '../types/models';
 
 export const ROLES = {
 	ADMIN: 'admin',

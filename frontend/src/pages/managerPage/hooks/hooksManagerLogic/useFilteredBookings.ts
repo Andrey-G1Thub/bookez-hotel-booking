@@ -1,8 +1,15 @@
 // hooks/useBookingEnrichment.ts
 import { useMemo } from 'react';
 import { ROLES } from '../../../../utils/permissions';
+import type { Booking, Hotel, User } from '../../../../types/models';
+import type { EnrichedBooking } from '../../../../types/components';
 
-export const useFilteredBookings = (allBookings, allHotels, allUsers, currentUser) => {
+export const useFilteredBookings = (
+	allBookings: Booking[],
+	allHotels: Hotel[],
+	allUsers: User[],
+	currentUser: User | null,
+): EnrichedBooking[] => {
 	const isAdmin = currentUser?.role === ROLES.ADMIN;
 
 	return useMemo(() => {

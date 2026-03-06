@@ -111,11 +111,6 @@ export const RoomBookingPage = () => {
 			alert('Пожалуйста, подтвердите согласие с условиями оферты.');
 			return;
 		}
-
-		// const formData = new FormData(e.currentTarget);
-		// const checkIn = formData.get('checkIn') as string;
-		// const checkOut = formData.get('checkOut') as string;
-
 		const overlapResult = checkDateOverlap(checkIn, checkOut, roomBookings);
 
 		if (overlapResult.overlap) {

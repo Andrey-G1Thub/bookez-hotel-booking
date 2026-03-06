@@ -11,9 +11,8 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
 	const reviewsCount = hotel.comments ? hotel.comments?.length : 0;
 
 	const hotelImage = useMemo(() => {
-		// 1. Если картинок нет вообще
+		// Если картинок нет вообще
 		if (!hotel.images || hotel.images.length === 0 || !hotel.images[0]) {
-			// Ограничим текст только названием (без лишних данных) или просто напишем "No Photo"
 			const placeholderText = hotel.name
 				? encodeURIComponent(hotel.name.substring(0, 10))
 				: 'No+Photo';

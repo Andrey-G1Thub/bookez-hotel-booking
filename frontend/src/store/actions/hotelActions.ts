@@ -4,7 +4,8 @@ import type { RootState } from '..';
 import { apiFetch } from '../../utils/api';
 
 import { checkPermission } from '../../utils/permissions';
-import type { City, Comments, Hotel, HotelActions, Room } from '../../types/models';
+import type { City, Comments, Hotel, Room } from '../../types/models';
+import type { HotelActions } from '../../types/store';
 
 export const SET_HOTELS = 'SET_HOTELS';
 export const SET_CITIES = 'SET_CITIES';

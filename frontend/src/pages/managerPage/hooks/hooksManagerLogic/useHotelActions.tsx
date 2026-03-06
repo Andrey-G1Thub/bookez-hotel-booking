@@ -1,13 +1,15 @@
 // hooks/useHotelActions.ts
 
+import type { AppDispatch } from '../../../../store';
 import {
 	deleteHotelThunk,
 	updateHotelThunk,
 	addHotelThunk,
 } from '../../../../store/actions/hotelActions';
+import type { UseHotelActionsDeps } from '../../../../types/hooks';
 
 export const useHotelActions = (
-	dispatch,
+	dispatch: AppDispatch,
 	{
 		newHotel,
 		isEditMode,
@@ -16,7 +18,7 @@ export const useHotelActions = (
 		allHotels,
 		setIsModalOpen,
 		filteredBookings,
-	},
+	}: UseHotelActionsDeps,
 ) => {
 	const handleDeleteHotel = async (_id: string) => {
 		const hasBookings = filteredBookings.some((b) => b.hotelId === _id);
@@ -35,7 +37,7 @@ export const useHotelActions = (
 		formData.append('description', newHotel.description || '');
 		formData.append('cityId', newHotel.cityId);
 		formData.append('priceFrom', String(newHotel.priceFrom));
-		if (newHotel.images?.length > 0)
+		if (newHotel.images && newHotel.images?.length > 0)
 			formData.append('images', JSON.stringify(newHotel.images));
 
 		const currentOwnerId =

@@ -8,9 +8,9 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectAllHotels, selectCities } from '../../selectors/hotelSelectors';
 import { selectBookingList } from '../../selectors/bookingSelectors';
 import { selectCurrentUser } from '../../selectors';
-import { addCityThunk } from '../../store/actions/cityActions';
 import { ROLES } from '../../utils/permissions';
 import type { SearchFilters } from '../../types/forms';
+import { CityModal } from './component/cityModal';
 
 //  Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = () => {
@@ -31,7 +31,6 @@ export const HomePage = () => {
 	});
 	const [isLoading, setIsLoading] = useState(true);
 	const [isCityModalOpen, setIsCityModalOpen] = useState(false);
-	const [newCityData, setNewCityData] = useState({ name: '', description: '' });
 
 	const isAdmin = currentUser?.role === ROLES.ADMIN;
 
@@ -61,48 +60,39 @@ export const HomePage = () => {
 		});
 	};
 
-	// ГЛАВНАЯ ЛОГИКА ФИЛЬТРАЦИИ И СОРТИРОВКИ
 	const filteredAndSortedHotels = useMemo(() => {
-		let result = [...allHotels];
+		// быстрые фильтры (город, название)
+		let result = allHotels.filter((h) => {
+			const matchCity = !searchFilters.cityId || h.cityId === searchFilters.cityId;
+			const matchName =
+				!nameSearch || h.name.toLowerCase().includes(nameSearch.toLowerCase());
+			return matchCity && matchName;
+		});
 
-		// 1. Фильтр по городу
-		if (searchFilters.cityId) {
-			result = result.filter((h) => h.cityId === searchFilters.cityId);
-		}
-
-		// 2. Поиск по названию
-		if (nameSearch) {
-			result = result.filter((h) =>
-				h.name.toLowerCase().includes(nameSearch.toLowerCase()),
-			);
-		}
-
-		// 3. Фильтр по датам (теперь комнаты берем из объекта отеля h.rooms)
+		// фильтр по датам
 		if (searchFilters.checkIn && searchFilters.checkOut) {
 			const userStart = new Date(searchFilters.checkIn);
 			const userEnd = new Date(searchFilters.checkOut);
 
-			result = result.filter((hotel) => {
-				if (!hotel.rooms) return false;
-				return hotel.rooms.some((room) => {
-					const roomBookings = (bookingsList || []).filter(
-						(b) => b.roomId === room._id,
-					);
+			result = result.filter((hotel) =>
+				hotel.rooms?.some((room) => {
+					const roomBookings =
+						bookingsList?.filter((b) => b.roomId === room._id) || [];
 					return !roomBookings.some((b) => {
 						const bStart = new Date(b.checkIn);
 						const bEnd = new Date(b.checkOut);
 						return userStart < bEnd && userEnd > bStart;
 					});
-				});
-			});
+				}),
+			);
 		}
 
-		// 4. Сортировка
-		result.sort((a, b) => {
-			if (sortBy === 'price') return Number(a.priceFrom) - Number(b.priceFrom);
-			return (b.rating || 0) - (a.rating || 0);
-		});
-		return result;
+		// Сортировка
+		return result.sort((a, b) =>
+			sortBy === 'price'
+				? Number(a.priceFrom) - Number(b.priceFrom)
+				: (b.rating || 0) - (a.rating || 0),
+		);
 	}, [allHotels, searchFilters, nameSearch, sortBy, bookingsList]);
 
 	const hotelsPerPage = 9;
@@ -113,13 +103,16 @@ export const HomePage = () => {
 	);
 	if (isLoading) return <LoadingSpinner />;
 
-	const handleAddCity = async (e: React.FormEvent) => {
-		e.preventDefault();
-		const success = await dispatch(addCityThunk(newCityData));
-		if (success) {
-			setIsCityModalOpen(false);
-			setNewCityData({ name: '', description: '' });
+	const onCitySelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
+		const { value } = e.target;
+
+		if (value === 'ADD_NEW_CITY_ACTION') {
+			setIsCityModalOpen(true);
+			e.target.value = '';
+			return;
 		}
+
+		handleCityChange(e);
 	};
 
 	return (
@@ -136,36 +129,9 @@ export const HomePage = () => {
 						onSubmit={handleSearch}
 						className="bg-white p-4 md:p-6 rounded-xl card-shadow flex flex-col md:flex-row gap-3"
 					>
-						{/* ПОЛЕ ВЫБОРА ГОРОДА (ВЫПАДАЮЩИЙ СПИСОК) */}
-						{/* <select
-							name="city"
-							onChange={handleCityChange}
-							className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 accent-text focus:accent-border bg-white"
-							defaultValue=""
-							required
-						>
-							<option value="" disabled>
-								Выберите город
-							</option>
-							{cities.map((city) => (
-								// Используем имя города в качестве значения
-								<option key={city._id} value={city.name}>
-									{city.name}
-								</option>
-							))}
-						</select>
-				     */}
-
 						<select
 							name="city"
-							onChange={(e) => {
-								if (e.target.value === 'ADD_NEW_CITY_ACTION') {
-									setIsCityModalOpen(true);
-									e.target.value = ''; // Сбрасываем выбор
-									return;
-								}
-								handleCityChange(e);
-							}}
+							onChange={onCitySelectChange}
 							className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 bg-white"
 							defaultValue=""
 							required
@@ -211,55 +177,6 @@ export const HomePage = () => {
 							<Zap className="w-5 h-5 inline mr-1 -mt-1" /> Найти
 						</button>
 					</form>
-					{/* ПРОСТАЯ МОДАЛКА  */}
-					{isCityModalOpen && (
-						<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
-							<div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl">
-								<h2 className="text-xl font-bold mb-4">Новый город</h2>
-								<form onSubmit={handleAddCity} className="space-y-4">
-									<input
-										className="w-full p-2 border rounded"
-										placeholder="Название города"
-										value={newCityData.name}
-										onChange={(e) =>
-											setNewCityData({
-												...newCityData,
-												name: e.target.value,
-											})
-										}
-										required
-									/>
-									<textarea
-										className="w-full p-2 border rounded"
-										placeholder="Описание"
-										value={newCityData.description}
-										onChange={(e) =>
-											setNewCityData({
-												...newCityData,
-												description: e.target.value,
-											})
-										}
-										required
-									/>
-									<div className="flex gap-2">
-										<button
-											type="submit"
-											className="flex-grow bg-teal-600 text-white p-2 rounded"
-										>
-											Сохранить
-										</button>
-										<button
-											type="button"
-											onClick={() => setIsCityModalOpen(false)}
-											className="flex-grow bg-gray-200 p-2 rounded"
-										>
-											Отмена
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					)}
 				</div>
 				{/* </div> */}
 			</div>
@@ -316,6 +233,11 @@ export const HomePage = () => {
 					</div>
 				)}
 			</div>
+			{/* МОДАЛКА  */}
+			<CityModal
+				isOpen={isCityModalOpen}
+				onClose={() => setIsCityModalOpen(false)}
+			/>
 		</main>
 	);
 };

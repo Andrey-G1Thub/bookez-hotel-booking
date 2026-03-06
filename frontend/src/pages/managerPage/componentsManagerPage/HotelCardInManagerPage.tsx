@@ -1,15 +1,5 @@
 import { Edit3, Trash2 } from 'lucide-react';
-import type { HotelCardInManagerPageProps } from '../../../types/models';
-// import type { City, Hotel } from '../../../store/reducers/hotelReducer';
-
-// export interface HotelCardInManagerPageProps {
-// 	hotel: Hotel;
-// 	cities: City[];
-// 	setSelectedHotel: (hotel: Hotel | null) => void;
-// 	handleDeleteHotel: (_id: string) => void;
-// 	handleEditHotelClick: (hotel: Hotel) => void;
-// 	handleOpenAddRoomModal: (hotel: Hotel) => void;
-// }
+import type { HotelCardInManagerPageProps } from '../../../types/components';
 
 export const HotelCardInManagerPage = ({
 	hotel,

@@ -1,6 +1,4 @@
-interface LoadingSpinnerProps {
-	message?: string;
-}
+import type { LoadingSpinnerProps } from '../../types/components';
 
 export const LoadingSpinner = ({
 	message = 'Загрузка данных...',

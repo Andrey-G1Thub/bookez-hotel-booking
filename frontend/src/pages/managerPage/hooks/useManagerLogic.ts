@@ -1,25 +1,17 @@
 import { useState, useMemo, useEffect } from 'react';
-
 import { selectBookingList } from '../../../selectors/bookingSelectors';
 import { selectCurrentUser, selectUsersList } from '../../../selectors';
-import {
-	deleteBookingThunk,
-	fetchBookingsThunk,
-} from '../../../store/actions/bookingActions';
+import { fetchBookingsThunk } from '../../../store/actions/bookingActions';
 import { fetchAllUsersThunk } from '../../../store/actions/userActions';
-// import type { Hotel, Room } from '../../../store/reducers/hotelReducer';
 import type { AppDispatch } from '../../../store';
 import { useDispatch } from 'react-redux';
 import { selectAllHotels, selectCities } from '../../../selectors/hotelSelectors';
 import { useAppSelector } from '../../../store/hooks';
 import { ROLES } from '../../../utils/permissions';
 import {
-	addHotelThunk,
-	deleteHotelThunk,
 	deletePhotoThunk,
 	fetchCitiesThunk,
 	fetchHotelsThunk,
-	updateHotelRoomsThunk,
 	updateHotelThunk,
 } from '../../../store/actions/hotelActions';
 import { useManagerModals } from './hooksManagerLogic/useManagerModals';
@@ -169,7 +161,10 @@ export const useManagerLogic = (): ManagerLogicReturn => {
 		setModals.setIsModalOpen(true);
 	};
 
-	const handleRemovePhoto = async (type: 'hotel' | 'room', urlToRemove: string) => {
+	const handleRemovePhoto = async (
+		type: 'hotel' | 'room',
+		urlToRemove: string,
+	): Promise<void> => {
 		if (type === 'hotel') {
 			setNewHotel((prev) => ({
 				...prev,
@@ -217,7 +212,7 @@ export const useManagerLogic = (): ManagerLogicReturn => {
 		}
 	}, [dispatch, currentUser?._id, currentUser?.role]);
 
-	const handleAddHotelPhoto = async (hotelId: string) => {
+	const handleAddHotelPhoto = async (hotelId: string): Promise<void> => {
 		if (!photoUrl) return;
 
 		// Создаем FormData, как и при загрузке файла
@@ -225,7 +220,9 @@ export const useManagerLogic = (): ManagerLogicReturn => {
 		formData.append('imageUrl', photoUrl); // Добавляем URL картинки
 
 		// Отправляем formData в Thunk
-		const success = await dispatch(updateHotelThunk(hotelId, formData));
+		const success = (await dispatch(
+			updateHotelThunk(hotelId, formData),
+		)) as unknown as boolean;
 
 		if (success) {
 			setPhotoUrl('');
@@ -244,25 +241,22 @@ export const useManagerLogic = (): ManagerLogicReturn => {
 			canAddHotel,
 			canAddRoom,
 			newHotel,
-			setNewHotel,
 			newRoom,
 			photoUrl,
-			setPhotoUrl,
-			setSelectedHotel,
-			setNewRoom,
 		},
 		actions: {
-			canAddHotel,
+			setNewRoom,
+			setSelectedHotel,
+			setPhotoUrl,
+			setNewHotel,
 			...setModals,
 			handleDeleteHotel,
-
 			handleDeleteRoom,
 			handleAddRoom,
 			handleSaveHotel,
 			handleEditHotelClick,
 			handleEditRoomClick,
 			handleDeleteBooking,
-
 			handleOpenAddRoomModal,
 			handleOpenCreateModal,
 			handleAddHotelPhoto,

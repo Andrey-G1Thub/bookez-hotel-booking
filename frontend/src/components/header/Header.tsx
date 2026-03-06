@@ -1,7 +1,7 @@
 import { LogOut, User } from 'lucide-react';
 import { useMemo } from 'react';
-import { logoutThunk } from '../../store/actions/userActions';
 import { useNavigate, Link } from 'react-router-dom';
+import { logoutThunk } from '../../store/actions/userActions';
 import { WeatherWidget } from './components/WeatherWidget';
 import { selectCurrentUser } from '../../selectors';
 import { NAVIGATION_CONFIG } from '../constants/navigation';
@@ -18,15 +18,16 @@ export const Header = () => {
 		const filtered = NAVIGATION_CONFIG.filter((link) => {
 			if (link.onlyAuth && !currentUser) return false;
 			if (link.roles) {
-				return link.roles.includes(currentUser?.role || '');
+				return link.roles.includes(
+					(currentUser?.role as (typeof ROLES)[keyof typeof ROLES]) || '',
+				);
 			}
 			return true;
 		});
 
-		// Добавляем мета-данные (например, нужен ли разделитель)
 		return filtered.map((link, index) => {
 			const isStaff = link.roles?.some((r) =>
-				[ROLES.ADMIN, ROLES.MANAGER].includes(r),
+				([ROLES.ADMIN, ROLES.MANAGER] as string[]).includes(r),
 			);
 			const prevLink = index > 0 ? filtered[index - 1] : null;
 

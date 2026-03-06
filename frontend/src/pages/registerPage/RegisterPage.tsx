@@ -117,7 +117,6 @@ export const RegisterPage = () => {
 								mask="_"
 								value={value}
 								onValueChange={(values) => {
-									// Передаем форматированное значение в react-hook-form
 									onChange(values.value);
 								}}
 								placeholder="Телефон +7 (___) ___-__-__"

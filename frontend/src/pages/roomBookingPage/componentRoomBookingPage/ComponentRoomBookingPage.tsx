@@ -6,12 +6,13 @@ import {
 	User,
 	Zap,
 } from 'lucide-react';
-import { getMinDate } from '../../../utils/helpers';
 import { calculateNights } from '../../../utils/calculateNights';
-import type { ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getFullImageUrl } from '../../../utils/getFullImageUrl';
 import type { BookingFormProps } from '../../../types/components';
+import { handleImageError } from '../../../utils/imageHandlers';
+import { OccupiedDates } from './component/OccupiedDates';
+import { BookingForm } from './component/BookingForm';
 
 export const ComponentRoomBookingPage = ({
 	room,
@@ -47,13 +48,7 @@ export const ComponentRoomBookingPage = ({
 								src={getFullImageUrl(room.images[0])}
 								alt={room.type}
 								className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-								onError={(
-									e: React.SyntheticEvent<HTMLImageElement, Event>,
-								) => {
-									e.currentTarget.onerror = null;
-									e.currentTarget.src =
-										'https://placehold.co/600x400?text=Room+Photo';
-								}}
+								onError={handleImageError}
 							/>
 						) : (
 							<div className="bg-teal-100 w-full h-full flex items-center justify-center text-teal-700 font-bold text-center p-4">
@@ -87,30 +82,23 @@ export const ComponentRoomBookingPage = ({
 					</h3>
 
 					{/* ВИЗУАЛИЗАЦИЯ ЗАНЯТЫХ ДАТ */}
-					<div className="mb-6 max-h-32 overflow-y-auto p-2 border rounded-lg bg-white">
-						<p className="text-sm font-semibold text-red-600 mb-2 border-b pb-1">
-							Занятые Даты в календаре:
-						</p>
-						<div className="flex flex-col gap-2">
-							{roomBookings.length > 0 ? (
-								roomBookings.map((b, index) => (
-									<span
-										key={index}
-										className="bg-red-100 text-red-700 px-3 py-1 text-xs rounded font-medium shadow-sm"
-									>
-										{b.checkIn} — {b.checkOut} ({b.roomType})
-									</span>
-								))
-							) : (
-								<span className="text-sm text-green-600">
-									На данный момент нет занятых дат.
-								</span>
-							)}
-						</div>
-					</div>
-					{/* КОНЕЦ ВИЗУАЛИЗАЦИИ ЗАНЯТЫХ ДАТ */}
+					<OccupiedDates roomBookings={roomBookings} />
 
-					<form onSubmit={handleBooking} className="space-y-4">
+					{/* Форма бронирования */}
+					<BookingForm
+						room={room}
+						handleBooking={handleBooking}
+						setCheckIn={setCheckIn}
+						checkIn={checkIn}
+						setCheckOut={setCheckOut}
+						checkOut={checkOut}
+						totalPrice={totalPrice}
+						calculateNights={calculateNights}
+						agreement={agreement}
+						setAgreement={setAgreement}
+						isPaying={isPaying}
+					/>
+					{/* <form onSubmit={handleBooking} className="space-y-4">
 						<div>
 							<label
 								htmlFor="checkIn"
@@ -195,7 +183,6 @@ export const ComponentRoomBookingPage = ({
 						</div>
 						<button
 							type="submit"
-							// Кнопка не нажмется, если нет дат, идет оплата или не стоит галочка
 							disabled={isPaying || !checkIn || !checkOut || !agreement}
 							className={`w-full py-3 rounded-lg text-white font-semibold transition shadow-lg mt-2 ${
 								isPaying || !agreement || !checkIn || !checkOut
@@ -205,7 +192,6 @@ export const ComponentRoomBookingPage = ({
 						>
 							{isPaying ? (
 								<div className="flex items-center justify-center">
-									{/* Простой CSS-спиннер через Tailwind */}
 									<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
 									Связь с банком...
 								</div>
@@ -213,7 +199,7 @@ export const ComponentRoomBookingPage = ({
 								`Оплатить и забронировать: ${totalPrice} ₽`
 							)}
 						</button>
-					</form>
+					</form> */}
 				</div>
 			</div>
 			<div className="mt-8">

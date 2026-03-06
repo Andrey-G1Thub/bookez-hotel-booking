@@ -1,5 +1,7 @@
 // Сущности БД
 
+import type { ROLES } from '../utils/permissions';
+
 export interface User {
 	_id: string;
 	name: string;
@@ -70,7 +72,8 @@ export interface NavItem {
 	title: string;
 	path: string;
 	icon?: React.ReactNode;
-	roles?: string[];
+	// roles?: string[];
+	roles?: (typeof ROLES)[keyof typeof ROLES][];
 	className?: string;
 	onlyAuth?: boolean; // Флаг: показывать только залогиненным
 	hasSeparator?: boolean;
