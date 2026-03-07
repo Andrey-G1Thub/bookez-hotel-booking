@@ -29,6 +29,7 @@ export const initialHotelState: HotelFormFields = {
 	cityId: '',
 	description: '',
 	priceFrom: '',
+	rating: 4,
 	images: [],
 	comments: [],
 };
@@ -121,6 +122,7 @@ export const useManagerLogic = (): ManagerLogicReturn => {
 			name: hotel.name,
 			cityId: hotel.cityId,
 			description: hotel.description,
+			rating: hotel.rating || 4,
 			priceFrom: hotel.priceFrom,
 			images: hotel.images || [],
 			comments: hotel.comments || [],
@@ -206,7 +208,7 @@ export const useManagerLogic = (): ManagerLogicReturn => {
 		if (currentUser?._id) {
 			dispatch(fetchBookingsThunk());
 
-			if (currentUser.role === ROLES.ADMIN) {
+			if (currentUser.role === ROLES.ADMIN || currentUser.role === ROLES.MANAGER) {
 				dispatch(fetchAllUsersThunk());
 			}
 		}

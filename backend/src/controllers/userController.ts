@@ -88,7 +88,8 @@ export const updateUser = async (req: Request, res: Response) => {
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { role, limits },
-      { new: true }, // Вернуть уже обновленный объект
+      // { new: true },
+      { returnDocument: 'after' }, // Вернуть уже обновленный объект
     ).select('-password')
 
     if (!updatedUser)

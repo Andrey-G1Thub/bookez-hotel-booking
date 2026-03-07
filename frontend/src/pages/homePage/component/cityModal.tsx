@@ -35,7 +35,7 @@ export const CityModal = ({ isOpen, onClose }: CityModalProps) => {
 						</label>
 						<input
 							className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none transition-all"
-							placeholder="Например: Париж"
+							placeholder="Например: Бердянск"
 							value={newCityData.name}
 							onChange={(e) =>
 								setNewCityData({ ...newCityData, name: e.target.value })

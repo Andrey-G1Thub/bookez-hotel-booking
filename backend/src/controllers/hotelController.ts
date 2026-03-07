@@ -5,6 +5,7 @@ import { ROLES } from '../constats/roles'
 import fs from 'fs'
 import path from 'path'
 import { deleteFileFromStorage } from '../utils/deleteFileFromStorage'
+import { Booking } from '../models/Booking'
 
 export const getHotels = async (req: Request, res: Response) => {
   try {
@@ -93,7 +94,7 @@ export const updateHotel = async (req: any, res: Response) => {
     const updatedHotel = await Hotel.findByIdAndUpdate(
       id,
       { $set: updateData },
-      { new: true },
+      { returnDocument: 'after' },
     )
 
     res.json(updatedHotel)
@@ -126,7 +127,7 @@ export const updateHotelRooms = async (req: any, res: Response) => {
 
       const maxRooms = fullUser.limits?.maxRooms || 0
 
-      // Если количество комнат в новом массиве больше лимита
+      // Если количество комнат
       if (newRooms.length > maxRooms) {
         // Если мы пытаемся ДОБАВИТЬ новую (длина выросла), а не просто редактируем старую
         if (newRooms.length > oldHotel.rooms.length) {
@@ -136,20 +137,28 @@ export const updateHotelRooms = async (req: any, res: Response) => {
         }
       }
     }
-
     // ЛОГИКА ОЧИСТКИ ФАЙЛОВ:
-
     const newRoomIds = newRooms.map((r: any) => r._id?.toString())
     const removedRooms = oldHotel.rooms.filter(
       (oldRoom: any) => !newRoomIds.includes(oldRoom._id.toString()),
     )
 
-    // Удаляем фото удаленных комнат
-    removedRooms.forEach((room: any) => {
-      room.images?.forEach((img: string) => deleteFileFromStorage(img))
-    })
+    // Удаляем фото удаленных комнат и брони
+    // removedRooms.forEach((room: any) => {
+    //   room.images?.forEach((img: string) => deleteFileFromStorage(img))
+    // })
+    if (removedRooms.length > 0) {
+      for (const room of removedRooms) {
+        // 1. Удаляем фото из хранилища
+        room.images?.forEach((img: string) => deleteFileFromStorage(img))
 
-    // Далее твой существующий код обработки нового фото (multer)
+        // 2. УДАЛЯЕМ ВСЕ БРОНИРОВАНИЯ ЭТОГО НОМЕРА
+        // Это решит проблему с "зависшими" бронями
+        await Booking.deleteMany({ roomId: room._id.toString() })
+        console.log(` Бронирования для номера ${room._id} удалены`)
+      }
+    }
+
     const targetRoomId = req.body.editingRoomId
     if (req.file) {
       const imageUrl = `/backend/uploads/${req.file.filename}`
@@ -166,7 +175,7 @@ export const updateHotelRooms = async (req: any, res: Response) => {
     const updatedHotel = await Hotel.findByIdAndUpdate(
       hotelId,
       { $set: { rooms: newRooms } },
-      { new: true },
+      { returnDocument: 'after' },
     )
     res.json(updatedHotel)
   } catch (error) {
@@ -233,7 +242,7 @@ export const addComment = async (req: any, res: Response) => {
     const updatedHotel = await Hotel.findByIdAndUpdate(
       hotelId,
       { $push: { comments: commentData } }, // Добавляем только один объект
-      { new: true },
+      { returnDocument: 'after' },
     )
 
     if (!updatedHotel) {
@@ -254,7 +263,7 @@ export const deleteComment = async (req: Request, res: Response) => {
     const updatedHotel = await Hotel.findByIdAndUpdate(
       hotelId,
       { $pull: { comments: { _id: commentId } } }, // Удаляем по конкретному _id внутри массива
-      { new: true },
+      { returnDocument: 'after' },
     )
     res.json(updatedHotel)
   } catch (error) {
@@ -268,7 +277,7 @@ export const removePhoto = async (req: Request, res: Response) => {
     const { imageUrl, type, roomId } = req.body
 
     let updateQuery = {}
-    let options: any = { new: true }
+    let options: any = { returnDocument: 'after' }
 
     if (type === 'hotel') {
       updateQuery = { $pull: { images: imageUrl } }

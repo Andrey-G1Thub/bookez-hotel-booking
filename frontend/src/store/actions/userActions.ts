@@ -117,6 +117,7 @@ export const fetchAllUsersThunk =
 			console.error('Доступ запрещен: требуется роль администратора');
 			return;
 		}
+
 		try {
 			const res = await apiFetch('/users');
 			const data = await res.json();

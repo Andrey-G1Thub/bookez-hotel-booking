@@ -131,6 +131,7 @@ export const RoomModal = ({
 						<input
 							required
 							type="text"
+							name="type"
 							value={newRoom.type}
 							onChange={handleChange}
 							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-blue-500 outline-none"
@@ -146,6 +147,7 @@ export const RoomModal = ({
 							<input
 								required
 								type="number"
+								name="capacity"
 								min="1"
 								value={newRoom.capacity}
 								onChange={handleChange}
@@ -159,6 +161,7 @@ export const RoomModal = ({
 							<input
 								required
 								type="number"
+								name="price"
 								value={newRoom.price}
 								onChange={handleChange}
 								className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-blue-500 outline-none"
@@ -173,6 +176,7 @@ export const RoomModal = ({
 						</label>
 						<input
 							type="text"
+							name="amenities"
 							value={newRoom.amenities}
 							onChange={handleChange}
 							className="w-full border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-blue-500 outline-none"

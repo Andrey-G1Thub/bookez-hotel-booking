@@ -30,8 +30,8 @@ const hotelSchema = new Schema({
   images: [String],
 
   ownerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  rating: { type: Number, default: 0 },
-  reviewCount: { type: Number, default: 0 },
+  rating: { type: Number, default: 4 },
+  reviewCount: { type: Number, default: 1 },
   comments: [commentSchema],
   rooms: [roomSchema],
 })

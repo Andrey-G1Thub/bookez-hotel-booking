@@ -49,6 +49,7 @@ export const checkPermission = (
 			case 'CREATE_HOTEL':
 			case 'ADD_BOOKING':
 			case 'ADD_COMMENT':
+			case 'VIEW_USERS_LIST':
 				return true;
 			case 'EDIT_HOTEL':
 			case 'EDIT_ROOM_HOTEL':
