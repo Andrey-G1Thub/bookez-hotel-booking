@@ -10,6 +10,7 @@ import {
 } from '../../selectors/hotelSelectors';
 import { LoadingSpinner } from '../../components/componentsLoading/loadingSpinner';
 import { useMemo } from 'react';
+import { ROUTES } from '../../components/constants/route';
 
 export const CityDetailsPage = () => {
 	const navigate = useNavigate();
@@ -65,7 +66,7 @@ export const CityDetailsPage = () => {
 
 			<div className="mt-10">
 				<button
-					onClick={() => navigate('/')}
+					onClick={() => navigate(ROUTES.HOME)}
 					className="text-gray-500 hover:text-gray-700 flex items-center"
 				>
 					<ChevronRight className="w-4 h-4 transform rotate-180 mr-1" />{' '}

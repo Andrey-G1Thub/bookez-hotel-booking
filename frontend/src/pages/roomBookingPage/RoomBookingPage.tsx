@@ -18,6 +18,7 @@ import { NAVIGATION_CONFIG } from '../../components/constants/navigation';
 import { checkDateOverlap } from '../../utils/dataHelpers';
 import { checkPermission } from '../../utils/permissions';
 import type { Booking, Hotel, Room } from '../../types/models';
+import { ROUTES } from '../../components/constants/route';
 
 // Страница бронирования конкретного номера _/;
 export const RoomBookingPage = () => {
@@ -101,7 +102,7 @@ export const RoomBookingPage = () => {
 		if (!canBook || !currentUser) {
 			if (!currentUser) {
 				alert('Пожалуйста, войдите в систему, чтобы забронировать номер.');
-				navigate('/login');
+				navigate(ROUTES.LOGIN);
 			} else {
 				alert('У вас нет прав для совершения бронирования.');
 			}
@@ -137,10 +138,7 @@ export const RoomBookingPage = () => {
 			alert(
 				`Сумма к оплате зафиксирована успешно! Номер "${room.type}" забронирован. Скоро с Вами свяжется менеджер нашего отеля.`,
 			);
-			const myBookingsPath =
-				NAVIGATION_CONFIG.find((item) => item.title === 'Мои Брони')?.path ||
-				'/bookings';
-			navigate(myBookingsPath);
+			navigate(ROUTES.BOOKINGS);
 		} catch (error) {
 			alert('Ошибка при оплате. Попробуйте еще раз.');
 		} finally {

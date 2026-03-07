@@ -8,6 +8,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import * as yup from 'yup';
 import { registerThunk } from '../../store/actions/userActions';
 import type { AppDispatch } from '../../store';
+import { ROUTES } from '../../components/constants/route';
 
 export const registerSchema = yup.object().shape({
 	name: yup.string().required('Имя обязательно').min(2, 'Минимум 2 символа'),
@@ -78,7 +79,7 @@ export const RegisterPage = () => {
 		const success = await dispatch(registerThunk(data));
 		if (success) {
 			alert('Регистрация успешна! Войдите в аккаунт.');
-			navigate('/login');
+			navigate(ROUTES.LOGIN);
 		}
 	};
 

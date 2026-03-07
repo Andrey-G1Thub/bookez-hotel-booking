@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 import { loginThunk } from '../../store/actions/userActions';
 import { useNavigate } from 'react-router-dom';
 import type { AppDispatch } from '../../store';
+import { ROUTES } from '../../components/constants/route';
 
 export const LoginPage = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -51,7 +52,7 @@ export const LoginPage = () => {
 			<p className="mt-4 text-center text-sm text-gray-600">
 				Нет аккаунта?{' '}
 				<button
-					onClick={() => navigate('/register')}
+					onClick={() => navigate(ROUTES.REGISTER)}
 					className="text-[#00a3a8] hover:underline font-medium"
 				>
 					Зарегистрироваться

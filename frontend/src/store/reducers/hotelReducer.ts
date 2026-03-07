@@ -1,7 +1,6 @@
 import type { HotelActions, HotelState } from '../../types/store';
 import {
 	ADD_CITY_SUCCESS,
-	// ADD_CITY_SUCCESS,
 	ADD_HOTEL_SUCCESS,
 	DELETE_HOTEL_SUCCESS,
 	FETCH_HOTELS_START,
@@ -9,7 +8,6 @@ import {
 	SET_HOTELS,
 	UPDATE_HOTEL_ROOM_SUCCESS,
 	UPDATE_HOTEL_SUCCESS,
-	// type HotelActions,
 } from '../actions/hotelActions';
 
 const initialState: HotelState = {

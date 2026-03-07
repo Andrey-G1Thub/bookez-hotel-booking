@@ -20,8 +20,8 @@ import { AdminPage } from './pages/adminPage/AdminPage';
 import { ROLES } from './utils/permissions';
 import { ManagerPage } from './pages/managerPage/ManagerPage';
 import { useAppDispatch } from './store/hooks';
-
-import type { User } from './store/reducers/userReducer';
+import type { User } from './types/models';
+import { ROUTES } from './components/constants/route';
 
 export const App = () => {
 	const dispatch = useAppDispatch();
@@ -41,16 +41,6 @@ export const App = () => {
 				dispatch({ type: SET_USER, payload: user });
 				dispatch(fetchBookingsThunk(user._id));
 			}
-			// 	try {
-			// 		const user: User = JSON.parse(savedUser);
-			// 		if (user && user._id) {
-			// 			dispatch({ type: SET_USER, payload: user });
-			// 			dispatch(fetchBookingsThunk(user._id));
-			// 		}
-			// 	} catch (error) {
-			// 		console.error('Failed to restore session:', error);
-			// 		localStorage.removeItem('bookez_user');
-			// 	}
 		}
 	}, [dispatch]);
 
@@ -59,9 +49,9 @@ export const App = () => {
 			<Header />
 			<main className="flex-grow">
 				<Routes>
-					<Route path="/" element={<HomePage />} />
-					<Route path="/login" element={<LoginPage />} />
-					<Route path="/register" element={<RegisterPage />} />
+					<Route path={ROUTES.HOME} element={<HomePage />} />
+					<Route path={ROUTES.LOGIN} element={<LoginPage />} />
+					<Route path={ROUTES.REGISTER} element={<RegisterPage />} />
 
 					{/* Публичные маршруты */}
 					<Route path="/city/:cityId" element={<CityDetailsPage />} />
@@ -70,7 +60,7 @@ export const App = () => {
 
 					{/* Защищенные маршруты */}
 					<Route
-						path="/bookings"
+						path={ROUTES.BOOKINGS}
 						element={
 							<PrivateRoute>
 								<BookingsPage />
@@ -79,7 +69,7 @@ export const App = () => {
 					/>
 
 					<Route
-						path="/admin"
+						path={ROUTES.ADMIN}
 						element={
 							<PrivateRoute roles={[ROLES.ADMIN]}>
 								<AdminPage />
@@ -87,7 +77,7 @@ export const App = () => {
 						}
 					/>
 					<Route
-						path="/manager"
+						path={ROUTES.MANAGER}
 						element={
 							<PrivateRoute roles={[ROLES.ADMIN, ROLES.MANAGER]}>
 								<ManagerPage />

@@ -1,11 +1,7 @@
+import { ROUTES } from '../components/constants/route';
+
 export const apiFetch = async (url: string, options: RequestInit = {}) => {
 	const token = localStorage.getItem('bookez_token');
-
-	// const headers = {
-	// 	'Content-Type': 'application/json',
-	// 	...(token ? { Authorization: `Bearer ${token}` } : {}), // Добавляем токен, если он есть
-	// 	...options.headers, // переопределяет заголовки
-	// };
 
 	//  объект заголовков
 	const headers: Record<string, string> = {
@@ -13,7 +9,6 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
 		...((options.headers as Record<string, string>) || {}),
 	};
 
-	//  Если body — это FormData, удаляем Content-Type, чтобы браузер поставил его сам
 	if (options.body instanceof FormData) {
 		delete headers['Content-Type'];
 	} else if (!headers['Content-Type']) {
@@ -26,7 +21,7 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
 	// разлогинивать пользователя
 	if (response.status === 401) {
 		localStorage.removeItem('bookez_token');
-		window.location.href = '/login';
+		window.location.href = ROUTES.LOGIN;
 	}
 
 	return response;

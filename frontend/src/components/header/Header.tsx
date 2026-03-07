@@ -7,6 +7,7 @@ import { selectCurrentUser } from '../../selectors';
 import { NAVIGATION_CONFIG } from '../constants/navigation';
 import { ROLES } from '../../utils/permissions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { ROUTES } from '../constants/route';
 
 export const Header = () => {
 	const dispatch = useAppDispatch();
@@ -47,7 +48,7 @@ export const Header = () => {
 		e.preventDefault();
 		if (window.confirm('Вы действительно хотите выйти?')) {
 			dispatch(logoutThunk());
-			navigate('/');
+			navigate(ROUTES.HOME);
 		}
 	};
 

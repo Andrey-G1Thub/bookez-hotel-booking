@@ -69,6 +69,7 @@ export interface City {
 }
 
 export interface NavItem {
+	id: string;
 	title: string;
 	path: string;
 	icon?: React.ReactNode;

@@ -1,4 +1,5 @@
-import type { Booking } from '../store/reducers/bookingReducer';
+// import type { Booking } from '../store/reducers/bookingReducer';
+import type { Booking } from '../types/models';
 import { getMinDate } from './helpers';
 
 interface OverlapResult {

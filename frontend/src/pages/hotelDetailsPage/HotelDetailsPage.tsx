@@ -1,14 +1,5 @@
 // Страница деталей отеля: список номеров _/;
-
-import {
-	ChevronRight,
-	MapPin,
-	MessageSquare,
-	Send,
-	Star,
-	Trash2,
-	User,
-} from 'lucide-react';
+import { ChevronRight, MapPin } from 'lucide-react';
 import { NotFoundPage } from '../notFoundPage/NotFoundPage';
 import { Rating } from '../../components/index';
 import { useDispatch } from 'react-redux';

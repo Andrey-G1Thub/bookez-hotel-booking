@@ -7,7 +7,6 @@ export const calculateNights = (
 	const start = new Date(checkIn).getTime();
 	const end = new Date(checkOut).getTime();
 
-	// Если дата выезда меньше или равна заезду, считаем как 0 ночей или 1 (зависит от логики)
 	if (end <= start) return 0;
 
 	const diffTime = end - start;

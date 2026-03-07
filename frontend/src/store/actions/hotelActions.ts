@@ -1,5 +1,4 @@
 import type { Dispatch } from 'redux';
-// import type { City, Comments, Hotel, Room } from '../reducers/hotelReducer';
 import type { RootState } from '..';
 import { apiFetch } from '../../utils/api';
 
@@ -43,7 +42,6 @@ export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 		const data: City[] = await response.json();
 
-		// console.log('Загруженные города:', data);
 		dispatch({ type: SET_CITIES, payload: data });
 	} catch (error) {
 		console.error('Ошибка при загрузке городов:', error);
@@ -52,41 +50,40 @@ export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 // Работа с отелем и комнатами
 export const updateHotelThunk =
-	// (hotelId: string, updatedData: Partial<Hotel>) =>
 	(hotelId: string, updatedData: FormData | Partial<Hotel>) =>
-		async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
-			const state = getState();
-			const user = state.users.currentUser;
-			const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+		const state = getState();
+		const user = state.users.currentUser;
+		const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
 
-			if (!checkPermission(user, 'EDIT_HOTEL', hotel)) {
-				alert('Нет прав на редактирование');
-				return false;
+		if (!checkPermission(user, 'EDIT_HOTEL', hotel)) {
+			alert('Нет прав на редактирование');
+			return false;
+		}
+
+		try {
+			const isFormData = updatedData instanceof FormData;
+
+			const response = await apiFetch(
+				`http://localhost:5000/api/hotels/${hotelId}`,
+				{
+					method: 'PATCH',
+					// headers: { 'Content-Type': 'application/json' },
+					// body: JSON.stringify(updatedData),
+					headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+					body: isFormData ? updatedData : JSON.stringify(updatedData),
+				},
+			);
+			if (response.ok) {
+				const updatedHotel: Hotel = await response.json();
+				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
+				return true;
 			}
-
-			try {
-				const isFormData = updatedData instanceof FormData;
-
-				const response = await apiFetch(
-					`http://localhost:5000/api/hotels/${hotelId}`,
-					{
-						method: 'PATCH',
-						// headers: { 'Content-Type': 'application/json' },
-						// body: JSON.stringify(updatedData),
-						headers: isFormData ? {} : { 'Content-Type': 'application/json' },
-						body: isFormData ? updatedData : JSON.stringify(updatedData),
-					},
-				);
-				if (response.ok) {
-					const updatedHotel: Hotel = await response.json();
-					dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
-					return true;
-				}
-			} catch (error) {
-				console.error('Ошибка при обновлении отеля:', error);
-				return false;
-			}
-		};
+		} catch (error) {
+			console.error('Ошибка при обновлении отеля:', error);
+			return false;
+		}
+	};
 
 // Thunk для обновления комнат (или любых данных отеля)
 export const updateHotelRoomsThunk =

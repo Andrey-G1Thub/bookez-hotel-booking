@@ -2,7 +2,7 @@ import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getFullImageUrl } from '../../../utils/getFullImageUrl';
 import type { RoomCardProps } from '../../../types/components';
-// import type { RoomCardProps } from '../../../types/components';
+import { ROUTES } from '../../../components/constants/route';
 
 export const RoomCard = ({ room }: RoomCardProps) => {
 	const navigate = useNavigate();
@@ -44,7 +44,8 @@ export const RoomCard = ({ room }: RoomCardProps) => {
 						<span className="text-gray-500 text-sm ml-1">/ ночь</span>
 					</div>
 					<button
-						onClick={() => navigate(`/room/${room.hotelId}/${room._id}`)}
+						// onClick={() => navigate(`/room/${room.hotelId}/${room._id}`)}
+						onClick={() => navigate(ROUTES.ROOM(room.hotelId, room._id))}
 						className="px-8 py-3 bg-[#00a3a8] text-white rounded-xl font-bold hover:bg-[#008c91] transition-colors shadow-lg"
 					>
 						Забронировать

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { SERVER_URL } from '../constants/serverUrl';
 import { useMemo } from 'react';
 import type { HotelCardProps } from '../../types/components';
+import { ROUTES } from '../constants/route';
 
 export const HotelCard = ({ hotel }: HotelCardProps) => {
 	const navigate = useNavigate();
@@ -33,7 +34,7 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
 
 	return (
 		<div
-			onClick={() => navigate(`/hotel/${hotel._id}`)}
+			onClick={() => navigate(ROUTES.HOTEL(hotel._id))}
 			className="bg-white card-shadow rounded-xl overflow-hidden cursor-pointer hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 border border-gray-100"
 		>
 			<img
