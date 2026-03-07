@@ -1,11 +1,11 @@
 // import type { BookingState } from '../../types/models';
-import type { BookingActions, BookingState } from '../../types/store';
 import {
 	ADD_BOOKING,
 	DELETE_BOOKING,
 	SET_BOOKINGS,
 	SET_BOOKINGS_LOADING,
-} from '../actions/bookingActions';
+} from '../../components/constants/actionConstants';
+import type { BookingActions, BookingState } from '../../types/typesStore';
 
 const initialState: BookingState = {
 	list: [],

@@ -1,8 +1,7 @@
 import { apiFetch } from '../../utils/api';
 import { checkPermission } from '../../utils/permissions';
 import type { RootState } from '..';
-
-// export const ADD_CITY = 'ADD_CITY' as const;
+import { ADD_CITY_SUCCESS } from '../../components/constants/actionConstants';
 
 export const addCityThunk =
 	(cityData: { name: string; description: string }) =>
@@ -15,8 +14,7 @@ export const addCityThunk =
 		}
 
 		try {
-			// const token = localStorage.getItem('bookez_token');
-			const response = await apiFetch('http://localhost:5000/api/cities', {
+			const response = await apiFetch('/cities', {
 				method: 'POST',
 				headers: {
 					// Authorization: `Bearer ${token}`, // Обязательно для authenticated
@@ -26,7 +24,7 @@ export const addCityThunk =
 			});
 			if (response.ok) {
 				const newCity = await response.json();
-				dispatch({ type: 'ADD_CITY_SUCCESS', payload: newCity });
+				dispatch({ type: ADD_CITY_SUCCESS, payload: newCity });
 				return true;
 			}
 		} catch (e) {

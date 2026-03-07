@@ -4,19 +4,20 @@ import type { RootState } from '..';
 import { apiFetch } from '../../utils/api';
 import type { UserLimits } from '../../types/models';
 import type { Credentials, RegisterData } from '../../types/forms';
-import type { UserActions } from '../../types/store';
-
-export const SET_USER = 'SET_USER' as const;
-export const LOGOUT_USER = 'LOGOUT_USER' as const;
-export const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS' as const;
-export const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS' as const;
+import type { UserActions } from '../../types/typesStore';
+import {
+	DELETE_USER_SUCCESS,
+	FETCH_USERS_SUCCESS,
+	LOGOUT_USER,
+	SET_USER,
+} from '../../components/constants/actionConstants';
 
 export const registerThunk =
 	(userData: RegisterData) => async (dispatch: Dispatch<UserActions>) => {
 		try {
 			const { confirmPassword, ...dataToInscribe } = userData;
 
-			const response = await apiFetch('http://localhost:5000/api/users/register', {
+			const response = await apiFetch('/users/register', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(dataToInscribe),
@@ -39,7 +40,7 @@ export const registerThunk =
 export const loginThunk =
 	(credentials: Credentials) => async (dispatch: Dispatch<UserActions>) => {
 		try {
-			const res = await apiFetch(`http://localhost:5000/api/users/login`, {
+			const res = await apiFetch(`/users/login`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(credentials),
@@ -80,7 +81,7 @@ export const updateUserRoleThunk =
 		}
 
 		try {
-			const response = await apiFetch(`http://localhost:5000/api/users/${userId}`, {
+			const response = await apiFetch(`/users/${userId}`, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -90,15 +91,16 @@ export const updateUserRoleThunk =
 			});
 
 			if (response.ok) {
-				// 1. Обновляем список всех юзеров для админа
+				const updatedUserData = await response.json();
+				//  Обновляем список всех юзеров для админа
 				dispatch(fetchAllUsersThunk());
 
-				// 2. Если админ изменил роль самому себе
+				// Если админ изменил роль самому себе
 				const currentUser = getState().users.currentUser;
 				if (currentUser && currentUser._id === userId) {
-					const updatedUser = await response.json();
-					dispatch({ type: SET_USER, payload: updatedUser });
-					localStorage.setItem('bookez_user', JSON.stringify(updatedUser));
+					// const updatedUser = await response.json();
+					dispatch({ type: SET_USER, payload: updatedUserData });
+					localStorage.setItem('bookez_user', JSON.stringify(updatedUserData));
 				}
 				return true;
 			}
@@ -116,7 +118,7 @@ export const fetchAllUsersThunk =
 			return;
 		}
 		try {
-			const res = await apiFetch('http://localhost:5000/api/users');
+			const res = await apiFetch('/users');
 			const data = await res.json();
 			dispatch({ type: FETCH_USERS_SUCCESS, payload: data });
 		} catch (e) {
@@ -135,12 +137,10 @@ export const deleteUserThunk =
 		}
 
 		try {
-			// 1. Запрос к API
-			const res = await apiFetch(`http://localhost:5000/api/users/${userId}`, {
+			const res = await apiFetch(`/users/${userId}`, {
 				method: 'DELETE',
 			});
 			if (res.ok) {
-				// 2. Если запрос успешен, обновляем стор
 				dispatch({ type: DELETE_USER_SUCCESS, payload: userId });
 			}
 		} catch (error) {

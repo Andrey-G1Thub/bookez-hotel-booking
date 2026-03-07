@@ -1,27 +1,29 @@
 import type {
 	ADD_BOOKING,
-	DELETE_BOOKING,
-	SET_BOOKINGS,
-	SET_BOOKINGS_LOADING,
-} from '../store/actions/bookingActions';
-import type {
+	ADD_CITY_SUCCESS,
 	ADD_HOTEL_SUCCESS,
+	DELETE_BOOKING,
 	DELETE_HOTEL_SUCCESS,
-	FETCH_HOTELS_START,
-	SET_CITIES,
-	SET_HOTELS,
-	UPDATE_HOTEL_ROOM_SUCCESS,
-	UPDATE_HOTEL_SUCCESS,
-} from '../store/actions/hotelActions';
-import type {
 	DELETE_USER_SUCCESS,
+	FETCH_HOTELS_START,
 	FETCH_USERS_SUCCESS,
 	LOGOUT_USER,
+	SET_BOOKINGS,
+	SET_BOOKINGS_LOADING,
+	SET_CITIES,
+	SET_HOTELS,
 	SET_USER,
-} from '../store/actions/userActions';
+	UPDATE_HOTEL_ROOM_SUCCESS,
+	UPDATE_HOTEL_SUCCESS,
+} from '../components/constants/actionConstants';
 import type { Booking, City, Hotel, User } from './models';
 
-// Action types и интерфейсы Redux (HotelActions, UserState)
+// Action types и интерфейсы Redux
+
+export interface AddCitySuccessAction {
+	type: typeof ADD_CITY_SUCCESS;
+	payload: City;
+}
 export interface HotelState {
 	allHotels: Hotel[];
 	cities: City[];
@@ -109,7 +111,8 @@ export type HotelActions =
 	| AddHotelAction
 	| DeleteHotelAction
 	| UpdateHotelAction
-	| UpdateHotelRoomAction;
+	| UpdateHotelRoomAction
+	| AddCitySuccessAction;
 
 export type BookingActions =
 	| SetBookingsAction

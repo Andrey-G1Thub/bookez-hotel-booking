@@ -4,24 +4,23 @@ import { apiFetch } from '../../utils/api';
 
 import { checkPermission } from '../../utils/permissions';
 import type { City, Comments, Hotel, Room } from '../../types/models';
-import type { HotelActions } from '../../types/store';
-
-export const SET_HOTELS = 'SET_HOTELS';
-export const SET_CITIES = 'SET_CITIES';
-export const ADD_HOTEL_SUCCESS = 'ADD_HOTEL_SUCCESS';
-export const DELETE_HOTEL_SUCCESS = 'DELETE_HOTEL_SUCCESS';
-export const UPDATE_HOTEL_SUCCESS = 'UPDATE_HOTEL_SUCCESS';
-export const UPDATE_HOTEL_ROOM_SUCCESS = 'UPDATE_HOTEL_ROOM_SUCCESS';
-export const FETCH_HOTELS_START = 'FETCH_HOTELS_START';
-export const ADD_CITY_SUCCESS = 'ADD_CITY_SUCCESS';
+import type { HotelActions } from '../../types/typesStore';
+import {
+	ADD_HOTEL_SUCCESS,
+	DELETE_HOTEL_SUCCESS,
+	FETCH_HOTELS_START,
+	SET_CITIES,
+	SET_HOTELS,
+	UPDATE_HOTEL_ROOM_SUCCESS,
+	UPDATE_HOTEL_SUCCESS,
+} from '../../components/constants/actionConstants';
 
 // Загрузка данных
 export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) => {
 	try {
-		// ШАГ 1: Включаем спиннер
+		// Включаем спиннер
 		dispatch({ type: FETCH_HOTELS_START });
-
-		const response = await fetch('http://localhost:5000/api/hotels');
+		const response = await apiFetch('/hotels');
 		if (!response.ok) throw new Error('Ошибка при загрузке отелей');
 
 		const data: Hotel[] = await response.json();
@@ -34,7 +33,7 @@ export const fetchHotelsThunk = () => async (dispatch: Dispatch<HotelActions>) =
 
 export const fetchCitiesThunk = () => async (dispatch: Dispatch<HotelActions>) => {
 	try {
-		const response = await apiFetch('http://localhost:5000/api/cities');
+		const response = await apiFetch('/cities');
 
 		if (!response.ok) {
 			throw new Error(`Ошибка сервера: ${response.status}`);
@@ -64,16 +63,13 @@ export const updateHotelThunk =
 		try {
 			const isFormData = updatedData instanceof FormData;
 
-			const response = await apiFetch(
-				`http://localhost:5000/api/hotels/${hotelId}`,
-				{
-					method: 'PATCH',
-					// headers: { 'Content-Type': 'application/json' },
-					// body: JSON.stringify(updatedData),
-					headers: isFormData ? {} : { 'Content-Type': 'application/json' },
-					body: isFormData ? updatedData : JSON.stringify(updatedData),
-				},
-			);
+			const response = await apiFetch(`/hotels/${hotelId}`, {
+				method: 'PATCH',
+				// headers: { 'Content-Type': 'application/json' },
+				// body: JSON.stringify(updatedData),
+				headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+				body: isFormData ? updatedData : JSON.stringify(updatedData),
+			});
 			if (response.ok) {
 				const updatedHotel: Hotel = await response.json();
 				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
@@ -87,42 +83,38 @@ export const updateHotelThunk =
 
 // Thunk для обновления комнат (или любых данных отеля)
 export const updateHotelRoomsThunk =
-	// (hotelId: string, roomsArray: Room[]) =>
 	(hotelId: string, data: FormData | Room[]) =>
-		async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
-			const state = getState();
-			const user = state.users.currentUser;
-			const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
+	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
+		const state = getState();
+		const user = state.users.currentUser;
+		const hotel = state.hotels.allHotels.find((h) => h._id === hotelId);
 
-			if (!checkPermission(user, 'EDIT_ROOM_HOTEL', hotel)) {
-				alert('У вас нет прав на редактирование комнат этого отеля');
-				return false;
+		if (!checkPermission(user, 'EDIT_ROOM_HOTEL', hotel)) {
+			alert('У вас нет прав на редактирование комнат этого отеля');
+			return false;
+		}
+		try {
+			const isFormData = data instanceof FormData;
+			const response = await apiFetch(`/hotels/${hotelId}/rooms`, {
+				method: 'PATCH',
+
+				headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+				body: isFormData ? data : JSON.stringify({ rooms: data }),
+			});
+
+			if (response.ok) {
+				const updatedRoomHotel: Hotel = await response.json();
+				dispatch({
+					type: UPDATE_HOTEL_ROOM_SUCCESS,
+					payload: updatedRoomHotel,
+				});
+				return true;
 			}
-			try {
-				const isFormData = data instanceof FormData;
-				const response = await apiFetch(
-					`http://localhost:5000/api/hotels/${hotelId}/rooms`,
-					{
-						method: 'PATCH',
-
-						headers: isFormData ? {} : { 'Content-Type': 'application/json' },
-						body: isFormData ? data : JSON.stringify({ rooms: data }),
-					},
-				);
-
-				if (response.ok) {
-					const updatedRoomHotel: Hotel = await response.json();
-					dispatch({
-						type: UPDATE_HOTEL_ROOM_SUCCESS,
-						payload: updatedRoomHotel,
-					});
-					return true;
-				}
-			} catch (error) {
-				console.error('Ошибка при обновлении комнат отеля:', error);
-				return false;
-			}
-		};
+		} catch (error) {
+			console.error('Ошибка при обновлении комнат отеля:', error);
+			return false;
+		}
+	};
 
 // Добавление и удаление отелей
 export const addHotelThunk =
@@ -135,7 +127,7 @@ export const addHotelThunk =
 		}
 
 		try {
-			const response = await apiFetch('http://localhost:5000/api/hotels', {
+			const response = await apiFetch('/hotels', {
 				method: 'POST',
 
 				body: formData,
@@ -170,12 +162,9 @@ export const deleteHotelThunk =
 		}
 
 		try {
-			const response = await apiFetch(
-				`http://localhost:5000/api/hotels/${hotelId}`,
-				{
-					method: 'DELETE',
-				},
-			);
+			const response = await apiFetch(`/hotels/${hotelId}`, {
+				method: 'DELETE',
+			});
 
 			if (response.ok) {
 				dispatch({
@@ -202,15 +191,12 @@ export const addCommentThunk =
 		}
 
 		try {
-			const res = await apiFetch(
-				`http://localhost:5000/api/hotels/${hotelId}/comments`,
-				{
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+			const res = await apiFetch(`/hotels/${hotelId}/comments`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
 
-					body: JSON.stringify({ text: newComment.text }),
-				},
-			);
+				body: JSON.stringify({ text: newComment.text }),
+			});
 
 			if (res.ok) {
 				const updatedHotel: Hotel = await res.json();
@@ -241,12 +227,9 @@ export const deleteCommentThunk =
 		}
 
 		try {
-			const res = await apiFetch(
-				`http://localhost:5000/api/hotels/${hotelId}/comments/${commentId}`,
-				{
-					method: 'DELETE',
-				},
-			);
+			const res = await apiFetch(`/hotels/${hotelId}/comments/${commentId}`, {
+				method: 'DELETE',
+			});
 
 			if (res.ok) {
 				const updatedHotel: Hotel = await res.json();
@@ -261,18 +244,15 @@ export const deletePhotoThunk =
 	(hotelId: string, imageUrl: string, type: 'hotel' | 'room', roomId?: string) =>
 	async (dispatch: Dispatch<HotelActions>, getState: () => RootState) => {
 		try {
-			const response = await apiFetch(
-				`http://localhost:5000/api/hotels/${hotelId}/remove-photo`,
-				{
-					method: 'POST', // или DELETE, бэкенде
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ imageUrl, type, roomId }),
-				},
-			);
+			const response = await apiFetch(`/hotels/${hotelId}/remove-photo`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ imageUrl, type, roomId }),
+			});
 
 			if (response.ok) {
 				const updatedHotel: Hotel = await response.json();
-				// Обновляем отель в Redux (используем существующий экшен)
+				// Обновляем отель в Redux
 				dispatch({ type: UPDATE_HOTEL_SUCCESS, payload: updatedHotel });
 				return true;
 			}

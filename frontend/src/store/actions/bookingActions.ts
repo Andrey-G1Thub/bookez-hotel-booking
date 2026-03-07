@@ -3,12 +3,13 @@ import { apiFetch } from '../../utils/api';
 import { checkPermission } from '../../utils/permissions';
 import type { RootState } from '..';
 import type { Booking } from '../../types/models';
-import type { BookingActions } from '../../types/store';
-
-export const SET_BOOKINGS = 'SET_BOOKINGS' as const;
-export const ADD_BOOKING = 'ADD_BOOKING' as const;
-export const DELETE_BOOKING = 'DELETE_BOOKING' as const;
-export const SET_BOOKINGS_LOADING = 'SET_BOOKINGS_LOADING' as const;
+import type { BookingActions } from '../../types/typesStore';
+import {
+	ADD_BOOKING,
+	DELETE_BOOKING,
+	SET_BOOKINGS,
+	SET_BOOKINGS_LOADING,
+} from '../../components/constants/actionConstants';
 
 // GET - получение данных
 export const fetchBookingsThunk =
@@ -23,10 +24,7 @@ export const fetchBookingsThunk =
 
 		try {
 			dispatch({ type: SET_BOOKINGS_LOADING, payload: true });
-
-			const url = userId
-				? `http://localhost:5000/api/bookings?userId=${userId}`
-				: `http://localhost:5000/api/bookings`;
+			const url = userId ? `/bookings?userId=${userId}` : `/bookings`;
 			const res = await apiFetch(url);
 			if (!res.ok) throw new Error('Ошибка сети');
 			const data: Booking[] = await res.json();
@@ -51,7 +49,7 @@ export const addBookingThunk =
 		}
 
 		try {
-			const response = await apiFetch('http://localhost:5000/api/bookings', {
+			const response = await apiFetch('/bookings', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -61,7 +59,6 @@ export const addBookingThunk =
 
 			if (response.ok) {
 				const savedBooking: Booking = await response.json();
-				// Обновляем Redux только если сервер ответил "ОК"
 				dispatch({ type: ADD_BOOKING, payload: savedBooking });
 			}
 		} catch (error) {
@@ -93,7 +90,7 @@ export const deleteBookingThunk =
 		}
 
 		try {
-			const response = await apiFetch(`http://localhost:5000/api/bookings/${_id}`, {
+			const response = await apiFetch(`/bookings/${_id}`, {
 				method: 'DELETE',
 			});
 
@@ -108,9 +105,7 @@ export const deleteBookingThunk =
 export const fetchRoomBookingsThunk =
 	(roomId: string) => async (dispatch: Dispatch<BookingActions>) => {
 		try {
-			const res = await apiFetch(
-				`http://localhost:5000/api/bookings/room/${roomId}`,
-			);
+			const res = await apiFetch(`/bookings/room/${roomId}`);
 			if (!res.ok) throw new Error('Ошибка загрузки занятых дат');
 			const data: Booking[] = await res.json();
 

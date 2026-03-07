@@ -1,4 +1,3 @@
-import type { HotelActions, HotelState } from '../../types/store';
 import {
 	ADD_CITY_SUCCESS,
 	ADD_HOTEL_SUCCESS,
@@ -8,7 +7,8 @@ import {
 	SET_HOTELS,
 	UPDATE_HOTEL_ROOM_SUCCESS,
 	UPDATE_HOTEL_SUCCESS,
-} from '../actions/hotelActions';
+} from '../../components/constants/actionConstants';
+import type { HotelActions, HotelState } from '../../types/typesStore';
 
 const initialState: HotelState = {
 	allHotels: [],

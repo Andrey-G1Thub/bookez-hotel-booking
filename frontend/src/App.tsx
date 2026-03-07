@@ -8,9 +8,6 @@ import { LoginPage } from './pages/loginPage/LoginPage';
 import { NotFoundPage } from './pages/notFoundPage/NotFoundPage';
 import { RegisterPage } from './pages/registerPage/RegisterPage';
 import { RoomBookingPage } from './pages/roomBookingPage/RoomBookingPage';
-
-// import './App.css';
-import { SET_USER } from './store/actions/userActions';
 import { fetchHotelsThunk } from './store/actions/hotelActions';
 import { fetchBookingsThunk } from './store/actions/bookingActions';
 import { fetchCitiesThunk } from './store/actions/hotelActions';
@@ -22,6 +19,7 @@ import { ManagerPage } from './pages/managerPage/ManagerPage';
 import { useAppDispatch } from './store/hooks';
 import type { User } from './types/models';
 import { ROUTES } from './components/constants/route';
+import { SET_USER } from './components/constants/actionConstants';
 
 export const App = () => {
 	const dispatch = useAppDispatch();

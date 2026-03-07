@@ -1,12 +1,12 @@
-import type { User } from '../../types/models';
-import type { UserActions, UserState } from '../../types/store';
-import { getInitialUser } from '../../utils/localStorageHelper';
 import {
-	SET_USER,
-	LOGOUT_USER,
-	FETCH_USERS_SUCCESS,
 	DELETE_USER_SUCCESS,
-} from '../actions/userActions';
+	FETCH_USERS_SUCCESS,
+	LOGOUT_USER,
+	SET_USER,
+} from '../../components/constants/actionConstants';
+import type { User } from '../../types/models';
+import type { UserActions, UserState } from '../../types/typesStore';
+import { getInitialUser } from '../../utils/localStorageHelper';
 
 const initialState: UserState = {
 	currentUser: getInitialUser(),
