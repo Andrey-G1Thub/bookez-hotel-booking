@@ -13,7 +13,6 @@ COPY backend/package*.json ./
 RUN npm install
 COPY backend/ ./
 
-
 COPY --from=build-frontend /app/frontend/dist ./public
 
 # Компилируем TypeScript бэкенда

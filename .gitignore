@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Зависимости (самое важное)
+# Зависимости 
 node_modules/
 **/node_modules/
 **/node_modules/*

@@ -98,7 +98,6 @@ export const updateUserRoleThunk =
 				// Если админ изменил роль самому себе
 				const currentUser = getState().users.currentUser;
 				if (currentUser && currentUser._id === userId) {
-					// const updatedUser = await response.json();
 					dispatch({ type: SET_USER, payload: updatedUserData });
 					localStorage.setItem('bookez_user', JSON.stringify(updatedUserData));
 				}
