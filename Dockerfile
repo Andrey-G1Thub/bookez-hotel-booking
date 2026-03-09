@@ -15,7 +15,6 @@ COPY backend/ ./
 
 COPY --from=build-frontend /app/frontend/dist ./public
 
-# Компилируем TypeScript бэкенда
 RUN npm run build
 
 EXPOSE 5000

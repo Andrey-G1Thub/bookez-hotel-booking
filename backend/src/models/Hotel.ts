@@ -18,7 +18,7 @@ const roomSchema = new Schema({
   price: { type: Number, required: true },
   amenities: { type: String },
   images: [String],
-  hotelId: { type: String }, // Будет ссылаться на _id родительского отеля
+  hotelId: { type: String },
 })
 
 // Основная схема отеля

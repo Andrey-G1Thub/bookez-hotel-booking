@@ -36,7 +36,7 @@ export const Footer = () => (
 			<hr className="my-6 border-gray-700 sm:mx-auto lg:my-8" />
 			<div className="text-center">
 				<span className="text-sm text-gray-400 sm:text-center">
-					© 2024 BookEZ. Все права защищены.
+					© 2026 BookEZ. Все права защищены.
 				</span>
 			</div>
 		</div>

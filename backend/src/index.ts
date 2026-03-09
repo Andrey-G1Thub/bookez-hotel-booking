@@ -25,7 +25,10 @@ app.use('/api/bookings', bookingRoutes)
 app.use(express.static(publicPath))
 
 app.use('/backend/uploads', express.static(path.join(__dirname, '../uploads')))
-app.get('*', (req, res) => {
+// app.get('/:any*', (req, res) => {
+//   res.sendFile(path.join(publicPath, 'index.html'))
+// })
+app.get(/^(?!\/api).+/, (req, res) => {
   res.sendFile(path.join(publicPath, 'index.html'))
 })
 

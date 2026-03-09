@@ -1,7 +1,6 @@
 import { Schema, model } from 'mongoose'
 
 const bookingSchema = new Schema({
-  // Используем Schema.Types.ObjectId для правильной связи в MongoDB
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',

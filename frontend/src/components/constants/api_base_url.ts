@@ -1,10 +1,2 @@
-const getApiUrl = () => {
-	const meta = import.meta as any;
-	if (meta.env && meta.env.MODE === 'development') {
-		return 'http://localhost:5000/api';
-	}
-
-	return `${window.location.origin}/api`;
-};
-
-export const API_BASE_URL = getApiUrl();
+//true при npm run dev и в false при сборке (build)
+export const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : '/api';

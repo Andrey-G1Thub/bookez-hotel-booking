@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { AuthenticatedRequest, Hotel } from '../models/Hotel'
-import { User, UserDocument } from '../models/User'
+import { Hotel } from '../models/Hotel'
+import { User } from '../models/User'
 import { ROLES } from '../constats/roles'
 import fs from 'fs'
 import path from 'path'
