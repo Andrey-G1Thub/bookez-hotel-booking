@@ -11,6 +11,7 @@ import { selectCurrentUser } from '../../selectors';
 import { ROLES } from '../../utils/permissions';
 import type { SearchFilters } from '../../types/forms';
 import { CityModal } from './component/cityModal';
+import { fetchBookingsThunk } from '../../store/actions/bookingActions';
 
 //  Главная страница с поиском и каталогом городов/отелей _/
 export const HomePage = () => {
@@ -37,7 +38,10 @@ export const HomePage = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			setIsLoading(true);
-			await dispatch(fetchHotelsThunk());
+			await Promise.all([
+				dispatch(fetchHotelsThunk()),
+				dispatch(fetchBookingsThunk()),
+			]);
 			setIsLoading(false);
 		};
 		loadData();

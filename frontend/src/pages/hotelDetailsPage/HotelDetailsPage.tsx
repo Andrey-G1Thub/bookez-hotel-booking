@@ -122,11 +122,18 @@ export const HotelDetailsPage = () => {
 				<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 			</div>
 
-			<section className="mb-12">
+			<section className="mb-6">
 				<p className="text-gray-700 text-lg leading-relaxed max-w-4xl">
 					{hotel.description}
 				</p>
 			</section>
+			<button
+				onClick={() => navigate(-1)}
+				className="mt-6 mb-5 group text-gray-400 hover:text-gray-700 flex items-center font-medium transition-colors"
+			>
+				<ChevronRight className="w-5 h-5 transform rotate-180 mr-2   group-hover:-translate-x-1 transition-transform" />
+				Вернуться назад
+			</button>
 
 			{/* Номера */}
 			<section className="mb-16">
@@ -155,14 +162,6 @@ export const HotelDetailsPage = () => {
 				canDeleteComment={canDeleteComment}
 				handleDeleteComment={handleDeleteComment}
 			/>
-
-			<button
-				onClick={() => navigate(-1)}
-				className="mt-12 group text-gray-400 hover:text-gray-700 flex items-center font-medium transition-colors"
-			>
-				<ChevronRight className="w-5 h-5 transform rotate-180 mr-2 group-hover:-translate-x-1 transition-transform" />
-				Вернуться назад
-			</button>
 		</div>
 	);
 };

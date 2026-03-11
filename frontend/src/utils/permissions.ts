@@ -36,7 +36,7 @@ export const checkPermission = (
 	targetData: any | null = null,
 ): boolean => {
 	if (!user) {
-		const publicActions: AppAction[] = ['VIEW'];
+		const publicActions: AppAction[] = ['VIEW', 'VIEW_BOOKINGS'];
 		return publicActions.includes(action);
 	}
 	if (user.role === ROLES.ADMIN) return true;

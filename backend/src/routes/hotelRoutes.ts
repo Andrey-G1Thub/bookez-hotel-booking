@@ -10,28 +10,30 @@ import {
   updateHotelRooms,
   removePhoto,
 } from '../controllers/hotelController'
-import { authenticated } from '../middleware/authMiddleware'
+import {
+  authenticated,
+  optionalAuthenticated,
+} from '../middleware/authMiddleware'
 
 import { ROLES } from '../constats/roles'
 import { upload } from '../middleware/uploads'
 
 const router = Router()
 
-router.get('/', getHotels) // GET http://localhost:5000/api/hotels
+router.get('/', optionalAuthenticated, getHotels)
 router.post(
   '/',
   authenticated,
   hasRole([ROLES.ADMIN, ROLES.MANAGER]),
   upload.single('image'),
   createHotel,
-) // POST http://localhost:5000/api/hotels
+)
 
-// ж+для добавления фото
 router.patch(
   '/:hotelId/rooms',
   authenticated,
   hasRole([ROLES.ADMIN, ROLES.MANAGER]),
-  upload.single('roomImage'), // <--- Добавляем здесь (ключ из фронтенда)
+  upload.single('roomImage'),
   updateHotelRooms,
 )
 

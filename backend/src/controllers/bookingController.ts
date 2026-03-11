@@ -5,18 +5,15 @@ import { ROLES } from '../constats/roles'
 export const getBookings = async (req: any, res: Response) => {
   try {
     const user = req.user
-    let bookings
 
-    if (user.role === ROLES.ADMIN) {
-      bookings = await Booking.find()
-    } else if (user.role === ROLES.MANAGER) {
-      bookings = await Booking.find({
-        $or: [{ hotelOwnerId: user._id }, { userId: user._id }],
-      })
-    } else {
-      bookings = await Booking.find({ userId: user._id })
+    if (user?.role === ROLES.ADMIN) {
+      const allBookings = await Booking.find()
+      return res.json(allBookings)
     }
-    res.json(bookings)
+
+    const publicData = await Booking.find({}, 'roomId checkIn checkOut status')
+
+    res.json(publicData)
   } catch (error) {
     res.status(500).json({ message: 'Ошибка при получении броней', error })
   }
@@ -35,7 +32,7 @@ export const createBooking = async (req: any, res: Response) => {
       price,
     } = req.body
 
-    // 1. Проверяем пересечение ТОЛЬКО для подтвержденных броней
+    //  Проверяем пересечение ТОЛЬКО для подтвержденных броней
     const overlappingBooking = await Booking.findOne({
       roomId: roomId,
       status: 'Подтверждено',
@@ -53,9 +50,8 @@ export const createBooking = async (req: any, res: Response) => {
       })
     }
 
-    // 2. Собираем данные. Берем ID пользователя из токена (req.user)
     const newBooking = new Booking({
-      userId: req.user._id, // Важно: ID того, кто делает запрос
+      userId: req.user._id, //  ID того, кто делает запрос
       hotelId,
       hotelOwnerId,
       roomId,
@@ -70,7 +66,6 @@ export const createBooking = async (req: any, res: Response) => {
     const savedBooking = await newBooking.save()
     res.status(201).json(savedBooking)
   } catch (error: any) {
-    // ВАЖНО: Это покажет конкретную ошибку в терминале сервера (например, "hotelOwnerId is required")
     console.error('SERVER CREATE BOOKING ERROR:', error)
     res
       .status(400)
@@ -112,8 +107,7 @@ export const deleteBooking = async (req: any, res: Response) => {
 export const getRoomBookingsPublic = async (req: Request, res: Response) => {
   try {
     const { roomId } = req.params
-    // Возвращаем все подтвержденные брони для этого номера
-    // Менеджеры и пользователи увидят только даты, не видя личных данных клиента
+
     const bookings = await Booking.find({ roomId, status: 'Подтверждено' })
     res.json(bookings)
   } catch (error) {

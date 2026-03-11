@@ -37,3 +37,32 @@ export const authenticated = async (
     res.status(401).send({ error: 'Authentication failed' })
   }
 }
+
+export const optionalAuthenticated = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const authHeader = req.headers.authorization
+    const token = authHeader && authHeader.split(' ')[1]
+
+    if (!token) {
+      ;(req as any).user = null
+      return next()
+    }
+
+    const tokenData = verifyToken(token) as JwtPayload
+    if (!tokenData || !tokenData.id) {
+      ;(req as any).user = null
+      return next()
+    }
+
+    const user = await User.findById(tokenData.id)
+    ;(req as any).user = user || null
+    next()
+  } catch (e) {
+    ;(req as any).user = null
+    next()
+  }
+}
