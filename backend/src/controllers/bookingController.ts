@@ -6,27 +6,25 @@ export const getBookings = async (req: any, res: Response) => {
   try {
     const user = req.user
 
-    if (!user) {
-      const publicData = await Booking.find(
-        { status: 'Подтверждено' },
-        'roomId checkIn checkOut status',
-      )
-      return res.json(publicData)
+    if (user?.role === ROLES.ADMIN) {
+      return res.json(await Booking.find())
     }
+    const allPublicBookings = await Booking.find(
+      { status: 'Подтверждено' },
+      'roomId checkIn checkOut status',
+    )
+    if (!user) return res.json(allPublicBookings)
 
-    if (user.role === ROLES.ADMIN) {
-      const allBookings = await Booking.find()
-      return res.json(allBookings)
-    }
-    if (user.role === ROLES.MANAGER) {
-      const managerBookings = await Booking.find({
-        $or: [{ userId: user._id }, { hotelOwnerId: user._id }],
-      })
-      return res.json(managerBookings)
-    }
+    const myBookings = await Booking.find({
+      $or: [{ userId: user._id }, { hotelOwnerId: user._id }],
+    })
 
-    const userBookings = await Booking.find({ userId: user._id })
-    res.json(userBookings)
+    const myIds = new Set(myBookings.map((b) => b._id.toString()))
+    const combined = [
+      ...myBookings,
+      ...allPublicBookings.filter((b) => !myIds.has(b._id.toString())),
+    ]
+    res.json(combined)
   } catch (error) {
     res.status(500).json({ message: 'Ошибка при получении броней', error })
   }
