@@ -6,14 +6,27 @@ export const getBookings = async (req: any, res: Response) => {
   try {
     const user = req.user
 
-    if (user?.role === ROLES.ADMIN) {
+    if (!user) {
+      const publicData = await Booking.find(
+        { status: 'Подтверждено' },
+        'roomId checkIn checkOut status',
+      )
+      return res.json(publicData)
+    }
+
+    if (user.role === ROLES.ADMIN) {
       const allBookings = await Booking.find()
       return res.json(allBookings)
     }
+    if (user.role === ROLES.MANAGER) {
+      const managerBookings = await Booking.find({
+        $or: [{ userId: user._id }, { hotelOwnerId: user._id }],
+      })
+      return res.json(managerBookings)
+    }
 
-    const publicData = await Booking.find({}, 'roomId checkIn checkOut status')
-
-    res.json(publicData)
+    const userBookings = await Booking.find({ userId: user._id })
+    res.json(userBookings)
   } catch (error) {
     res.status(500).json({ message: 'Ошибка при получении броней', error })
   }
@@ -32,7 +45,6 @@ export const createBooking = async (req: any, res: Response) => {
       price,
     } = req.body
 
-    //  Проверяем пересечение ТОЛЬКО для подтвержденных броней
     const overlappingBooking = await Booking.findOne({
       roomId: roomId,
       status: 'Подтверждено',

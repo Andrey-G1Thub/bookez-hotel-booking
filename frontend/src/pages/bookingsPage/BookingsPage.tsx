@@ -25,12 +25,9 @@ export const BookingsPage = () => {
 	const isLoading = useAppSelector(selectBookingIsLoading);
 
 	useEffect(() => {
-		if (currentUser?._id) {
-			dispatch(fetchBookingsThunk(currentUser._id));
-		}
-	}, [dispatch, currentUser?._id]);
+		dispatch(fetchBookingsThunk());
+	}, [dispatch]);
 
-	// Фильтрация остается в useMemo для производительности
 	const activeBookings = useMemo(
 		() =>
 			allBookings.filter(

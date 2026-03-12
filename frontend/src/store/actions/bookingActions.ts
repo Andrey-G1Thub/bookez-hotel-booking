@@ -13,19 +13,10 @@ import {
 
 // GET - получение данных
 export const fetchBookingsThunk =
-	(userId?: string | null) =>
-	async (dispatch: Dispatch<BookingActions>, getState: () => RootState) => {
-		const user = getState().users.currentUser;
-
-		if (!userId && !checkPermission(user, 'VIEW_BOOKINGS')) {
-			console.error('Нет прав для просмотра всех бронирований');
-			return;
-		}
-
+	() => async (dispatch: Dispatch<BookingActions>, getState: () => RootState) => {
 		try {
 			dispatch({ type: SET_BOOKINGS_LOADING, payload: true });
-			const url = userId ? `/bookings?userId=${userId}` : `/bookings`;
-			const res = await apiFetch(url);
+			const res = await apiFetch('/bookings');
 			if (!res.ok) throw new Error('Ошибка сети');
 			const data: Booking[] = await res.json();
 
