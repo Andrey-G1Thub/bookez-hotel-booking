@@ -143,17 +143,12 @@ export const updateHotelRooms = async (req: any, res: Response) => {
       (oldRoom: any) => !newRoomIds.includes(oldRoom._id.toString()),
     )
 
-    // Удаляем фото удаленных комнат и брони
-    // removedRooms.forEach((room: any) => {
-    //   room.images?.forEach((img: string) => deleteFileFromStorage(img))
-    // })
     if (removedRooms.length > 0) {
       for (const room of removedRooms) {
-        // 1. Удаляем фото из хранилища
+        //Удаляем фото из хранилища
         room.images?.forEach((img: string) => deleteFileFromStorage(img))
 
-        // 2. УДАЛЯЕМ ВСЕ БРОНИРОВАНИЯ ЭТОГО НОМЕРА
-        // Это решит проблему с "зависшими" бронями
+        // УДАЛЯЕМ ВСЕ БРОНИРОВАНИЯ ЭТОГО НОМЕРА
         await Booking.deleteMany({ roomId: room._id.toString() })
         console.log(` Бронирования для номера ${room._id} удалены`)
       }
@@ -202,17 +197,17 @@ export const deleteHotel = async (req: any, res: Response) => {
         .json({ message: 'Вы не можете удалить чужой отель' })
     }
 
-    // 1. Собираем ВСЕ фото отеля
+    //  Собираем ВСЕ фото отеля
     const allPhotos: string[] = [...(hotel.images || [])]
 
-    // 2. Добавляем фото из всех комнат
+    // Добавляем фото из всех комнат
     hotel.rooms.forEach((room: any) => {
       if (room.images && room.images.length > 0) {
         allPhotos.push(...room.images)
       }
     })
 
-    // 3. Физически удаляем каждый файл
+    //  Физически удаляем каждый файл
     allPhotos.forEach((photoUrl) => deleteFileFromStorage(photoUrl))
 
     await Hotel.findByIdAndDelete(id)
