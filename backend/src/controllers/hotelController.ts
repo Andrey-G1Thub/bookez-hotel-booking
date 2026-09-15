@@ -118,7 +118,7 @@ export const updateHotelRooms = async (req: any, res: Response) => {
 
     // --- ПРОВЕРКА ЛИМИТОВ ---
     if (userFromToken.role !== ROLES.ADMIN) {
-      // Подтягиваем свежие данные пользователя, чтобы увидеть актуальные лимиты
+     
       const fullUser = await User.findById(userFromToken._id)
 
       if (!fullUser) {
