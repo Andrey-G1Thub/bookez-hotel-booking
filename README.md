@@ -2,9 +2,6 @@
 
 BookEz — это современное Fullstack-приложение, реализующее полный цикл бронирования номеров в отеле: от поиска и фильтрации до полного управления отелем и администрирования контента.
 
-Приложение развернуто на облачном сервере и доступно по адресу:
-
-**[http://85.239.63.108](http://85.239.63.108)**
 
 ## Основные возможности
 - **Поиск и фильтрация:** &nbsp; Поиск отелей по городам, датам и названию.
@@ -68,7 +65,7 @@ BookEz — это современное Fullstack-приложение, реа�
 
 ### Инструкция: Как запустить проект через Docker
 
-Для запуска проекта вам понадобится установленный **Docker**.
+Для запуска проекта у вас должен быть установлен **Docker** и **Docker Compose**.
 
 1. Клонируйте репозиторий:
   - git clone [https://github.com/Andrey-G1Thub/bookez-hotel-booking.git](https://github.com/Andrey-G1Thub/bookez-hotel-booking.git)
@@ -80,29 +77,10 @@ BookEz — это современное Fullstack-приложение, реа�
 - PORT=5000
 - JWT_SECRET=super_secret_key_2026
 
-3. Создайте сеть:
-- `docker network create hotel-network`
+3. Запуск приложения:
+- docker compose -p bookez-project up --build -d
 
-4. Запуск базы данных MongoDB:
-- `docker run -d --name diplom-mongodb --network hotel-network -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=adminpass --restart always mongo:latest`
-
-5. Соберите образ приложения:
- - `docker build -t hotel-app .`
-
-6. Запустите приложение:
-- `docker run -d --name hotel-booking-live --network hotel-network -p 80:5000 --env-file .env -v $(pwd)/backend/uploads:/app/backend/uploads --restart always hotel-app`
-
-### Как запустить проект для разработки (Development)
-
-### backend
-* cd backend
-* npm install
-* npm run dev
-
-### frontend
-* cd frontend
-* npm install
-* npm run dev
+После этого проект будет полностью доступен в браузере по адресу: http://localhost
 
 ![Главная_для_админа](./frontend/screenshots/Главная_для_админа.png)
 ![Панель_админа](./frontend/screenshots/Панель_админа.png)

@@ -33,5 +33,5 @@ build/
 vite-app/
 **/vite-app/
 # Фотографии пользователей
-backend/uploads/
+# backend/uploads/
 backend/logs/
