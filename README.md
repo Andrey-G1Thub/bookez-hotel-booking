@@ -73,7 +73,7 @@ BookEz — это современное Fullstack-приложение, реа�
 
 2. Настройка окружения. Создайте файл .env в корневой папке проекта и добавьте в него следующие переменные:
 
-- MONGO_URI=mongodb://admin:adminpass@diplom-mongodb:27017/hoteldb?authSource=admin
+- MONGO_URI=mongodb://admin:adminpass@mongodb:27017/hoteldb?authSource=admin
 - PORT=5000
 - JWT_SECRET=super_secret_key_2026
 
